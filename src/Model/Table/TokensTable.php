@@ -22,6 +22,7 @@
  */
 namespace Tokens\Model\Table;
 
+use Cake\I18n\Time;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -39,6 +40,24 @@ use Cake\Validation\Validator;
  */
 class TokensTable extends Table
 {
+    /**
+     * Called before each entity is saved.
+     * Stopping this event will abort the save operation
+     * @param \Cake\Event\Event $event Event
+     * @param \Cake\ORM\Entity $entity Entity
+     * @param \ArrayObject $options Options
+     * @return bool
+     */
+    public function beforeSave(\Cake\Event\Event $event, \Cake\ORM\Entity $entity, \ArrayObject $options)
+    {
+        //Adds expiry
+        if (empty($entity->expiry)) {
+            $entity->expiry = new Time('+2 hour');
+        }
+
+        return true;
+    }
+
     /**
      * Initialize method
      * @param array $config Configuration for the table

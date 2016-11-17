@@ -29,7 +29,7 @@ use Cake\ORM\Entity;
  * @property int $id
  * @property string $type
  * @property string $token
- * @property string $data
+ * @property string $extra
  * @property \Cake\I18n\Time $expiry
  */
 class Token extends Entity
