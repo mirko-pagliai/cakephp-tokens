@@ -1,0 +1,29 @@
+{
+    "name": "mirko-pagliai/cakephp-tokens",
+    "description": "A plugin to handle tokens for CakePHP",
+    "homepage": "https://github.com/mirko-pagliai/cakephp-tokens",
+    "type": "cakephp-plugin",
+    "license": "AGPL",
+    "authors": [{
+        "name": "Mirko Pagliai",
+        "email": "mirko.pagliai@gmail.com"
+    }],
+    "require": {
+        "php": ">=5.5.9",
+        "cakephp/cakephp": ">=3.2.0 <4.0"
+    },
+    "require-dev": {
+        "cakephp/cakephp-codesniffer": "2.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tokens\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Cake\\Test\\": "vendor/cakephp/cakephp/tests",
+            "Tokens\\Test\\": "tests"
+        }
+    }
+}
