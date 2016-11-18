@@ -258,10 +258,63 @@ class TokensTableTest extends TestCase
     }
 
     /**
+     * Test validation for `expiry` property
+     * @test
+     */
+    public function testValidationForExpiry()
+    {
+        $token = $this->Tokens->newEntity([
+            'token' => 'test',
+            'expiry' => new \Cake\I18n\Date,
+        ]);
+        $this->assertEmpty($token->errors());
+
+        $token = $this->Tokens->newEntity([
+            'token' => 'test',
+            'expiry' => new \Cake\I18n\Time,
+        ]);
+        $this->assertEmpty($token->errors());
+
+        $token = $this->Tokens->newEntity([
+            'token' => 'test',
+            'expiry' => new \Cake\I18n\FrozenDate,
+        ]);
+        $this->assertEmpty($token->errors());
+
+        $token = $this->Tokens->newEntity([
+            'token' => 'test',
+            'expiry' => new \Cake\I18n\FrozenTime,
+        ]);
+        $this->assertEmpty($token->errors());
+
+        $token = $this->Tokens->newEntity([
+            'token' => 'test',
+            'expiry' => 'thisIsAString',
+        ]);
+        $this->assertEquals(['expiry' => ['dateTime' => 'The provided value is invalid']], $token->errors());
+    }
+
+    /**
+     * Test validation for `token` property
+     * @test
+     */
+    public function testValidationForToken()
+    {
+        $token = $this->Tokens->newEntity([]);
+        $this->assertEquals(['token' => ['_required' => 'This field is required']], $token->errors());
+
+        $this->assertNotEmpty($this->Tokens->save(new Token(['token' => 'uniqueValue'])));
+
+        $token = new Token(['token' => 'uniqueValue']);
+        $this->assertFalse($this->Tokens->save($token));
+        $this->assertEquals(['token' => ['_isUnique' => 'This value is already in use']], $token->errors());
+    }
+
+    /**
      * Test validation for `type` property
      * @test
      */
-    public function testValidationType()
+    public function testValidationForType()
     {
         $token = $this->Tokens->newEntity([
             'type' => '12',
@@ -286,21 +339,5 @@ class TokensTableTest extends TestCase
             'token' => 'test',
         ]);
         $this->assertEmpty($token->errors());
-    }
-
-    /**
-     * Test validation for `token` property
-     * @test
-     */
-    public function testValidationToken()
-    {
-        $token = $this->Tokens->newEntity([]);
-        $this->assertEquals(['token' => ['_required' => 'This field is required']], $token->errors());
-
-        $this->assertNotEmpty($this->Tokens->save(new Token(['token' => 'uniqueValue'])));
-
-        $token = new Token(['token' => 'uniqueValue']);
-        $this->assertFalse($this->Tokens->save($token));
-        $this->assertEquals(['token' => ['_isUnique' => 'This value is already in use']], $token->errors());
     }
 }
