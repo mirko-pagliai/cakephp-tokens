@@ -51,6 +51,10 @@ class Token extends Entity
      */
     protected function _setToken($token)
     {
+        if (!is_string($token)) {
+            $token = serialize($token);
+        }
+
         return substr(Security::hash($token, 'sha1', true), 0, 25);
     }
 }
