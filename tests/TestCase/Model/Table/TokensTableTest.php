@@ -131,6 +131,31 @@ class TokensTableTest extends TestCase
     }
 
     /**
+     * Test for `deleteExpired()` method
+     * @test
+     * @uses _createSomeTokens()
+     */
+    public function testDeleteExpired()
+    {
+        //Deletes all tokens
+        $this->Tokens->deleteAll([]);
+
+        //Create three tokens. The second is expired
+        list(, $second, ) = $this->_createSomeTokens();
+
+        //The second token exists
+        $token = $this->Tokens->find()->where(['id' => $second->id])->first();
+        $this->assertNotEmpty($token);
+
+        $count = $this->Tokens->deleteExpired();
+        $this->assertEquals(1, $count);
+
+        //The second token does not exist anymore
+        $token = $this->Tokens->find()->where(['id' => $second->id])->first();
+        $this->assertEmpty($token);
+    }
+
+    /**
      * Test for `find()` method
      * @test
      */

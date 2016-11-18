@@ -63,6 +63,15 @@ class TokensTable extends Table
     }
 
     /**
+     * Deletes all expired tokens
+     * @return Count Returns the affected rows
+     */
+    public function deleteExpired()
+    {
+        return $this->deleteAll(['expiry <=' => new Time()]);
+    }
+
+    /**
      * Basic `find()` method.
      *
      * This rewrites the method provided by CakePHP, to unserialize the `extra`
