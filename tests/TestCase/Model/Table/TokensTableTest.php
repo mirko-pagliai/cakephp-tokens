@@ -241,6 +241,8 @@ class TokensTableTest extends TestCase
      */
     public function testInitialize()
     {
+        debug($this->Tokens->entityClass);
+        debug($this->Tokens->registryAlias);
         $this->markTestIncomplete('Not implemented yet.');
     }
 
