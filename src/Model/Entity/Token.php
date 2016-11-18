@@ -22,6 +22,7 @@
  */
 namespace Tokens\Model\Entity;
 
+use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\Utility\Security;
 
@@ -43,6 +44,25 @@ class Token extends Entity
         '*' => true,
         'id' => false,
     ];
+
+    /**
+     * `set` mutators for `expiry` property
+     * @param string $expiry `expiry` value
+     * @return string
+     */
+    protected function _setExpiry($expiry)
+    {
+        if (is_object($expiry) && in_array(get_class($expiry), [
+            'Cake\I18n\Date',
+            'Cake\I18n\Time',
+            'Cake\I18n\FrozenDate',
+            'Cake\I18n\FrozenTime',
+        ])) {
+            return $expiry;
+        }
+
+        return new Time($expiry);
+    }
 
     /**
      * `set` mutators for `token` property

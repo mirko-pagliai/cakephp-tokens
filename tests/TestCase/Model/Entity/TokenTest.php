@@ -31,6 +31,35 @@ use Tokens\Model\Entity\Token;
 class TokenTest extends TestCase
 {
     /**
+     * Test for `_setExpiry()` method
+     * @test
+     */
+    public function testExpirySetMutator()
+    {
+        $entity = new Token();
+
+        $entity->set('expiry', '+1 day');
+        $this->assertEquals('Cake\I18n\Time', get_class($entity->expiry));
+        $this->assertTrue($entity->expiry->isTomorrow());
+
+        $entity->set('expiry', new \Cake\I18n\Time);
+        $this->assertEquals('Cake\I18n\Time', get_class($entity->expiry));
+
+        $entity->set('expiry', new \Cake\I18n\Time('+1 day'));
+        $this->assertEquals('Cake\I18n\Time', get_class($entity->expiry));
+        $this->assertTrue($entity->expiry->isTomorrow());
+
+        $entity->set('expiry', new \Cake\I18n\Date);
+        $this->assertEquals('Cake\I18n\Date', get_class($entity->expiry));
+
+        $entity->set('expiry', new \Cake\I18n\FrozenDate);
+        $this->assertEquals('Cake\I18n\FrozenDate', get_class($entity->expiry));
+
+        $entity->set('expiry', new \Cake\I18n\FrozenTime);
+        $this->assertEquals('Cake\I18n\FrozenTime', get_class($entity->expiry));
+    }
+
+    /**
      * Test for `_setToken()` method
      * @test
      */
