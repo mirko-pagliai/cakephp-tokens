@@ -241,9 +241,10 @@ class TokensTableTest extends TestCase
      */
     public function testInitialize()
     {
-        debug($this->Tokens->entityClass);
-        debug($this->Tokens->registryAlias);
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->assertEquals('Tokens\Model\Table\TokensTable', get_class($this->Tokens));
+        $this->assertEquals('id', $this->Tokens->primaryKey());
+        $this->assertEquals('token', $this->Tokens->displayField());
+        $this->assertEquals('tokens', $this->Tokens->table());
     }
 
     /**

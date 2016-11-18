@@ -134,7 +134,7 @@ class TokensTable extends Table
         parent::initialize($config);
 
         $this->table('tokens');
-        $this->displayField('id');
+        $this->displayField('token');
         $this->primaryKey('id');
     }
 
