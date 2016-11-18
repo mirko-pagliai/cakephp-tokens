@@ -23,6 +23,7 @@
 namespace Tokens\Model\Entity;
 
 use Cake\ORM\Entity;
+use Cake\Utility\Security;
 
 /**
  * Token Entity
@@ -42,4 +43,14 @@ class Token extends Entity
         '*' => true,
         'id' => false,
     ];
+
+    /**
+     * `set` mutators for `token` property
+     * @param string $token `token` value
+     * @return string
+     */
+    protected function _setToken($token)
+    {
+        return substr(Security::hash($token, 'sha1', true), 0, 25);
+    }
 }

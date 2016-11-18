@@ -25,7 +25,6 @@ namespace Tokens\Test\TestCase\Model\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Tokens\Model\Entity\Token;
-use Tokens\Model\Table\TokensTable;
 
 /**
  * Tokens\Model\Table\TokensTable Test Case
@@ -72,7 +71,7 @@ class TokensTableTest extends TestCase
      */
     public function testBeforeSave()
     {
-        $token = $this->Tokens->save(new Token);
+        $token = $this->Tokens->save(new Token(['token' => 'token1']));
 
         $this->assertNotEmpty($token);
         $this->assertEquals('Tokens\Model\Entity\Token', get_class($token));
@@ -81,19 +80,18 @@ class TokensTableTest extends TestCase
         $this->assertEquals('Cake\I18n\Time', get_class($token->expiry));
         $this->assertEmpty($token->extra);
 
-        $token = $this->Tokens->save(new Token(['expiry' => '+1 day']));
+        $token = $this->Tokens->save(new Token([
+            'token' => 'token2',
+            'expiry' => '+1 day',
+        ]));
 
         $this->assertNotEmpty($token);
         $this->assertTrue($token->expiry->isTomorrow());
         $this->assertEquals('Cake\I18n\Time', get_class($token->expiry));
 
-        $token = $this->Tokens->save(new Token(['token' => 'test']));
-
-        $this->assertNotEmpty($token);
-        $this->assertRegExp('/^[a-z0-9]{25}$/', $token->token);
-
         $token = $this->Tokens->save(new Token([
             'type' => 'testType',
+            'token' => 'token3',
             'extra' => 'testExtra',
         ]));
 
@@ -102,6 +100,7 @@ class TokensTableTest extends TestCase
         $this->assertEquals('s:9:"testExtra";', $token->extra);
 
         $token = $this->Tokens->save(new Token([
+            'token' => 'token4',
             'extra' => ['first', 'second'],
         ]));
 
@@ -109,6 +108,7 @@ class TokensTableTest extends TestCase
         $this->assertEquals('a:2:{i:0;s:5:"first";i:1;s:6:"second";}', $token->extra);
 
         $token = $this->Tokens->save(new Token([
+            'token' => 'token5',
             'extra' => (object)['first', 'second'],
         ]));
 
@@ -153,11 +153,59 @@ class TokensTableTest extends TestCase
     }
 
     /**
-     * Test validationDefault method
-     * @return void
+     * Test validation. Generic method
+     * @test
      */
-    public function testValidationDefault()
+    public function testValidation()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $token = $this->Tokens->newEntity(['token' => 'test']);
+        $this->assertEmpty($token->errors());
+    }
+
+    /**
+     * Test validation for `type` property
+     * @test
+     */
+    public function testValidationType()
+    {
+        $token = $this->Tokens->newEntity([
+            'type' => '12',
+            'token' => 'test',
+        ]);
+        $this->assertEquals(['type' => ['lengthBetween' => 'The provided value is invalid']], $token->errors());
+
+        $token = $this->Tokens->newEntity([
+            'type' => '123',
+            'token' => 'test',
+        ]);
+        $this->assertEmpty($token->errors());
+
+        $token = $this->Tokens->newEntity([
+            'type' => str_repeat('a', 256),
+            'token' => 'test',
+        ]);
+        $this->assertEquals(['type' => ['lengthBetween' => 'The provided value is invalid']], $token->errors());
+
+        $token = $this->Tokens->newEntity([
+            'type' => str_repeat('a', 255),
+            'token' => 'test',
+        ]);
+        $this->assertEmpty($token->errors());
+    }
+
+    /**
+     * Test validation for `token` property
+     * @test
+     */
+    public function testValidationToken()
+    {
+        $token = $this->Tokens->newEntity([]);
+        $this->assertEquals(['token' => ['_required' => 'This field is required']], $token->errors());
+
+        $this->assertNotEmpty($this->Tokens->save(new Token(['token' => 'uniqueValue'])));
+
+        $token = new Token(['token' => 'uniqueValue']);
+        $this->assertFalse($this->Tokens->save($token));
+        $this->assertEquals(['token' => ['_isUnique' => 'This value is already in use']], $token->errors());
     }
 }

@@ -23,10 +23,8 @@
 namespace Tokens\Model\Table;
 
 use Cake\I18n\Time;
-use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
-use Cake\Utility\Security;
 use Cake\Validation\Validator;
 
 /**
@@ -51,12 +49,6 @@ class TokensTable extends Table
      */
     public function beforeSave(\Cake\Event\Event $event, \Cake\ORM\Entity $entity, \ArrayObject $options)
     {
-        if (empty($entity->token)) {
-            $entity->token = time();
-        }
-
-        $entity->token = substr(Security::hash($entity->token, 'sha1', true), 0, 25);
-
         if (empty($entity->expiry)) {
             $entity->expiry = '+2 hour';
         }
@@ -112,6 +104,18 @@ class TokensTable extends Table
     }
 
     /**
+     * Build rules
+     * @param Cake\ORM\RulesChecker $rules The rules object to be modified
+     * @return Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules)
+    {
+        $rules->add($rules->isUnique(['token']));
+
+        return $rules;
+    }
+
+    /**
      * Default validation rules
      * @param \Cake\Validation\Validator $validator Validator instance
      * @return \Cake\Validation\Validator
@@ -123,6 +127,7 @@ class TokensTable extends Table
             ->allowEmpty('id', 'create');
 
         $validator
+            ->lengthBetween('type', [3, 255])
             ->allowEmpty('type');
 
         $validator
@@ -130,7 +135,7 @@ class TokensTable extends Table
             ->notEmpty('token');
 
         $validator
-            ->allowEmpty('data');
+            ->allowEmpty('extra');
 
         $validator
             ->dateTime('expiry')
