@@ -90,6 +90,32 @@ class TokensTable extends Table
     }
 
     /**
+     * `active` find method
+     * @param \Cake\ORM\Query $query Query
+     * @param array $options The options to use for the find
+     * @return \Cake\ORM\Query
+     */
+    public function findActive(\Cake\ORM\Query $query, array $options)
+    {
+        $query->where(['expiry >' => new Time()]);
+
+        return $query;
+    }
+
+    /**
+     * `expired` find method
+     * @param \Cake\ORM\Query $query Query
+     * @param array $options The options to use for the find
+     * @return \Cake\ORM\Query
+     */
+    public function findExpired(\Cake\ORM\Query $query, array $options)
+    {
+        $query->where(['expiry <=' => new Time()]);
+
+        return $query;
+    }
+
+    /**
      * Initialize method
      * @param array $config Configuration for the table
      * @return void
