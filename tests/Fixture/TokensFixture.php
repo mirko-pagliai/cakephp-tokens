@@ -47,4 +47,15 @@ class TokensFixture extends TestFixture
             'collation' => 'utf8_general_ci'
         ],
     ];
+
+    /**
+     * Records
+     * @var array
+     */
+    public $records = [
+        ['type' => null, 'token' => '036b303f058a35ed48220ee5f', 'extra' => null, 'expiry' => '11/18/16, 10:30 AM'],
+        ['type' => null, 'token' => '036b303f058a35ed48220ee5f', 'extra' => 's:9:"testExtra";', 'expiry' => '11/18/16, 10:31 AM'],
+        ['type' => null, 'token' => '036b303f058a35ed48220ee5f', 'extra' => 'a:2:{i:0;s:5:"first";i:1;s:6:"second";}', 'expiry' => '11/18/16, 10:32 AM'],
+        ['type' => null, 'token' => '036b303f058a35ed48220ee5f', 'extra' => 'O:8:"stdClass":2:{i:0;s:5:"first";i:1;s:6:"second";}', 'expiry' => '11/18/16, 10:33 AM'],
+    ];
 }

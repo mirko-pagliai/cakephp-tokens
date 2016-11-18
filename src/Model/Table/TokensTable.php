@@ -26,6 +26,7 @@ use Cake\I18n\Time;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
+use Cake\Utility\Security;
 use Cake\Validation\Validator;
 
 /**
@@ -42,7 +43,7 @@ class TokensTable extends Table
 {
     /**
      * Called before each entity is saved.
-     * Stopping this event will abort the save operation
+     * Stopping this event will abort the save operation.
      * @param \Cake\Event\Event $event Event
      * @param \Cake\ORM\Entity $entity Entity
      * @param \ArrayObject $options Options
@@ -50,12 +51,50 @@ class TokensTable extends Table
      */
     public function beforeSave(\Cake\Event\Event $event, \Cake\ORM\Entity $entity, \ArrayObject $options)
     {
-        //Adds expiry
+        if (empty($entity->token)) {
+            $entity->token = time();
+        }
+
+        $entity->token = substr(Security::hash($entity->token, 'sha1', true), 0, 25);
+
         if (empty($entity->expiry)) {
-            $entity->expiry = new Time('+2 hour');
+            $entity->expiry = '+2 hour';
+        }
+
+        $entity->expiry = new Time($entity->expiry);
+
+        if (!empty($entity->extra)) {
+            $entity->extra = serialize($entity->extra);
         }
 
         return true;
+    }
+
+    /**
+     * Basic `find()` method.
+     *
+     * This rewrites the method provided by CakePHP, to unserialize the `extra`
+     *  field.
+     * @param string $type Find type
+     * @param array $options The options to use for the find
+     * @return \Cake\ORM\Query
+     */
+    public function find($type = 'all', $options = [])
+    {
+        $query = parent::find($type, $options);
+
+        //Unserializes the `extra` field.
+        $query->formatResults(function ($results) {
+            return $results->map(function ($row) {
+                if (!empty($row->extra)) {
+                    $row->extra = unserialize($row->extra);
+                }
+
+                return $row;
+            });
+        });
+
+        return $query;
     }
 
     /**

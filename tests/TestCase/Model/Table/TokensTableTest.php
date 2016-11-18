@@ -24,6 +24,7 @@ namespace Tokens\Test\TestCase\Model\Table;
 
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use Tokens\Model\Entity\Token;
 use Tokens\Model\Table\TokensTable;
 
 /**
@@ -31,7 +32,6 @@ use Tokens\Model\Table\TokensTable;
  */
 class TokensTableTest extends TestCase
 {
-
     /**
      * Test subject
      * @var \Tokens\Model\Table\TokensTable
@@ -65,17 +65,82 @@ class TokensTableTest extends TestCase
 
         parent::tearDown();
     }
-    
-    public function testSave()
-    {
-        //Saves a new entity
-        $newEntity = $this->Tokens->newEntity();
-        $newEntity->token = 'test';
-        $savedEntity = $this->Tokens->save($newEntity);
 
-        $this->assertNotEmpty($savedEntity);
-        $this->assertEquals('Tokens\Model\Entity\Token', get_class($savedEntity));
-        $this->assertEquals('Cake\I18n\Time', get_class($savedEntity->expiry));
+    /**
+     * Test for `beforeSave()` method
+     * @test
+     */
+    public function testBeforeSave()
+    {
+        $token = $this->Tokens->save(new Token);
+
+        $this->assertNotEmpty($token);
+        $this->assertEquals('Tokens\Model\Entity\Token', get_class($token));
+        $this->assertEmpty($token->type);
+        $this->assertRegExp('/^[a-z0-9]{25}$/', $token->token);
+        $this->assertEquals('Cake\I18n\Time', get_class($token->expiry));
+        $this->assertEmpty($token->extra);
+
+        $token = $this->Tokens->save(new Token(['expiry' => '+1 day']));
+
+        $this->assertNotEmpty($token);
+        $this->assertTrue($token->expiry->isTomorrow());
+        $this->assertEquals('Cake\I18n\Time', get_class($token->expiry));
+
+        $token = $this->Tokens->save(new Token(['token' => 'test']));
+
+        $this->assertNotEmpty($token);
+        $this->assertRegExp('/^[a-z0-9]{25}$/', $token->token);
+
+        $token = $this->Tokens->save(new Token([
+            'type' => 'testType',
+            'extra' => 'testExtra',
+        ]));
+
+        $this->assertNotEmpty($token);
+        $this->assertEquals('testType', $token->type);
+        $this->assertEquals('s:9:"testExtra";', $token->extra);
+
+        $token = $this->Tokens->save(new Token([
+            'extra' => ['first', 'second'],
+        ]));
+
+        $this->assertNotEmpty($token);
+        $this->assertEquals('a:2:{i:0;s:5:"first";i:1;s:6:"second";}', $token->extra);
+
+        $token = $this->Tokens->save(new Token([
+            'extra' => (object)['first', 'second'],
+        ]));
+
+        $this->assertNotEmpty($token);
+        $this->assertEquals('O:8:"stdClass":2:{i:0;s:5:"first";i:1;s:6:"second";}', $token->extra);
+    }
+
+    /**
+     * Test for `find()` method
+     * @test
+     */
+    public function testFind()
+    {
+        $token = $this->Tokens->get(1);
+
+        $this->assertNotEmpty($token);
+        $this->assertNull($token->extra);
+
+        $token = $this->Tokens->get(2);
+
+        $this->assertNotEmpty($token);
+        $this->assertEquals('testExtra', $token->extra);
+
+        $token = $this->Tokens->get(3);
+
+        $this->assertNotEmpty($token);
+        $this->assertEquals(['first', 'second'], $token->extra);
+
+        $token = $this->Tokens->get(4);
+
+        $this->assertNotEmpty($token);
+        $this->assertEquals((object)['first', 'second'], $token->extra);
     }
 
     /**
