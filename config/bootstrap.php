@@ -27,6 +27,12 @@ if (!Configure::check('Tokens.expiryDefaultClass')) {
     Configure::write('Tokens.expiryDefaultClass', 'Cake\I18n\FrozenTime');
 }
 
+//Salt to use to generate the token. Can be a string or a boolean.
+//With `true`, the application’s salt value will be used.
+if (!Configure::check('Tokens.tokenSalt')) {
+    Configure::write('Tokens.tokenSalt', true);
+}
+
 //Checks for default class for `expiry`
 if (empty(Configure::read('Tokens.expiryDefaultClass')) || !in_array(Configure::read('Tokens.expiryDefaultClass'), [
     'Cake\I18n\Date',

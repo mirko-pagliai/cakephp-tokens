@@ -77,6 +77,6 @@ class Token extends Entity
             $token = serialize($token);
         }
 
-        return substr(Security::hash($token, 'sha1', true), 0, 25);
+        return substr(Security::hash($token, 'sha1', Configure::read('Tokens.tokenSalt')), 0, 25);
     }
 }
