@@ -263,7 +263,10 @@ class TokensTableTest extends TestCase
         $this->assertEquals('id', $this->Tokens->primaryKey());
         $this->assertEquals('token', $this->Tokens->displayField());
         $this->assertEquals('tokens', $this->Tokens->table());
+
         $this->assertNotEmpty($this->Tokens->association('users'));
+        $this->assertEquals('Cake\ORM\Association\BelongsTo', get_class($this->Tokens->Users));
+        $this->assertEquals('users', $this->Tokens->Users->table());
     }
 
     /**
