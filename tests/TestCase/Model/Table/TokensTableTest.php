@@ -278,10 +278,8 @@ class TokensTableTest extends TestCase
      */
     public function testForCustomUsersTable()
     {
-        Configure::write('Tokens.usersClassOptions', [
-            'foreignKey' => 'user_id',
-            'className' => 'TestApp.Users',
-        ]);
+        Configure::write('Tokens.usersClassOptions.className', 'TestApp.Users');
+
         TableRegistry::clear();
         $this->Tokens = TableRegistry::get('Tokens', ['className' => 'Tokens\Model\Table\TokensTable']);
 
