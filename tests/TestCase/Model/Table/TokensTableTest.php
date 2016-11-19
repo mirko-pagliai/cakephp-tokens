@@ -22,6 +22,7 @@
  */
 namespace Tokens\Test\TestCase\Model\Table;
 
+use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Tokens\Model\Entity\Token;
@@ -41,7 +42,10 @@ class TokensTableTest extends TestCase
      * Fixtures
      * @var array
      */
-    public $fixtures = ['core.users', 'plugin.tokens.tokens'];
+    public $fixtures = [
+        'core.users',
+        'plugin.tokens.tokens',
+    ];
 
     /**
      * Internal method to create some tokens
@@ -65,8 +69,7 @@ class TokensTableTest extends TestCase
     {
         parent::setUp();
 
-        $config = TableRegistry::exists('Tokens') ? [] : ['className' => 'Tokens\Model\Table\TokensTable'];
-        $this->Tokens = TableRegistry::get('Tokens', $config);
+        $this->Tokens = TableRegistry::get('Tokens', ['className' => 'Tokens\Model\Table\TokensTable']);
     }
 
     /**
@@ -267,6 +270,42 @@ class TokensTableTest extends TestCase
         $this->assertNotEmpty($this->Tokens->association('users'));
         $this->assertEquals('Cake\ORM\Association\BelongsTo', get_class($this->Tokens->Users));
         $this->assertEquals('users', $this->Tokens->Users->table());
+    }
+
+    /**
+     * Test for a custum `Users` table
+     * @test
+     */
+    public function testForCustomUsersTable()
+    {
+        Configure::write('Tokens.usersClassOptions', [
+            'foreignKey' => 'user_id',
+            'className' => 'TestApp.Users',
+        ]);
+        TableRegistry::clear();
+        $this->Tokens = TableRegistry::get('Tokens', ['className' => 'Tokens\Model\Table\TokensTable']);
+
+        $this->assertEquals('TestApp.Users', $this->Tokens->Users->className());
+        $this->assertEquals('This is a test method', $this->Tokens->Users->test());
+
+        $token = $this->Tokens->findById(2)->contain('Users')->first();
+        $this->assertEquals('TestApp\Model\Entity\User', get_class($token->user));
+        $this->assertEquals('This is a test property', $token->user->test);
+    }
+
+    /**
+     * Test for a no `Users` table
+     * @expectedException RuntimeException
+     * @expectedExceptionMessage Table "Tokens\Model\Table\TokensTable" is not associated with "Users"
+     * @test
+     */
+    public function testForNoUsersTable()
+    {
+        Configure::write('Tokens.usersClassOptions', false);
+        TableRegistry::clear();
+        $this->Tokens = TableRegistry::get('Tokens', ['className' => 'Tokens\Model\Table\TokensTable']);
+
+        $this->Tokens->Users;
     }
 
     /**
