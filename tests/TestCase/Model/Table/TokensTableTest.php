@@ -149,11 +149,27 @@ class TokensTableTest extends TestCase
         $token = $this->Tokens->findById(3)->contain('Users')->first();
         $this->assertEquals('Cake\ORM\Entity', get_class($token->user));
         $this->assertEquals(2, $token->user->id);
-        
+
         //User with ID 2 has tokens with ID 3 and 4
         $user = $this->Tokens->Users->findById(2)->contain('Tokens')->first();
         $this->assertEquals(3, $user->tokens[0]->id);
         $this->assertEquals(4, $user->tokens[1]->id);
+    }
+
+    /**
+     * Test for `deleteByUser()` method
+     * @test
+     */
+    public function testDeleteByUser()
+    {
+        $tokens = $this->Tokens->find()->where(['user_id' => 2])->toArray();
+        $this->assertNotEmpty($tokens);
+
+        $this->count(2, $this->Tokens->deleteByUser(2));
+
+        foreach ($tokens as $token) {
+            $this->assertEmpty($this->Tokens->find()->where(['id' => $token->id])->first());
+        }
     }
 
     /**

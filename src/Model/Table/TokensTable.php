@@ -63,8 +63,18 @@ class TokensTable extends Table
     }
 
     /**
+     * Deletes token by user ID
+     * @param int $id User ID
+     * @return int Affected rows
+     */
+    public function deleteByUser($id)
+    {
+        return $this->deleteAll(['user_id' => $id]);
+    }
+
+    /**
      * Deletes all expired tokens
-     * @return Count Returns the affected rows
+     * @return int affected rows
      */
     public function deleteExpired()
     {
