@@ -30,6 +30,7 @@ use Cake\Validation\Validator;
 
 /**
  * Tokens Model
+ * @property \Cake\ORM\Association\BelongsTo $Users
  * @method \Tokens\Model\Entity\Token get($primaryKey, $options = [])
  * @method \Tokens\Model\Entity\Token newEntity($data = null, array $options = [])
  * @method \Tokens\Model\Entity\Token[] newEntities(array $data, array $options = [])
@@ -135,6 +136,11 @@ class TokensTable extends Table
         $this->table('tokens');
         $this->displayField('token');
         $this->primaryKey('id');
+
+        $this->belongsTo('Users', [
+            'foreignKey' => 'user_id',
+            'className' => 'Tokens.Users',
+        ]);
     }
 
     /**
@@ -145,6 +151,7 @@ class TokensTable extends Table
     public function buildRules(RulesChecker $rules)
     {
         $rules->add($rules->isUnique(['token']));
+        $rules->add($rules->existsIn(['user_id'], 'Users'));
 
         return $rules;
     }
@@ -161,12 +168,12 @@ class TokensTable extends Table
             ->allowEmpty('id', 'create');
 
         $validator
-            ->lengthBetween('type', [3, 255])
-            ->allowEmpty('type');
-
-        $validator
             ->requirePresence('token', 'create')
             ->notEmpty('token');
+
+        $validator
+            ->lengthBetween('type', [3, 255])
+            ->allowEmpty('type');
 
         $validator
             ->allowEmpty('extra');

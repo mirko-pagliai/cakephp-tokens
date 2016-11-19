@@ -41,7 +41,7 @@ class TokensTableTest extends TestCase
      * Fixtures
      * @var array
      */
-    public $fixtures = ['plugin.tokens.tokens'];
+    public $fixtures = ['core.users', 'plugin.tokens.tokens'];
 
     /**
      * Internal method to create some tokens
@@ -50,11 +50,11 @@ class TokensTableTest extends TestCase
     protected function _createSomeTokens()
     {
         //Create three tokens. The second is expired
-        $first = $this->Tokens->save(new Token(['token' => 'token1', 'expiry' => '+1 day']));
-        $second = $this->Tokens->save(new Token(['token' => 'token2', 'expiry' => '-1 day']));
-        $third = $this->Tokens->save(new Token(['token' => 'token3', 'expiry' => '+2 day']));
-
-        return [$first, $second, $third];
+        return [
+            $this->Tokens->save(new Token(['token' => 'token1', 'expiry' => '+1 day'])),
+            $this->Tokens->save(new Token(['token' => 'token2', 'expiry' => '-1 day'])),
+            $this->Tokens->save(new Token(['token' => 'token3', 'expiry' => '+2 day'])),
+        ];
     }
 
     /**
@@ -65,7 +65,8 @@ class TokensTableTest extends TestCase
     {
         parent::setUp();
 
-        $this->Tokens = TableRegistry::get('Tokens.Tokens');
+        $config = TableRegistry::exists('Tokens') ? [] : ['className' => 'Tokens\Model\Table\TokensTable'];
+        $this->Tokens = TableRegistry::get('Tokens', $config);
     }
 
     /**
@@ -89,8 +90,9 @@ class TokensTableTest extends TestCase
 
         $this->assertNotEmpty($token);
         $this->assertEquals('Tokens\Model\Entity\Token', get_class($token));
-        $this->assertEmpty($token->type);
+        $this->assertNull($token->user_id);
         $this->assertRegExp('/^[a-z0-9]{25}$/', $token->token);
+        $this->assertEmpty($token->type);
         $this->assertEquals('Cake\I18n\FrozenTime', get_class($token->expiry));
         $this->assertEmpty($token->extra);
 
@@ -104,8 +106,8 @@ class TokensTableTest extends TestCase
         $this->assertEquals('Cake\I18n\FrozenTime', get_class($token->expiry));
 
         $token = $this->Tokens->save(new Token([
-            'type' => 'testType',
             'token' => 'token3',
+            'type' => 'testType',
             'extra' => 'testExtra',
         ]));
 
@@ -245,6 +247,7 @@ class TokensTableTest extends TestCase
         $this->assertEquals('id', $this->Tokens->primaryKey());
         $this->assertEquals('token', $this->Tokens->displayField());
         $this->assertEquals('tokens', $this->Tokens->table());
+        $this->assertNotEmpty($this->Tokens->association('users'));
     }
 
     /**

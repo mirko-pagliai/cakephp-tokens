@@ -29,10 +29,12 @@ use Cake\Utility\Security;
 /**
  * Token Entity
  * @property int $id
- * @property string $type
+ * @property int $user_id
  * @property string $token
+ * @property string $type
  * @property string $extra
- * @property \Cake\I18n\Time $expiry
+ * @property \Cake\I18n\FrozenTime $expiry
+ * @property \Tokens\Model\Entity\User $user
  */
 class Token extends Entity
 {
