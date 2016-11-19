@@ -20,3 +20,19 @@
  * @license     http://www.gnu.org/licenses/agpl.txt AGPL License
  * @link        http://git.novatlantis.it Nova Atlantis Ltd
  */
+use Cake\Core\Configure;
+
+//Default class for `expiry`
+if (!Configure::check('Tokens.expiryDefaultClass')) {
+    Configure::write('Tokens.expiryDefaultClass', 'Cake\I18n\FrozenTime');
+}
+
+//Checks for default class for `expiry`
+if (empty(Configure::read('Tokens.expiryDefaultClass')) || !in_array(Configure::read('Tokens.expiryDefaultClass'), [
+    'Cake\I18n\Date',
+    'Cake\I18n\Time',
+    'Cake\I18n\FrozenDate',
+    'Cake\I18n\FrozenTime',
+])) {
+    trigger_error('Invalid default class for `expiry`', E_USER_ERROR);
+}

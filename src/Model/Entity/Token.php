@@ -22,7 +22,7 @@
  */
 namespace Tokens\Model\Entity;
 
-use Cake\I18n\Time;
+use Cake\Core\Configure;
 use Cake\ORM\Entity;
 use Cake\Utility\Security;
 
@@ -61,7 +61,9 @@ class Token extends Entity
             return $expiry;
         }
 
-        return new Time($expiry);
+        $class = Configure::read('Tokens.expiryDefaultClass');
+
+        return new $class($expiry);
     }
 
     /**
