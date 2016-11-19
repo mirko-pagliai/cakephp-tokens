@@ -137,10 +137,9 @@ class TokensTable extends Table
         $this->displayField('token');
         $this->primaryKey('id');
 
-        $this->belongsTo('Users', [
-            'foreignKey' => 'user_id',
-            'className' => 'Users',
-        ]);
+        if (Configure::check('Tokens.usersClassOptions')) {
+            $this->belongsTo('Users', Configure::read('Tokens.usersClassOptions'));
+        }
     }
 
     /**

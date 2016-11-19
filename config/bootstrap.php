@@ -40,6 +40,14 @@ if (!Configure::check('Tokens.tokenSalt')) {
     Configure::write('Tokens.tokenSalt', true);
 }
 
+//`Users` class options
+if (!Configure::check('Tokens.usersClassOptions')) {
+    Configure::write('Tokens.usersClassOptions', [
+        'foreignKey' => 'user_id',
+        'className' => 'Users',
+    ]);
+}
+
 //Checks for default class for `expiry`
 if (empty(Configure::read('Tokens.expiryDefaultClass')) || !in_array(Configure::read('Tokens.expiryDefaultClass'), [
     'Cake\I18n\Date',
