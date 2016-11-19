@@ -47,8 +47,12 @@ class Token extends Entity
 
     /**
      * `set` mutators for `expiry` property
-     * @param string $expiry `expiry` value
+     * @param string|object $expiry `expiry` value. Can be a string or a time
+     *  instance. If the value is a string, it gets the class to use from the
+     *  configuration
      * @return string
+     * @see http://book.cakephp.org/3.0/en/core-libraries/time.html#creating-time-instances
+     * @see http://book.cakephp.org/3.0/en/core-libraries/time.html#immutable-dates-and-times
      */
     protected function _setExpiry($expiry)
     {
@@ -61,6 +65,8 @@ class Token extends Entity
             return $expiry;
         }
 
+        //If the value is a string, it gets the class to use from the
+        //  configuration
         $class = Configure::read('Tokens.expiryDefaultClass');
 
         return new $class($expiry);
