@@ -137,7 +137,7 @@ class TokensTable extends Table
         $this->displayField('token');
         $this->primaryKey('id');
 
-        if (Configure::check('Tokens.usersClassOptions')) {
+        if (Configure::read('Tokens.usersClassOptions')) {
             $this->belongsTo('Users', Configure::read('Tokens.usersClassOptions'));
         }
     }
