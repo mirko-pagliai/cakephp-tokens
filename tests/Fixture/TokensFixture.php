@@ -58,6 +58,6 @@ class TokensFixture extends TestFixture
         ['user_id' => null, 'token' => '036b303f058a35ed48220ee5f', 'type' => null, 'extra' => null, 'expiry' => '11/18/16, 10:30 AM'],
         ['user_id' => 1, 'token' => '036b303f058a35ed48220ee5g', 'type' => null, 'extra' => 's:9:"testExtra";', 'expiry' => '11/18/16, 10:31 AM'],
         ['user_id' => 2, 'token' => '036b303f058a35ed48220ee5h', 'type' => null, 'extra' => 'a:2:{i:0;s:5:"first";i:1;s:6:"second";}', 'expiry' => '11/18/16, 10:32 AM'],
-        ['user_id' => 3, 'token' => '036b303f058a35ed48220ee5i', 'type' => null, 'extra' => 'O:8:"stdClass":2:{i:0;s:5:"first";i:1;s:6:"second";}', 'expiry' => '11/18/16, 10:33 AM'],
+        ['user_id' => 2, 'token' => '036b303f058a35ed48220ee5i', 'type' => null, 'extra' => 'O:8:"stdClass":2:{i:0;s:5:"first";i:1;s:6:"second";}', 'expiry' => '11/18/16, 10:33 AM'],
     ];
 }
