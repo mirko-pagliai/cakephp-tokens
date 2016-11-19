@@ -22,6 +22,7 @@
  */
 namespace Tokens\Model\Table;
 
+use Cake\Core\Configure;
 use Cake\I18n\Time;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -50,7 +51,7 @@ class TokensTable extends Table
     public function beforeSave(\Cake\Event\Event $event, \Cake\ORM\Entity $entity, \ArrayObject $options)
     {
         if (empty($entity->expiry)) {
-            $entity->expiry = '+2 hour';
+            $entity->expiry = Configure::read('Tokens.expiryDefaultValue');
         }
 
         if (!empty($entity->extra)) {

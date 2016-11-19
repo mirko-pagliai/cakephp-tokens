@@ -27,6 +27,13 @@ if (!Configure::check('Tokens.expiryDefaultClass')) {
     Configure::write('Tokens.expiryDefaultClass', 'Cake\I18n\FrozenTime');
 }
 
+//Default value for `expiry`.
+//For supported formats, see http://php.net/manual/en/datetime.formats.php.
+//In particular, see relative formats http://php.net/manual/en/datetime.formats.relative.php
+if (!Configure::check('Tokens.expiryDefaultValue')) {
+    Configure::write('Tokens.expiryDefaultValue', '+1 hour');
+}
+
 //Salt to use to generate the token. Can be a string or a boolean.
 //With `true`, the application’s salt value will be used.
 if (!Configure::check('Tokens.tokenSalt')) {
