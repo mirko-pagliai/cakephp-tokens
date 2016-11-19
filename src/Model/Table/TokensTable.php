@@ -53,8 +53,6 @@ class TokensTable extends Table
             $entity->expiry = '+2 hour';
         }
 
-        $entity->expiry = new Time($entity->expiry);
-
         if (!empty($entity->extra)) {
             $entity->extra = serialize($entity->extra);
         }

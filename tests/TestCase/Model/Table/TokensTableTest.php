@@ -91,7 +91,7 @@ class TokensTableTest extends TestCase
         $this->assertEquals('Tokens\Model\Entity\Token', get_class($token));
         $this->assertEmpty($token->type);
         $this->assertRegExp('/^[a-z0-9]{25}$/', $token->token);
-        $this->assertEquals('Cake\I18n\Time', get_class($token->expiry));
+        $this->assertEquals('Cake\I18n\FrozenTime', get_class($token->expiry));
         $this->assertEmpty($token->extra);
 
         $token = $this->Tokens->save(new Token([
@@ -101,7 +101,7 @@ class TokensTableTest extends TestCase
 
         $this->assertNotEmpty($token);
         $this->assertTrue($token->expiry->isTomorrow());
-        $this->assertEquals('Cake\I18n\Time', get_class($token->expiry));
+        $this->assertEquals('Cake\I18n\FrozenTime', get_class($token->expiry));
 
         $token = $this->Tokens->save(new Token([
             'type' => 'testType',
