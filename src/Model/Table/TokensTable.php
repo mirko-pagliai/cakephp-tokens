@@ -139,7 +139,7 @@ class TokensTable extends Table
 
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id',
-            'className' => 'Tokens.Users',
+            'className' => 'Users',
         ]);
     }
 

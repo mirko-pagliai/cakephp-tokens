@@ -133,6 +133,22 @@ class TokensTableTest extends TestCase
     }
 
     /**
+     * Test for `Users` association
+     * @test
+     */
+    public function testBelongsToUsers()
+    {
+        //Token with ID 1 has no user
+        $token = $this->Tokens->findById(1)->contain('Users')->first();
+        $this->assertEmpty($token->user);
+
+        //Token with ID 3 has user with ID 2
+        $token = $this->Tokens->findById(3)->contain('Users')->first();
+        $this->assertEquals('Cake\ORM\Entity', get_class($token->user));
+        $this->assertEquals(2, $token->user->id);
+    }
+
+    /**
      * Test for `deleteExpired()` method
      * @test
      * @uses _createSomeTokens()
