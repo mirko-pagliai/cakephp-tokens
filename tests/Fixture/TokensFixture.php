@@ -22,6 +22,7 @@
  */
 namespace Tokens\Test\Fixture;
 
+use Cake\I18n\FrozenTime;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
@@ -51,13 +52,42 @@ class TokensFixture extends TestFixture
     ];
 
     /**
-     * Records
-     * @var array
+     * Init. Adds some records
      */
-    public $records = [
-        ['user_id' => null, 'token' => '036b303f058a35ed48220ee5f', 'type' => null, 'extra' => null, 'expiry' => '11/18/16, 10:30 AM'],
-        ['user_id' => 1, 'token' => '036b303f058a35ed48220ee5g', 'type' => null, 'extra' => 's:9:"testExtra";', 'expiry' => '11/18/16, 10:31 AM'],
-        ['user_id' => 2, 'token' => '036b303f058a35ed48220ee5h', 'type' => null, 'extra' => 'a:2:{i:0;s:5:"first";i:1;s:6:"second";}', 'expiry' => '11/18/16, 10:32 AM'],
-        ['user_id' => 2, 'token' => '036b303f058a35ed48220ee5i', 'type' => null, 'extra' => 'O:8:"stdClass":2:{i:0;s:5:"first";i:1;s:6:"second";}', 'expiry' => '11/18/16, 10:33 AM'],
-    ];
+    public function init()
+    {
+        $this->records = [
+            [
+                'id' => 1,
+                'user_id' => null,
+                'token' => '036b303f058a35ed48220ee5f',
+                'extra' => null,
+                'expiry' => new FrozenTime('+1 day'),
+            ],
+            [
+                'id' => 3,
+                'user_id' => 1,
+                'token' => 'c658ffdd8d26875d2539cf78c',
+                'extra' => 'a:2:{i:0;s:5:"first";i:1;s:6:"second";}',
+                'expiry' => new FrozenTime('+2 day'),
+            ],
+            [
+                'id' => 4,
+                'user_id' => 2,
+                'token' => '036b303f058a35ed48220ee5i',
+                'extra' => 'O:8:"stdClass":2:{i:0;s:5:"first";i:1;s:6:"second";}',
+                'expiry' => new FrozenTime('+1 month'),
+            ],
+            //Expired token. It is added last, with ID 2, so that it is not deleted
+            [
+                'id' => 2,
+                'user_id' => 2,
+                'token' => '036b303f058a35ed48220ee5h',
+                'extra' => 's:9:"testExtra";',
+                'expiry' => new FrozenTime('-1 day'),
+            ],
+        ];
+
+        parent::init();
+    }
 }
