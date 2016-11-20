@@ -63,22 +63,30 @@ class TokensTable extends Table
     }
 
     /**
-     * Deletes token by user ID
-     * @param int $id User ID
+     * Deletes all expired tokens.
+     *
+     * If a `$token` entity is passed, it also clears tokens with the same
+     *  token value and/or the same user.
+     *
+     * This method should be called before creating a new token. In fact, it
+     *  prevents a user from having more than token or a token is created with
+     *  the same token value.
+     * @param \Tokens\Model\Entity\Token|null $token Token entity
      * @return int Affected rows
      */
-    public function deleteByUser($id)
+    public function deleteExpired(\Tokens\Model\Entity\Token $token = null)
     {
-        return $this->deleteAll(['user_id' => $id]);
-    }
+        $conditions[] = ['expiry <=' => new Time()];
 
-    /**
-     * Deletes all expired tokens
-     * @return int affected rows
-     */
-    public function deleteExpired()
-    {
-        return $this->deleteAll(['expiry <=' => new Time()]);
+        if (!empty($token->token)) {
+            $conditions[] = ['token' => $token->token];
+        }
+
+        if (!empty($token->user_id)) {
+            $conditions[] = ['user_id' => $token->user_id];
+        }
+
+        return $this->deleteAll(['OR' => $conditions]);
     }
 
     /**
