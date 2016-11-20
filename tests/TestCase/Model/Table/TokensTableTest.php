@@ -53,11 +53,14 @@ class TokensTableTest extends TestCase
      */
     protected function _createSomeTokens()
     {
+        //Deletes all tokens
+        $this->Tokens->deleteAll([]);
+
         //Create three tokens. The second is expired
         return [
-            $this->Tokens->save(new Token(['token' => 'token1', 'expiry' => '+1 day'])),
-            $this->Tokens->save(new Token(['token' => 'token2', 'expiry' => '-1 day'])),
-            $this->Tokens->save(new Token(['token' => 'token3', 'expiry' => '+2 day'])),
+            $this->Tokens->save(new Token(['id' => 1, 'user_id' => 1, 'token' => 'token1', 'expiry' => '+1 day'])),
+            $this->Tokens->save(new Token(['id' => 2, 'user_id' => 2, 'token' => 'token2', 'expiry' => '-1 day'])),
+            $this->Tokens->save(new Token(['id' => 3, 'user_id' => 3, 'token' => 'token3', 'expiry' => '+2 day'])),
         ];
     }
 
@@ -157,44 +160,42 @@ class TokensTableTest extends TestCase
     }
 
     /**
-     * Test for `deleteByUser()` method
-     * @test
-     */
-    public function testDeleteByUser()
-    {
-        $tokens = $this->Tokens->find()->where(['user_id' => 2])->toArray();
-        $this->assertNotEmpty($tokens);
-
-        $this->count(2, $this->Tokens->deleteByUser(2));
-
-        foreach ($tokens as $token) {
-            $this->assertEmpty($this->Tokens->find()->where(['id' => $token->id])->first());
-        }
-    }
-
-    /**
      * Test for `deleteExpired()` method
      * @test
      * @uses _createSomeTokens()
      */
     public function testDeleteExpired()
     {
-        //Deletes all tokens
-        $this->Tokens->deleteAll([]);
-
-        //Create three tokens. The second is expired
-        list(, $second, ) = $this->_createSomeTokens();
-
-        //The second token exists
-        $token = $this->Tokens->find()->where(['id' => $second->id])->first();
-        $this->assertNotEmpty($token);
+        //Create some tokens
+        $this->_createSomeTokens();
 
         $count = $this->Tokens->deleteExpired();
         $this->assertEquals(1, $count);
 
-        //The second token does not exist anymore
-        $token = $this->Tokens->find()->where(['id' => $second->id])->first();
-        $this->assertEmpty($token);
+        //Token with ID 2 does not exist anymore
+        $this->assertEmpty($this->Tokens->find()->where(['id' => 2])->first());
+
+        //Create some tokens
+        $this->_createSomeTokens();
+
+        $token = new Token(['user_id' => 1]);
+        $count = $this->Tokens->deleteExpired($token);
+        $this->assertEquals(2, $count);
+
+        //Tokens with ID 1 and 2 do not exist anymore
+        $this->assertEmpty($this->Tokens->find()->where(['id' => 1])->first());
+        $this->assertEmpty($this->Tokens->find()->where(['id' => 2])->first());
+
+        //Create some tokens
+        $this->_createSomeTokens();
+
+        $token = new Token(['token' => 'token3']);
+        $count = $this->Tokens->deleteExpired($token);
+        $this->assertEquals(2, $count);
+
+        //Tokens with ID 2 and 3 do not exist anymore
+        $this->assertEmpty($this->Tokens->find()->where(['id' => 2])->first());
+        $this->assertEmpty($this->Tokens->find()->where(['id' => 3])->first());
     }
 
     /**
@@ -231,25 +232,19 @@ class TokensTableTest extends TestCase
      */
     public function testFindActive()
     {
-        //Deletes all tokens
-        $this->Tokens->deleteAll([]);
-
         $query = $this->Tokens->find('active');
         $this->assertEquals('Cake\ORM\Query', get_class($query));
         $this->assertEmpty($query->hydrate(false)->toArray());
 
-        //Create three tokens. The second is expired
-        list($first,, $third) = $this->_createSomeTokens();
+        //Create some tokens
+        $this->_createSomeTokens();
 
         $result = $this->Tokens->find('active')->hydrate(false)->toArray();
-        $this->assertNotEmpty($result);
         $this->assertEquals(2, count($result));
 
-        //The first result is the same as the first token
-        $this->assertEquals($result[0]['token'], $first->token);
-
-        //The second result is the same as the third token
-        $this->assertEquals($result[1]['token'], $third->token);
+        //Results are tokens with ID 1 and 3
+        $this->assertEquals(1, $result[0]['id']);
+        $this->assertEquals(3, $result[1]['id']);
     }
 
     /**
@@ -266,15 +261,14 @@ class TokensTableTest extends TestCase
         $this->assertEquals('Cake\ORM\Query', get_class($query));
         $this->assertEmpty($query->hydrate(false)->toArray());
 
-        //Create three tokens. The second is expired
-        list(, $second, ) = $this->_createSomeTokens();
+        //Create some tokens
+        $this->_createSomeTokens();
 
         $result = $this->Tokens->find('expired')->hydrate(false)->toArray();
-        $this->assertNotEmpty($result);
         $this->assertEquals(1, count($result));
 
-        //The first result is the same as the second token
-        $this->assertEquals($result[0]['token'], $second->token);
+        //The first result is the token with ID 2
+        $this->assertEquals(2, $result[0]['id']);
     }
 
     /**
@@ -321,6 +315,7 @@ class TokensTableTest extends TestCase
     public function testForNoUsersTable()
     {
         Configure::write('Tokens.usersClassOptions', false);
+
         TableRegistry::clear();
         $this->Tokens = TableRegistry::get('Tokens', ['className' => 'Tokens\Model\Table\TokensTable']);
 
