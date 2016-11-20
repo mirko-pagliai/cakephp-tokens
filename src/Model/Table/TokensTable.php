@@ -48,6 +48,7 @@ class TokensTable extends Table
      * @param \Cake\ORM\Entity $entity Entity
      * @param \ArrayObject $options Options
      * @return bool
+     * @uses deleteExpired()
      */
     public function beforeSave(\Cake\Event\Event $event, \Cake\ORM\Entity $entity, \ArrayObject $options)
     {
@@ -58,6 +59,10 @@ class TokensTable extends Table
         if (!empty($entity->extra)) {
             $entity->extra = serialize($entity->extra);
         }
+
+        //Deletes all expired tokens and tokens with the same token value
+        //  and/or the same user.
+        $this->deleteExpired($entity);
 
         return true;
     }
@@ -71,19 +76,19 @@ class TokensTable extends Table
      * This method should be called before creating a new token. In fact, it
      *  prevents a user from having more than token or a token is created with
      *  the same token value.
-     * @param \Tokens\Model\Entity\Token|null $token Token entity
+     * @param \Tokens\Model\Entity\Token|null $entity Token entity
      * @return int Affected rows
      */
-    public function deleteExpired(\Tokens\Model\Entity\Token $token = null)
+    public function deleteExpired(\Tokens\Model\Entity\Token $entity = null)
     {
         $conditions[] = ['expiry <=' => new Time()];
 
-        if (!empty($token->token)) {
-            $conditions[] = ['token' => $token->token];
+        if (!empty($entity->token)) {
+            $conditions[] = ['token' => $entity->token];
         }
 
-        if (!empty($token->user_id)) {
-            $conditions[] = ['user_id' => $token->user_id];
+        if (!empty($entity->user_id)) {
+            $conditions[] = ['user_id' => $entity->user_id];
         }
 
         return $this->deleteAll(['OR' => $conditions]);
