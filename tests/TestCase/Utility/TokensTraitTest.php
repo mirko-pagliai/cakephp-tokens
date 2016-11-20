@@ -20,12 +20,10 @@
  * @license     http://www.gnu.org/licenses/agpl.txt AGPL License
  * @link        http://git.novatlantis.it Nova Atlantis Ltd
  */
-namespace Tokens\Controller\Component;
+namespace Tokens\Test\TestCase\Utility;
 
-use Cake\Controller\Component;
-use Tokens\Utility\TokenTrait;
+use Cake\TestSuite\TestCase;
 
-class TokenComponent extends Component
+class TokenTraitTest extends TestCase
 {
-    use TokenTrait;
 }
