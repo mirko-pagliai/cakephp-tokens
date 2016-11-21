@@ -31,6 +31,12 @@ use Tokens\Model\Entity\Token;
 trait TokenTrait
 {
     /**
+     * Errors occurred during the creation of the last token
+     * @var array
+     */
+    protected $errors = [];
+
+    /**
      * Returns the table instance
      * @return \Tokens\Model\Table\TokensTable
      */
@@ -80,9 +86,13 @@ trait TokenTrait
      * @param array $options Options
      * @return string|false Token value, otherwise `false` on failure
      * @uses _getTable()
+     * @uses $errors
      */
     public function create($token, array $options = [])
     {
+        //Resets errors
+        $this->errors = [];
+
         $entity = new Token(compact('token'));
 
         foreach (['user_id', 'type', 'extra', 'expiry'] as $key) {
@@ -92,10 +102,22 @@ trait TokenTrait
         }
 
         if (!$this->_getTable()->save($entity)) {
+            $this->errors = $entity->errors();
+
             return false;
         }
 
         return $entity->token;
+    }
+
+    /**
+     * Returns errors that occurred during the creation of the last token
+     * @return array
+     * @uses $errors
+     */
+    public function errors()
+    {
+        return $this->errors;
     }
 
     /**

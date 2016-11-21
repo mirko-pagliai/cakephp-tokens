@@ -87,6 +87,8 @@ class TokenTraitTest extends TestCase
      */
     public function tearDown()
     {
+        $this->Tokens->deleteAll(['id >=' => 1]);
+
         unset($this->Tokens, $this->TokenTrait);
 
         parent::tearDown();
@@ -148,18 +150,23 @@ class TokenTraitTest extends TestCase
      */
     public function testCreate()
     {
-        $token = $this->TokenTrait->create('token1');
+        //No errors for now
+        $this->assertEmpty($this->TokenTrait->errors());
+
+        $token = $this->TokenTrait->create('token_1');
         $this->assertNotEmpty($token);
+        $this->assertEmpty($this->TokenTrait->errors());
         $token = $this->Tokens->findByToken($token)->contain('Users')->first();
         $this->assertNotEmpty($token);
 
-        $token = $this->TokenTrait->create('token2', [
+        $token = $this->TokenTrait->create('token_2', [
             'user_id' => 2,
             'type' => 'testType',
             'extra' => ['extra1', 'extra2'],
             'expiry' => '+1 days',
         ]);
         $this->assertNotEmpty($token);
+        $this->assertEmpty($this->TokenTrait->errors());
         $token = $this->Tokens->findByToken($token)->contain('Users')->first();
         $this->assertEquals(2, $token->user->id);
         $this->assertEquals('testType', $token->type);
@@ -167,11 +174,13 @@ class TokenTraitTest extends TestCase
         $this->assertEquals('Cake\I18n\Time', get_class($token->expiry));
         $this->assertTrue($token->expiry->isTomorrow());
 
-        $token = $this->TokenTrait->create('token2');
+        $token = $this->TokenTrait->create('token_2');
         $this->assertFalse($token);
+        $this->assertEquals(['token' => ['_isUnique' => 'This value is already in use']], $this->TokenTrait->errors());
 
-        $token = $this->TokenTrait->create('token3', ['type' => 'aaa']);
+        $token = $this->TokenTrait->create('token_3', ['type' => 'aa']);
         $this->assertFalse($token);
+        $this->assertEquals(['type' => ['lengthBetween' => 'The provided value is invalid']], $this->TokenTrait->errors());
     }
 
     /**
