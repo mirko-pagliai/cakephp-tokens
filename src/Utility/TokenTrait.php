@@ -30,7 +30,7 @@ use Cake\ORM\TableRegistry;
 trait TokenTrait
 {
     /**
-     * Gets a table instance
+     * Returns the table instance
      * @return \Tokens\Model\Table\TokensTable
      */
     protected function _getTable()
@@ -39,19 +39,56 @@ trait TokenTrait
     }
 
     /**
+     * Internal `find()` method
+     * @param string $token Token value
+     * @param int|null $user User ID
+     * @param string|null $type Token type
+     * @return \Cake\ORM\Query
+     * @uses _getTable()
+     */
+    protected function _find($token, $user = null, $type = null)
+    {
+        $conditions = compact('token');
+
+        if (!empty($user)) {
+            $conditions['user_id'] = $user;
+        }
+
+        if (!empty($type)) {
+            $conditions['type'] = $type;
+        }
+
+        return $this->_getTable()->find('active')->where($conditions);
+    }
+
+    /**
+     * Checks if a token exists and is active
+     * @param string $token Token value
+     * @param int|null $user Optional user ID
+     * @param string|null $type Optional token type
+     * @return bool
+     * @uses _find()
+     */
+    public function check($token, $user = null, $type = null)
+    {
+        return (bool)$this->_find($token, $user, $type)->count();
+    }
+
+    /**
      * Deletes a token
      * @param string $token Token value
-     * @return bool `true` if the token has been deleted
+     * @return bool
+     * @uses _find()
      * @uses _getTable()
      */
     public function delete($token)
     {
-        $entity = $this->_getTable()->findByToken($token)->first();
+        $query = $this->_find($token);
 
-        if (empty($entity)) {
+        if (!$query->count()) {
             return false;
         }
 
-        return $this->_getTable()->delete($entity);
+        return $this->_getTable()->delete($query->first());
     }
 }
