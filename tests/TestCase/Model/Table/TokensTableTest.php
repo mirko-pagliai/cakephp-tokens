@@ -274,15 +274,43 @@ class TokensTableTest extends TestCase
     }
 
     /**
-     * Test validation. Generic method
+     * Test build rules for `token` property
      * @test
      */
-    public function testValidation()
+    public function testRulesForToken()
     {
-        //Only `token` is required.
-        //`expiry` is also required, but it will be added by `beforeSave()`
-        $token = $this->Tokens->newEntity(['token' => 'test']);
+        //Valid `token` value
+        $token = $this->Tokens->newEntity(['token' => 'uniqueValue']);
+        $this->assertNotEmpty($this->Tokens->save($token));
         $this->assertEmpty($token->errors());
+
+        //Invalid `token` value
+        $token = $this->Tokens->newEntity(['token' => 'uniqueValue']);
+        $this->assertFalse($this->Tokens->save($token));
+        $this->assertEquals(['token' => ['_isUnique' => 'This value is already in use']], $token->errors());
+    }
+
+    /**
+     * Test build rules for `user_id` property
+     * @test
+     */
+    public function testRulesForUserId()
+    {
+        //Valid `user_id` value
+        $token = $this->Tokens->newEntity([
+            'user_id' => '2',
+            'token' => 'firstToken',
+        ]);
+        $this->assertNotEmpty($this->Tokens->save($token));
+        $this->assertEmpty($token->errors());
+
+        //Invalid `user_id` value (the user does not exist)
+        $token = $this->Tokens->newEntity([
+            'user_id' => '999',
+            'token' => 'secondToken',
+        ]);
+        $this->assertFalse($this->Tokens->save($token));
+        $this->assertEquals(['user_id' => ['_existsIn' => 'This value does not exist']], $token->errors());
     }
 
     /**
@@ -319,19 +347,11 @@ class TokensTableTest extends TestCase
      */
     public function testValidationForToken()
     {
-        //`token` value is required
-        $token = $this->Tokens->newEntity([]);
-        $this->assertEquals(['token' => ['_required' => 'This field is required']], $token->errors());
-
-        //Valid `token` value
-        $token = new Token(['token' => 'uniqueValue']);
-        $this->assertNotEmpty($this->Tokens->save($token));
+        $token = $this->Tokens->newEntity(['token' => 'test']);
         $this->assertEmpty($token->errors());
 
-        //Invalid `token` value
-        $token = new Token(['token' => 'uniqueValue']);
-        $this->assertFalse($this->Tokens->save($token));
-        $this->assertEquals(['token' => ['_isUnique' => 'This value is already in use']], $token->errors());
+        $token = $this->Tokens->newEntity([]);
+        $this->assertEquals(['token' => ['_required' => 'This field is required']], $token->errors());
     }
 
     /**
@@ -367,28 +387,5 @@ class TokensTableTest extends TestCase
             'type' => str_repeat('a', 256),
         ]);
         $this->assertEquals(['type' => ['lengthBetween' => 'The provided value is invalid']], $token->errors());
-    }
-
-    /**
-     * Test validation for `user_id` property
-     * @test
-     */
-    public function testValidationForUserId()
-    {
-        //Valid `user_id` value
-        $token = $this->Tokens->newEntity([
-            'user_id' => '2',
-            'token' => 'firstToken',
-        ]);
-        $this->assertNotEmpty($this->Tokens->save($token));
-        $this->assertEmpty($token->errors());
-
-        //Invalid `user_id` value (the user does not exist)
-        $token = $this->Tokens->newEntity([
-            'user_id' => '999',
-            'token' => 'secondToken',
-        ]);
-        $this->assertFalse($this->Tokens->save($token));
-        $this->assertEquals(['user_id' => ['_existsIn' => 'This value does not exist']], $token->errors());
     }
 }
