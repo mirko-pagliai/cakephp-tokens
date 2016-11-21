@@ -81,6 +81,11 @@ class Token extends Entity
      */
     protected function _setToken($token)
     {
+        //Prevents an empty value is serialized
+        if (empty($token)) {
+            return $token;
+        }
+
         if (!is_string($token)) {
             $token = serialize($token);
         }
