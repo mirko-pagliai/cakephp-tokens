@@ -44,6 +44,9 @@ class TokenTrait
     }
 }
 
+/**
+ * Tokens\Utility\TokenTrait Test Case
+ */
 class TokenTraitTest extends TestCase
 {
     /**
@@ -53,15 +56,15 @@ class TokenTraitTest extends TestCase
     public $fixtures = ['plugin.tokens.tokens'];
 
     /**
-     * @var \Tokens\Model\Table\TokensTable
-     */
-    public $table;
-
-    /**
      * Instance of the trait
      * @var \TokenTrait
      */
-    public $trait;
+    public $TokenTrait;
+
+    /**
+     * @var \Tokens\Model\Table\TokensTable
+     */
+    public $Tokens;
 
     /**
      * setUp method
@@ -71,8 +74,8 @@ class TokenTraitTest extends TestCase
     {
         parent::setUp();
 
-        $this->table = TableRegistry::get('Tokens', ['className' => 'Tokens\Model\Table\TokensTable']);
-        $this->trait = new TokenTrait;
+        $this->Tokens = TableRegistry::get('Tokens', ['className' => 'Tokens\Model\Table\TokensTable']);
+        $this->TokenTrait = new TokenTrait;
     }
 
     /**
@@ -81,7 +84,7 @@ class TokenTraitTest extends TestCase
      */
     public function tearDown()
     {
-        unset($this->table, $this->trait);
+        unset($this->Tokens, $this->TokenTrait);
 
         parent::tearDown();
     }
@@ -92,7 +95,7 @@ class TokenTraitTest extends TestCase
      */
     public function testFind()
     {
-        $this->assertEquals('Cake\ORM\Query', get_class($this->trait->getFind()));
+        $this->assertEquals('Cake\ORM\Query', get_class($this->TokenTrait->getFind()));
     }
 
     /**
@@ -101,7 +104,7 @@ class TokenTraitTest extends TestCase
      */
     public function testGetTable()
     {
-        $this->assertEquals('Tokens\Model\Table\TokensTable', get_class($this->trait->getTable()));
+        $this->assertEquals('Tokens\Model\Table\TokensTable', get_class($this->TokenTrait->getTable()));
     }
 
     /**
@@ -111,21 +114,21 @@ class TokenTraitTest extends TestCase
     public function testCheck()
     {
         //This token does not exist
-        $this->assertFalse($this->trait->check('tokenNotExists'));
+        $this->assertFalse($this->TokenTrait->check('tokenNotExists'));
 
         //This token exists, but it has expired
-        $this->assertFalse($this->trait->check('036b303f058a35ed48220ee5h'));
+        $this->assertFalse($this->TokenTrait->check('036b303f058a35ed48220ee5h'));
 
-        $this->assertTrue($this->trait->check('c658ffdd8d26875d2539cf78c'));
-        $this->assertTrue($this->trait->check('c658ffdd8d26875d2539cf78c', 1));
-        $this->assertTrue($this->trait->check('c658ffdd8d26875d2539cf78c', null, 'registration'));
-        $this->assertTrue($this->trait->check('c658ffdd8d26875d2539cf78c', 1, 'registration'));
+        $this->assertTrue($this->TokenTrait->check('c658ffdd8d26875d2539cf78c'));
+        $this->assertTrue($this->TokenTrait->check('c658ffdd8d26875d2539cf78c', 1));
+        $this->assertTrue($this->TokenTrait->check('c658ffdd8d26875d2539cf78c', null, 'registration'));
+        $this->assertTrue($this->TokenTrait->check('c658ffdd8d26875d2539cf78c', 1, 'registration'));
 
         //Wrong user ID
-        $this->assertFalse($this->trait->check('c658ffdd8d26875d2539cf78c', 2));
+        $this->assertFalse($this->TokenTrait->check('c658ffdd8d26875d2539cf78c', 2));
         //Wrong type
-        $this->assertFalse($this->trait->check('c658ffdd8d26875d2539cf78c', 1, 'Invalid'));
-        $this->assertFalse($this->trait->check('c658ffdd8d26875d2539cf78c', null, 'Invalid'));
+        $this->assertFalse($this->TokenTrait->check('c658ffdd8d26875d2539cf78c', 1, 'Invalid'));
+        $this->assertFalse($this->TokenTrait->check('c658ffdd8d26875d2539cf78c', null, 'Invalid'));
     }
 
     /**
@@ -135,10 +138,10 @@ class TokenTraitTest extends TestCase
     public function testDelete()
     {
         //This token does not exist
-        $this->assertFalse($this->trait->delete('tokenNotExists'));
+        $this->assertFalse($this->TokenTrait->delete('tokenNotExists'));
 
-        $this->assertNotEmpty($this->table->findById(3)->first());
-        $this->assertTrue($this->trait->delete('c658ffdd8d26875d2539cf78c'));
-        $this->assertEmpty($this->table->findById(3)->first());
+        $this->assertNotEmpty($this->Tokens->findById(3)->first());
+        $this->assertTrue($this->TokenTrait->delete('c658ffdd8d26875d2539cf78c'));
+        $this->assertEmpty($this->Tokens->findById(3)->first());
     }
 }
