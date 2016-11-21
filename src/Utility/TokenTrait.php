@@ -22,6 +22,36 @@
  */
 namespace Tokens\Utility;
 
+use Cake\ORM\TableRegistry;
+
+/**
+ * TokenTrait
+ */
 trait TokenTrait
 {
+    /**
+     * Gets a table instance
+     * @return \Tokens\Model\Table\TokensTable
+     */
+    protected function _getTable()
+    {
+        return TableRegistry::get('Tokens', ['className' => 'Tokens\Model\Table\TokensTable']);
+    }
+
+    /**
+     * Deletes a token
+     * @param string $token Token value
+     * @return bool `true` if the token has been deleted
+     * @uses _getTable()
+     */
+    public function delete($token)
+    {
+        $entity = $this->_getTable()->findByToken($token)->first();
+
+        if (empty($entity)) {
+            return false;
+        }
+
+        return $this->_getTable()->delete($entity);
+    }
 }

@@ -22,8 +22,82 @@
  */
 namespace Tokens\Test\TestCase\Utility;
 
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use Tokens\Utility\TokenTrait as BaseTokenTrait;
+
+/**
+ * Makes public some protected methods/properties from `TokenTrait`
+ */
+class TokenTrait
+{
+    use BaseTokenTrait;
+
+    public function getTable()
+    {
+        return $this->_getTable();
+    }
+}
 
 class TokenTraitTest extends TestCase
 {
+    /**
+     * Fixtures
+     * @var array
+     */
+    public $fixtures = ['plugin.tokens.tokens'];
+
+    /**
+     * @var \Tokens\Model\Table\TokensTable
+     */
+    public $table;
+
+    /**
+     * Instance of the trait
+     * @var \TokenTrait
+     */
+    public $trait;
+
+    /**
+     * setUp method
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->table = TableRegistry::get('Tokens', ['className' => 'Tokens\Model\Table\TokensTable']);
+        $this->trait = new TokenTrait;
+    }
+
+    /**
+     * tearDown method
+     * @return void
+     */
+    public function tearDown()
+    {
+        unset($this->table, $this->trait);
+
+        parent::tearDown();
+    }
+
+    /**
+     * Test for `_getTable()` method
+     * @test
+     */
+    public function testGetTable()
+    {
+        $this->assertEquals('Tokens\Model\Table\TokensTable', get_class($this->trait->getTable()));
+    }
+
+    /**
+     * Test for `delete()` method
+     * @test
+     */
+    public function testDelete()
+    {
+        $this->assertFalse($this->trait->delete('tokenNotExists'));
+
+        $this->assertTrue($this->trait->delete('036b303f058a35ed48220ee5f'));
+    }
 }
