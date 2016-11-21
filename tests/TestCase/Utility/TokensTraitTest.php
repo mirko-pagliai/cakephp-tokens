@@ -33,9 +33,9 @@ class TokenTrait
 {
     use BaseTokenTrait;
 
-    public function getFind($token = null, $user = null, $type = null)
+    public function getFind(array $conditions = [])
     {
-        return $this->_find($token, $user, $type);
+        return $this->_find($conditions);
     }
 
     public function getTable()
@@ -53,7 +53,10 @@ class TokenTraitTest extends TestCase
      * Fixtures
      * @var array
      */
-    public $fixtures = ['plugin.tokens.tokens'];
+    public $fixtures = [
+        'core.users',
+        'plugin.tokens.tokens',
+    ];
 
     /**
      * Instance of the trait
@@ -119,16 +122,24 @@ class TokenTraitTest extends TestCase
         //This token exists, but it has expired
         $this->assertFalse($this->TokenTrait->check('036b303f058a35ed48220ee5h'));
 
-        $this->assertTrue($this->TokenTrait->check('c658ffdd8d26875d2539cf78c'));
-        $this->assertTrue($this->TokenTrait->check('c658ffdd8d26875d2539cf78c', 1));
-        $this->assertTrue($this->TokenTrait->check('c658ffdd8d26875d2539cf78c', null, 'registration'));
-        $this->assertTrue($this->TokenTrait->check('c658ffdd8d26875d2539cf78c', 1, 'registration'));
+        $value = 'c658ffdd8d26875d2539cf78c';
+
+        $this->assertTrue($this->TokenTrait->check($value));
+        $this->assertTrue($this->TokenTrait->check($value, ['user_id' => 1]));
+        $this->assertTrue($this->TokenTrait->check($value, ['type' => 'registration']));
+        $this->assertTrue($this->TokenTrait->check($value, ['user_id' => 1, 'type' => 'registration']));
 
         //Wrong user ID
-        $this->assertFalse($this->TokenTrait->check('c658ffdd8d26875d2539cf78c', 2));
+        $this->assertFalse($this->TokenTrait->check($value, ['user_id' => 2]));
+
         //Wrong type
-        $this->assertFalse($this->TokenTrait->check('c658ffdd8d26875d2539cf78c', 1, 'Invalid'));
-        $this->assertFalse($this->TokenTrait->check('c658ffdd8d26875d2539cf78c', null, 'Invalid'));
+        $this->assertFalse($this->TokenTrait->check($value, ['type' => 'invalid']));
+
+        //Right user ID, but wrong type
+        $this->assertFalse($this->TokenTrait->check($value, ['user_id' => 1, 'type' => 'invalid']));
+
+        //Right type, but wronge user ID
+        $this->assertFalse($this->TokenTrait->check($value, ['user_id' => 2, 'type' => 'registration']));
     }
 
     /**

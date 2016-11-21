@@ -23,6 +23,7 @@
 namespace Tokens\Utility;
 
 use Cake\ORM\TableRegistry;
+use Tokens\Model\Entity\Token;
 
 /**
  * TokenTrait
@@ -40,38 +41,35 @@ trait TokenTrait
 
     /**
      * Internal `find()` method
-     * @param string $token Token value
-     * @param int|null $user User ID
-     * @param string|null $type Token type
+     * @param array $conditions Conditions for `where()`
      * @return \Cake\ORM\Query
      * @uses _getTable()
      */
-    protected function _find($token, $user = null, $type = null)
+    protected function _find(array $conditions = [])
     {
-        $conditions = compact('token');
-
-        if (!empty($user)) {
-            $conditions['user_id'] = $user;
-        }
-
-        if (!empty($type)) {
-            $conditions['type'] = $type;
-        }
-
         return $this->_getTable()->find('active')->where($conditions);
     }
 
     /**
-     * Checks if a token exists and is active
+     * Checks if a token exists and is active.
+     *
+     * Valid optios values: `user_id`, `type`.
      * @param string $token Token value
-     * @param int|null $user Optional user ID
-     * @param string|null $type Optional token type
+     * @param array $options Options
      * @return bool
      * @uses _find()
      */
-    public function check($token, $user = null, $type = null)
+    public function check($token, array $options = [])
     {
-        return (bool)$this->_find($token, $user, $type)->count();
+        $data = compact('token');
+
+        foreach (['user_id', 'type'] as $key) {
+            if (!empty($options[$key])) {
+                $data[$key] = $options[$key];
+            }
+        }
+
+        return (bool)$this->_find($data)->count();
     }
 
     /**
@@ -83,7 +81,7 @@ trait TokenTrait
      */
     public function delete($token)
     {
-        $query = $this->_find($token);
+        $query = $this->_find(compact('token'));
 
         if (!$query->count()) {
             return false;
