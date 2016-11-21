@@ -52,10 +52,6 @@ class TokensTable extends Table
      */
     public function beforeSave(\Cake\Event\Event $event, \Cake\ORM\Entity $entity, \ArrayObject $options)
     {
-        if (empty($entity->token)) {
-            $entity->token = microtime();
-        }
-
         if (empty($entity->expiry)) {
             $entity->expiry = Configure::read('Tokens.expiryDefaultValue');
         }
@@ -174,12 +170,25 @@ class TokensTable extends Table
     }
 
     /**
-     * Build rules
+     * Build rules.
+     *
+     * It uses validation rules as application rules.
      * @param Cake\ORM\RulesChecker $rules The rules object to be modified
      * @return Cake\ORM\RulesChecker
      */
     public function buildRules(RulesChecker $rules)
     {
+        //Uses validation rules as application rules
+        $rules->add(function ($entity) {
+            $errors = $this->validator('default')->errors(
+                $entity->extract($this->schema()->columns(), true),
+                $entity->isNew()
+            );
+            $entity->errors($errors);
+
+            return empty($errors);
+        });
+
         $rules->add($rules->isUnique(['token']));
         $rules->add($rules->existsIn(['user_id'], 'Users'));
 
