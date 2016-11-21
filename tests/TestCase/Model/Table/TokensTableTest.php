@@ -69,6 +69,8 @@ class TokensTableTest extends TestCase
      */
     public function tearDown()
     {
+        $this->Tokens->deleteAll(['id >=' => 1]);
+
         unset($this->Users, $this->Tokens);
 
         parent::tearDown();
@@ -108,34 +110,32 @@ class TokensTableTest extends TestCase
      */
     public function testBeforeSave()
     {
-        $token = $this->Tokens->save(new Token);
-
-        $this->assertNotEmpty($token);
-        $this->assertEquals('Tokens\Model\Entity\Token', get_class($token));
-        $this->assertEquals(null, $token->user_id);
-        $this->assertRegExp('/^[a-z0-9]{25}$/', $token->token);
-        $this->assertEmpty($token->type);
-        $this->assertEquals('Cake\I18n\FrozenTime', get_class($token->expiry));
-        $this->assertEmpty($token->extra);
-
-        $token = $this->Tokens->save(new Token(['expiry' => '+1 day']));
-
+        $token = $this->Tokens->save(new Token([
+            'token' => 'test1',
+            'expiry' => '+1 day',
+        ]));
         $this->assertNotEmpty($token);
         $this->assertTrue($token->expiry->isTomorrow());
         $this->assertEquals('Cake\I18n\FrozenTime', get_class($token->expiry));
 
-        $token = $this->Tokens->save(new Token(['extra' => 'testExtra']));
-
+        $token = $this->Tokens->save(new Token([
+            'token' => 'test2',
+            'extra' => 'testExtra',
+        ]));
         $this->assertNotEmpty($token);
         $this->assertEquals('s:9:"testExtra";', $token->extra);
 
-        $token = $this->Tokens->save(new Token(['extra' => ['first', 'second']]));
-
+        $token = $this->Tokens->save(new Token([
+            'token' => 'test3',
+            'extra' => ['first', 'second'],
+        ]));
         $this->assertNotEmpty($token);
         $this->assertEquals('a:2:{i:0;s:5:"first";i:1;s:6:"second";}', $token->extra);
 
-        $token = $this->Tokens->save(new Token(['extra' => (object)['first', 'second']]));
-
+        $token = $this->Tokens->save(new Token([
+            'token' => 'test4',
+            'extra' => (object)['first', 'second'],
+        ]));
         $this->assertNotEmpty($token);
         $this->assertEquals('O:8:"stdClass":2:{i:0;s:5:"first";i:1;s:6:"second";}', $token->extra);
     }
@@ -311,6 +311,22 @@ class TokensTableTest extends TestCase
         ]);
         $this->assertFalse($this->Tokens->save($token));
         $this->assertEquals(['user_id' => ['_existsIn' => 'This value does not exist']], $token->errors());
+    }
+
+    /**
+     * Test for `save()` method
+     * @test
+     */
+    public function testSave()
+    {
+        $token = $this->Tokens->save(new Token(['token' => 'test1']));
+        $this->assertNotEmpty($token);
+        $this->assertEquals('Tokens\Model\Entity\Token', get_class($token));
+        $this->assertEquals(null, $token->user_id);
+        $this->assertRegExp('/^[a-z0-9]{25}$/', $token->token);
+        $this->assertEmpty($token->type);
+        $this->assertEquals('Cake\I18n\FrozenTime', get_class($token->expiry));
+        $this->assertEmpty($token->extra);
     }
 
     /**
