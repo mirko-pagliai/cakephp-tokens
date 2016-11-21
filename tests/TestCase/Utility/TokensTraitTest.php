@@ -33,6 +33,11 @@ class TokenTrait
 {
     use BaseTokenTrait;
 
+    public function getFind($token = null, $user = null, $type = null)
+    {
+        return $this->_find($token, $user, $type);
+    }
+
     public function getTable()
     {
         return $this->_getTable();
@@ -82,6 +87,15 @@ class TokenTraitTest extends TestCase
     }
 
     /**
+     * Test for `_find()` method
+     * @test
+     */
+    public function testFind()
+    {
+        $this->assertEquals('Cake\ORM\Query', get_class($this->trait->getFind()));
+    }
+
+    /**
      * Test for `_getTable()` method
      * @test
      */
@@ -91,13 +105,40 @@ class TokenTraitTest extends TestCase
     }
 
     /**
+     * Test for `check()` method
+     * @test
+     */
+    public function testCheck()
+    {
+        //This token does not exist
+        $this->assertFalse($this->trait->check('tokenNotExists'));
+
+        //This token exists, but it has expired
+        $this->assertFalse($this->trait->check('036b303f058a35ed48220ee5h'));
+
+        $this->assertTrue($this->trait->check('c658ffdd8d26875d2539cf78c'));
+        $this->assertTrue($this->trait->check('c658ffdd8d26875d2539cf78c', 1));
+        $this->assertTrue($this->trait->check('c658ffdd8d26875d2539cf78c', null, 'registration'));
+        $this->assertTrue($this->trait->check('c658ffdd8d26875d2539cf78c', 1, 'registration'));
+
+        //Wrong user ID
+        $this->assertFalse($this->trait->check('c658ffdd8d26875d2539cf78c', 2));
+        //Wrong type
+        $this->assertFalse($this->trait->check('c658ffdd8d26875d2539cf78c', 1, 'Invalid'));
+        $this->assertFalse($this->trait->check('c658ffdd8d26875d2539cf78c', null, 'Invalid'));
+    }
+
+    /**
      * Test for `delete()` method
      * @test
      */
     public function testDelete()
     {
+        //This token does not exist
         $this->assertFalse($this->trait->delete('tokenNotExists'));
 
-        $this->assertTrue($this->trait->delete('036b303f058a35ed48220ee5f'));
+        $this->assertNotEmpty($this->table->findById(3)->first());
+        $this->assertTrue($this->trait->delete('c658ffdd8d26875d2539cf78c'));
+        $this->assertEmpty($this->table->findById(3)->first());
     }
 }
