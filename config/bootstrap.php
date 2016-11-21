@@ -22,11 +22,6 @@
  */
 use Cake\Core\Configure;
 
-//Default class for `expiry`
-if (!Configure::check('Tokens.expiryDefaultClass')) {
-    Configure::write('Tokens.expiryDefaultClass', 'Cake\I18n\FrozenTime');
-}
-
 //Default value for `expiry`.
 //For supported formats, see http://php.net/manual/en/datetime.formats.php.
 //In particular, see relative formats http://php.net/manual/en/datetime.formats.relative.php
@@ -46,14 +41,4 @@ if (!Configure::check('Tokens.usersClassOptions')) {
         'foreignKey' => 'user_id',
         'className' => 'Users',
     ]);
-}
-
-//Checks for default class for `expiry`
-if (empty(Configure::read('Tokens.expiryDefaultClass')) || !in_array(Configure::read('Tokens.expiryDefaultClass'), [
-    'Cake\I18n\Date',
-    'Cake\I18n\Time',
-    'Cake\I18n\FrozenDate',
-    'Cake\I18n\FrozenTime',
-])) {
-    trigger_error('Invalid default class for `expiry`', E_USER_ERROR);
 }

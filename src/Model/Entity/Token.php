@@ -23,6 +23,7 @@
 namespace Tokens\Model\Entity;
 
 use Cake\Core\Configure;
+use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\Utility\Security;
 
@@ -50,8 +51,8 @@ class Token extends Entity
     /**
      * `set` mutators for `expiry` property
      * @param string|object $expiry `expiry` value. Can be a string or a time
-     *  instance. If the value is a string, it gets the class to use from the
-     *  configuration
+     *  instance. If the value is a string, an instance of `Cake\I18n\Time` will
+     *  be created
      * @return string
      * @see http://book.cakephp.org/3.0/en/core-libraries/time.html#creating-time-instances
      * @see http://book.cakephp.org/3.0/en/core-libraries/time.html#immutable-dates-and-times
@@ -67,11 +68,7 @@ class Token extends Entity
             return $expiry;
         }
 
-        //If the value is a string, it gets the class to use from the
-        //  configuration
-        $class = Configure::read('Tokens.expiryDefaultClass');
-
-        return new $class($expiry);
+        return new Time($expiry);
     }
 
     /**
