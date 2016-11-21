@@ -76,6 +76,9 @@ class TokenTest extends TestCase
 
         $entity = new Token();
 
+        $entity->set('token', null);
+        $this->assertNull($entity->token);
+
         $entity->set('token', 'test');
         $this->assertRegExp($regex, $entity->token);
 
