@@ -108,7 +108,7 @@ class TokensTableTest extends TestCase
      */
     public function testBeforeSave()
     {
-        $token = $this->Tokens->save(new Token(['token' => 'firstToken']));
+        $token = $this->Tokens->save(new Token);
 
         $this->assertNotEmpty($token);
         $this->assertEquals('Tokens\Model\Entity\Token', get_class($token));
@@ -118,37 +118,23 @@ class TokensTableTest extends TestCase
         $this->assertEquals('Cake\I18n\FrozenTime', get_class($token->expiry));
         $this->assertEmpty($token->extra);
 
-        $token = $this->Tokens->save(new Token([
-            'token' => 'secondToken',
-            'expiry' => '+1 day',
-        ]));
+        $token = $this->Tokens->save(new Token(['expiry' => '+1 day']));
 
         $this->assertNotEmpty($token);
         $this->assertTrue($token->expiry->isTomorrow());
         $this->assertEquals('Cake\I18n\FrozenTime', get_class($token->expiry));
 
-        $token = $this->Tokens->save(new Token([
-            'token' => 'thirdToken',
-            'type' => 'testType',
-            'extra' => 'testExtra',
-        ]));
+        $token = $this->Tokens->save(new Token(['extra' => 'testExtra']));
 
         $this->assertNotEmpty($token);
-        $this->assertEquals('testType', $token->type);
         $this->assertEquals('s:9:"testExtra";', $token->extra);
 
-        $token = $this->Tokens->save(new Token([
-            'token' => 'fourthToken',
-            'extra' => ['first', 'second'],
-        ]));
+        $token = $this->Tokens->save(new Token(['extra' => ['first', 'second']]));
 
         $this->assertNotEmpty($token);
         $this->assertEquals('a:2:{i:0;s:5:"first";i:1;s:6:"second";}', $token->extra);
 
-        $token = $this->Tokens->save(new Token([
-            'token' => 'fifthToken',
-            'extra' => (object)['first', 'second'],
-        ]));
+        $token = $this->Tokens->save(new Token(['extra' => (object)['first', 'second']]));
 
         $this->assertNotEmpty($token);
         $this->assertEquals('O:8:"stdClass":2:{i:0;s:5:"first";i:1;s:6:"second";}', $token->extra);

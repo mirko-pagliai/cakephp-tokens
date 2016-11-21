@@ -52,6 +52,10 @@ class TokensTable extends Table
      */
     public function beforeSave(\Cake\Event\Event $event, \Cake\ORM\Entity $entity, \ArrayObject $options)
     {
+        if (empty($entity->token)) {
+            $entity->token = microtime();
+        }
+
         if (empty($entity->expiry)) {
             $entity->expiry = Configure::read('Tokens.expiryDefaultValue');
         }
