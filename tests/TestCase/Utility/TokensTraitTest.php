@@ -143,6 +143,38 @@ class TokenTraitTest extends TestCase
     }
 
     /**
+     * Test for `create()` method
+     * @test
+     */
+    public function testCreate()
+    {
+        $token = $this->TokenTrait->create('token1');
+        $this->assertNotEmpty($token);
+        $token = $this->Tokens->findByToken($token)->contain('Users')->first();
+        $this->assertNotEmpty($token);
+
+        $token = $this->TokenTrait->create('token2', [
+            'user_id' => 2,
+            'type' => 'testType',
+            'extra' => ['extra1', 'extra2'],
+            'expiry' => '+1 days',
+        ]);
+        $this->assertNotEmpty($token);
+        $token = $this->Tokens->findByToken($token)->contain('Users')->first();
+        $this->assertEquals(2, $token->user->id);
+        $this->assertEquals('testType', $token->type);
+        $this->assertEquals(['extra1', 'extra2'], $token->extra);
+        $this->assertEquals('Cake\I18n\Time', get_class($token->expiry));
+        $this->assertTrue($token->expiry->isTomorrow());
+
+        $token = $this->TokenTrait->create('token2');
+        $this->assertFalse($token);
+
+        $token = $this->TokenTrait->create('token3', ['type' => 'aaa']);
+        $this->assertFalse($token);
+    }
+
+    /**
      * Test for `delete()` method
      * @test
      */

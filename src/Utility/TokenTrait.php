@@ -73,6 +73,32 @@ trait TokenTrait
     }
 
     /**
+     * Creates a token.
+     *
+     * Valid optios values: `user_id`, `type`, `extra`, `expiry`.
+     * @param string $token Token value
+     * @param array $options Options
+     * @return string|false Token value, otherwise `false` on failure
+     * @uses _getTable()
+     */
+    public function create($token, array $options = [])
+    {
+        $entity = new Token(compact('token'));
+
+        foreach (['user_id', 'type', 'extra', 'expiry'] as $key) {
+            if (!empty($options[$key])) {
+                $entity->set($key, $options[$key]);
+            }
+        }
+
+        if (!$this->_getTable()->save($entity)) {
+            return false;
+        }
+
+        return $entity->token;
+    }
+
+    /**
      * Deletes a token
      * @param string $token Token value
      * @return bool
