@@ -47,7 +47,7 @@ class TokenTrait
 /**
  * Tokens\Utility\TokenTrait Test Case
  */
-class TokenTraitTest extends TestCase
+class TokensTraitTest extends TestCase
 {
     /**
      * Fixtures
