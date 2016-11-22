@@ -126,21 +126,21 @@ class TokenTraitTest extends TestCase
 
         $value = 'c658ffdd8d26875d2539cf78c';
 
-        $this->assertTrue($this->TokenTrait->check($value));
-        $this->assertTrue($this->TokenTrait->check($value, ['user_id' => 1]));
-        $this->assertTrue($this->TokenTrait->check($value, ['type' => 'registration']));
         $this->assertTrue($this->TokenTrait->check($value, ['user_id' => 1, 'type' => 'registration']));
 
-        //Wrong user ID
-        $this->assertFalse($this->TokenTrait->check($value, ['user_id' => 2]));
+        //Missing `user_id` and `ŧype`
+        $this->assertFalse($this->TokenTrait->check($value, []));
+
+        //Missing `ŧype`
+        $this->assertFalse($this->TokenTrait->check($value, ['user_id' => 1]));
+
+        //Missing `user_id`
+        $this->assertFalse($this->TokenTrait->check($value, ['type' => 'registration']));
 
         //Wrong type
-        $this->assertFalse($this->TokenTrait->check($value, ['type' => 'invalid']));
-
-        //Right user ID, but wrong type
         $this->assertFalse($this->TokenTrait->check($value, ['user_id' => 1, 'type' => 'invalid']));
 
-        //Right type, but wronge user ID
+        //Wrong user ID
         $this->assertFalse($this->TokenTrait->check($value, ['user_id' => 2, 'type' => 'registration']));
     }
 

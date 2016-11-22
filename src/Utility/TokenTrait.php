@@ -60,6 +60,9 @@ trait TokenTrait
      * Checks if a token exists and is active.
      *
      * Valid optios values: `user_id`, `type`.
+     *
+     * Be careful: if the token has these options, then you must set them.
+     * In other words, blank options will be replaced with `null`.
      * @param string $token Token value
      * @param array $options Options
      * @return bool
@@ -67,15 +70,13 @@ trait TokenTrait
      */
     public function check($token, array $options = [])
     {
-        $data = compact('token');
+        $conditions = compact('token');
 
         foreach (['user_id', 'type'] as $key) {
-            if (!empty($options[$key])) {
-                $data[$key] = $options[$key];
-            }
+            $conditions[$key] = empty($options[$key]) ? null : $options[$key];
         }
 
-        return (bool)$this->_find($data)->count();
+        return (bool)$this->_find($conditions)->count();
     }
 
     /**
@@ -96,12 +97,12 @@ trait TokenTrait
         $entity = new Token(compact('token'));
 
         foreach (['user_id', 'type', 'extra', 'expiry'] as $key) {
-            if (!empty($options[$key])) {
-                $entity->set($key, $options[$key]);
-            }
+            $entity->set($key, empty($options[$key]) ? null : $options[$key]);
         }
 
         if (!$this->_getTable()->save($entity)) {
+            //If the token has not been saved, stores the returned errors.
+            //Errors will be accessible via the `errors()` method
             $this->errors = $entity->errors();
 
             return false;
