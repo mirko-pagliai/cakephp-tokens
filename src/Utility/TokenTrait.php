@@ -97,7 +97,9 @@ trait TokenTrait
         $entity = new Token(compact('token'));
 
         foreach (['user_id', 'type', 'extra', 'expiry'] as $key) {
-            $entity->set($key, empty($options[$key]) ? null : $options[$key]);
+            if (!empty($options[$key])) {
+                $entity->set($key, $options[$key]);
+            }
         }
 
         if (!$this->_getTable()->save($entity)) {
