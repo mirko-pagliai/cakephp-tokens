@@ -274,23 +274,6 @@ class TokensTableTest extends TestCase
     }
 
     /**
-     * Test build rules for `token` property
-     * @test
-     */
-    public function testRulesForToken()
-    {
-        //Valid `token` value
-        $token = $this->Tokens->newEntity(['token' => 'uniqueValue']);
-        $this->assertNotEmpty($this->Tokens->save($token));
-        $this->assertEmpty($token->errors());
-
-        //Invalid `token` value
-        $token = $this->Tokens->newEntity(['token' => 'uniqueValue']);
-        $this->assertFalse($this->Tokens->save($token));
-        $this->assertEquals(['token' => ['_isUnique' => 'This value is already in use']], $token->errors());
-    }
-
-    /**
      * Test build rules for `user_id` property
      * @test
      */

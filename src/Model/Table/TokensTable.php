@@ -189,7 +189,6 @@ class TokensTable extends Table
             return empty($errors);
         });
 
-        $rules->add($rules->isUnique(['token']));
         $rules->add($rules->existsIn(['user_id'], 'Users'));
 
         return $rules;
