@@ -47,7 +47,6 @@ class TokensFixture extends TestFixture
         ],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
-            'token' => ['type' => 'unique', 'columns' => ['token'], 'length' => []],
         ],
     ];
 
