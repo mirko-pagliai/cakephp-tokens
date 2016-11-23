@@ -25,6 +25,9 @@ namespace Tokens\Controller\Component;
 use Cake\Controller\Component;
 use Tokens\Utility\TokenTrait;
 
+/**
+ * A component to handle tokens.
+ */
 class TokenComponent extends Component
 {
     use TokenTrait;

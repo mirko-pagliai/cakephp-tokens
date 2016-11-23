@@ -26,7 +26,8 @@ use Cake\ORM\TableRegistry;
 use Tokens\Model\Entity\Token;
 
 /**
- * TokenTrait
+ * TokenTrait.
+ * It allows to handle tokens.
  */
 trait TokenTrait
 {
