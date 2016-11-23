@@ -174,10 +174,6 @@ class TokenTraitTest extends TestCase
         $this->assertEquals('Cake\I18n\Time', get_class($token->expiry));
         $this->assertTrue($token->expiry->isTomorrow());
 
-        $token = $this->TokenTrait->create('token_2');
-        $this->assertFalse($token);
-        $this->assertEquals(['token' => ['_isUnique' => 'This value is already in use']], $this->TokenTrait->errors());
-
         $token = $this->TokenTrait->create('token_3', ['type' => 'aa']);
         $this->assertFalse($token);
         $this->assertEquals(['type' => ['lengthBetween' => 'The provided value is invalid']], $this->TokenTrait->errors());
