@@ -22,7 +22,6 @@
  */
 namespace Tokens\Test\TestCase\Model\Entity;
 
-use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Tokens\Model\Entity\Token;
 
