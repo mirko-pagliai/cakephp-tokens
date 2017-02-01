@@ -100,7 +100,7 @@ class TokenTraitTest extends TestCase
      */
     public function testFind()
     {
-        $this->assertEquals('Cake\ORM\Query', get_class($this->TokenTrait->getFind()));
+        $this->assertInstanceOf('Cake\ORM\Query', $this->TokenTrait->getFind());
     }
 
     /**
@@ -109,7 +109,7 @@ class TokenTraitTest extends TestCase
      */
     public function testGetTable()
     {
-        $this->assertEquals('Tokens\Model\Table\TokensTable', get_class($this->TokenTrait->getTable()));
+        $this->assertInstanceOf('Tokens\Model\Table\TokensTable', $this->TokenTrait->getTable());
     }
 
     /**
@@ -171,7 +171,7 @@ class TokenTraitTest extends TestCase
         $this->assertEquals(2, $token->user->id);
         $this->assertEquals('testType', $token->type);
         $this->assertEquals(['extra1', 'extra2'], $token->extra);
-        $this->assertEquals('Cake\I18n\Time', get_class($token->expiry));
+        $this->assertInstanceOf('Cake\I18n\Time', $token->expiry);
         $this->assertTrue($token->expiry->isTomorrow());
 
         $token = $this->TokenTrait->create('token_3', ['type' => 'aa']);

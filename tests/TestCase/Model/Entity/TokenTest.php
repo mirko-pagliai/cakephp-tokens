@@ -39,24 +39,24 @@ class TokenTest extends TestCase
         $entity = new Token();
 
         $entity->set('expiry', '+1 day');
-        $this->assertEquals('Cake\I18n\Time', get_class($entity->expiry));
+        $this->assertInstanceOf('Cake\I18n\Time', $entity->expiry);
         $this->assertTrue($entity->expiry->isTomorrow());
 
         $entity->set('expiry', new \Cake\I18n\Time);
-        $this->assertEquals('Cake\I18n\Time', get_class($entity->expiry));
+        $this->assertInstanceOf('Cake\I18n\Time', $entity->expiry);
 
         $entity->set('expiry', new \Cake\I18n\Time('+1 day'));
-        $this->assertEquals('Cake\I18n\Time', get_class($entity->expiry));
+        $this->assertInstanceOf('Cake\I18n\Time', $entity->expiry);
         $this->assertTrue($entity->expiry->isTomorrow());
 
         $entity->set('expiry', new \Cake\I18n\FrozenTime);
-        $this->assertEquals('Cake\I18n\FrozenTime', get_class($entity->expiry));
+        $this->assertInstanceOf('Cake\I18n\FrozenTime', $entity->expiry);
 
         $entity->set('expiry', new \Cake\I18n\Date);
-        $this->assertEquals('Cake\I18n\Date', get_class($entity->expiry));
+        $this->assertInstanceOf('Cake\I18n\Date', $entity->expiry);
 
         $entity->set('expiry', new \Cake\I18n\FrozenDate);
-        $this->assertEquals('Cake\I18n\FrozenDate', get_class($entity->expiry));
+        $this->assertInstanceOf('Cake\I18n\FrozenDate', $entity->expiry);
     }
 
     /**

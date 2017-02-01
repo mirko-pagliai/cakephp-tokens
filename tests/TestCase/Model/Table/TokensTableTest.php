@@ -88,7 +88,7 @@ class TokensTableTest extends TestCase
 
         //Token with ID 3 has user with ID 2
         $token = $this->Tokens->findById(3)->contain('Users')->first();
-        $this->assertEquals('Cake\ORM\Entity', get_class($token->user));
+        $this->assertInstanceOf('Cake\ORM\Entity', $token->user);
         $this->assertEquals(1, $token->user->id);
 
         //User with ID 2 has tokens with ID 3 and 4
@@ -116,7 +116,7 @@ class TokensTableTest extends TestCase
         ]));
         $this->assertNotEmpty($token);
         $this->assertTrue($token->expiry->isTomorrow());
-        $this->assertEquals('Cake\I18n\Time', get_class($token->expiry));
+        $this->assertInstanceOf('Cake\I18n\Time', $token->expiry);
 
         $token = $this->Tokens->save(new Token([
             'token' => 'test2',
@@ -182,7 +182,7 @@ class TokensTableTest extends TestCase
     public function testFindFormatsExtraFields()
     {
         $query = $this->Tokens->find();
-        $this->assertEquals('Cake\ORM\Query', get_class($query));
+        $this->assertInstanceOf('Cake\ORM\Query', $query);
 
         $tokens = $query->extract('extra')->toArray();
 
@@ -199,7 +199,7 @@ class TokensTableTest extends TestCase
     public function testFindActive()
     {
         $query = $this->Tokens->find('active');
-        $this->assertEquals('Cake\ORM\Query', get_class($query));
+        $this->assertInstanceOf('Cake\ORM\Query', $query);
 
         $tokens = $query->extract('id')->toArray();
 
@@ -214,7 +214,7 @@ class TokensTableTest extends TestCase
     public function testFindExpired()
     {
         $query = $this->Tokens->find('expired');
-        $this->assertEquals('Cake\ORM\Query', get_class($query));
+        $this->assertInstanceOf('Cake\ORM\Query', $query);
 
         $tokens = $query->extract('id')->toArray();
 
@@ -228,13 +228,13 @@ class TokensTableTest extends TestCase
      */
     public function testInitialize()
     {
-        $this->assertEquals('Tokens\Model\Table\TokensTable', get_class($this->Tokens));
+        $this->assertInstanceOf('Tokens\Model\Table\TokensTable', $this->Tokens);
         $this->assertEquals('id', $this->Tokens->primaryKey());
         $this->assertEquals('token', $this->Tokens->displayField());
         $this->assertEquals('tokens', $this->Tokens->table());
 
         $this->assertNotEmpty($this->Tokens->association('users'));
-        $this->assertEquals('Cake\ORM\Association\BelongsTo', get_class($this->Tokens->Users));
+        $this->assertInstanceOf('Cake\ORM\Association\BelongsTo', $this->Tokens->Users);
         $this->assertEquals('users', $this->Tokens->Users->table());
     }
 
@@ -253,7 +253,7 @@ class TokensTableTest extends TestCase
         $this->assertEquals('This is a test method', $this->Tokens->Users->test());
 
         $token = $this->Tokens->findById(2)->contain('Users')->first();
-        $this->assertEquals('TestApp\Model\Entity\User', get_class($token->user));
+        $this->assertInstanceOf('TestApp\Model\Entity\User', $token->user);
         $this->assertEquals('This is a test property', $token->user->test);
     }
 
@@ -304,11 +304,11 @@ class TokensTableTest extends TestCase
     {
         $token = $this->Tokens->save(new Token(['token' => 'test1']));
         $this->assertNotEmpty($token);
-        $this->assertEquals('Tokens\Model\Entity\Token', get_class($token));
+        $this->assertInstanceOf('Tokens\Model\Entity\Token', $token);
         $this->assertEquals(null, $token->user_id);
         $this->assertRegExp('/^[a-z0-9]{25}$/', $token->token);
         $this->assertEmpty($token->type);
-        $this->assertEquals('Cake\I18n\Time', get_class($token->expiry));
+        $this->assertInstanceOf('Cake\I18n\Time', $token->expiry);
         $this->assertEmpty($token->extra);
     }
 
