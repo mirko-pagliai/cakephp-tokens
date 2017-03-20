@@ -229,13 +229,13 @@ class TokensTableTest extends TestCase
     public function testInitialize()
     {
         $this->assertInstanceOf('Tokens\Model\Table\TokensTable', $this->Tokens);
-        $this->assertEquals('id', $this->Tokens->primaryKey());
-        $this->assertEquals('token', $this->Tokens->displayField());
-        $this->assertEquals('tokens', $this->Tokens->table());
+        $this->assertEquals('tokens', $this->Tokens->getTable());
+        $this->assertEquals('token', $this->Tokens->getDisplayField());
+        $this->assertEquals('id', $this->Tokens->getPrimaryKey());
 
-        $this->assertNotEmpty($this->Tokens->association('users'));
         $this->assertInstanceOf('Cake\ORM\Association\BelongsTo', $this->Tokens->Users);
-        $this->assertEquals('users', $this->Tokens->Users->table());
+        $this->assertEquals('user_id', $this->Tokens->Users->getForeignKey());
+        $this->assertEquals('Users', $this->Tokens->Users->className());
     }
 
     /**

@@ -156,15 +156,15 @@ class TokensTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('tokens');
-        $this->displayField('token');
-        $this->primaryKey('id');
+        $this->setTable('tokens');
+        $this->setDisplayField('token');
+        $this->setPrimaryKey('id');
 
         if (Configure::read('Tokens.usersClassOptions')) {
             $this->belongsTo('Users', Configure::read('Tokens.usersClassOptions'));
 
             if (empty($this->Users->association('tokens'))) {
-                $this->Users->hasMany('Tokens', ['foreignKey' => 'user_id']);
+                $this->Users->hasMany('Tokens')->setForeignKey('user_id');
             }
         }
     }
