@@ -43,7 +43,7 @@ trait TokenTrait
      */
     protected function _getTable()
     {
-        return TableRegistry::get('Tokens', ['className' => 'Tokens\Model\Table\TokensTable']);
+        return TableRegistry::get('Tokens.Tokens');
     }
 
     /**
