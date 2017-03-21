@@ -156,15 +156,15 @@ class TokensTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('tokens');
-        $this->displayField('token');
-        $this->primaryKey('id');
+        $this->setTable('tokens');
+        $this->setDisplayField('token');
+        $this->setPrimaryKey('id');
 
         if (Configure::read('Tokens.usersClassOptions')) {
             $this->belongsTo('Users', Configure::read('Tokens.usersClassOptions'));
 
             if (empty($this->Users->association('tokens'))) {
-                $this->Users->hasMany('Tokens', ['foreignKey' => 'user_id']);
+                $this->Users->hasMany('Tokens')->setForeignKey('user_id');
             }
         }
     }
@@ -181,7 +181,7 @@ class TokensTable extends Table
         //Uses validation rules as application rules
         $rules->add(function ($entity) {
             $errors = $this->validator('default')->errors(
-                $entity->extract($this->schema()->columns(), true),
+                $entity->extract($this->getSchema()->columns(), true),
                 $entity->isNew()
             );
             $entity->errors($errors);
