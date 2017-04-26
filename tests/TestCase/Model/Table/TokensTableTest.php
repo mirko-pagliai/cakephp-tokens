@@ -52,6 +52,15 @@ class TokensTableTest extends TestCase
     ];
 
     /**
+     * Internal method to get the `Tokens.Tokens` table
+     * @return \Tokens\Model\Table\TokensTable
+     */
+    protected function getTable()
+    {
+        return TableRegistry::get('Tokens.Tokens');
+    }
+
+    /**
      * setUp method
      * @return void
      */
@@ -59,7 +68,7 @@ class TokensTableTest extends TestCase
     {
         parent::setUp();
 
-        $this->Tokens = TableRegistry::get('Tokens', ['className' => 'Tokens\Model\Table\TokensTable']);
+        $this->Tokens = $this->getTable();
         $this->Users = $this->Tokens->Users;
     }
 
@@ -247,7 +256,7 @@ class TokensTableTest extends TestCase
         Configure::write('Tokens.usersClassOptions.className', 'TestApp.Users');
 
         TableRegistry::clear();
-        $this->Tokens = TableRegistry::get('Tokens', ['className' => 'Tokens\Model\Table\TokensTable']);
+        $this->Tokens = $this->getTable();
 
         $this->assertEquals('TestApp.Users', $this->Tokens->Users->className());
         $this->assertEquals('This is a test method', $this->Tokens->Users->test());
@@ -268,8 +277,7 @@ class TokensTableTest extends TestCase
         Configure::write('Tokens.usersClassOptions', false);
 
         TableRegistry::clear();
-        $this->Tokens = TableRegistry::get('Tokens', ['className' => 'Tokens\Model\Table\TokensTable']);
-
+        $this->Tokens = $this->getTable();
         $this->Tokens->Users;
     }
 
@@ -319,12 +327,8 @@ class TokensTableTest extends TestCase
     public function testValidationForExpiry()
     {
         //Valid `expiry` values
-        foreach ([
-            '\Cake\I18n\Date',
-            '\Cake\I18n\Time',
-            '\Cake\I18n\FrozenDate',
-            '\Cake\I18n\FrozenTime',
-        ] as $class) {
+        foreach (['Date', 'FrozenDate', 'FrozenTime', 'Time'] as $class) {
+            $class = '\Cake\I18n\\' . $class;
             $token = $this->Tokens->newEntity([
                 'token' => 'test',
                 'expiry' => new $class,
