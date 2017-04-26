@@ -150,12 +150,8 @@ class TokenTraitTest extends TestCase
      */
     public function testCreate()
     {
-        //No errors for now
-        $this->assertEmpty($this->TokenTrait->errors());
-
         $token = $this->TokenTrait->create('token_1');
         $this->assertNotEmpty($token);
-        $this->assertEmpty($this->TokenTrait->errors());
         $token = $this->Tokens->findByToken($token)->contain('Users')->first();
         $this->assertNotEmpty($token);
 
@@ -166,17 +162,23 @@ class TokenTraitTest extends TestCase
             'expiry' => '+1 days',
         ]);
         $this->assertNotEmpty($token);
-        $this->assertEmpty($this->TokenTrait->errors());
         $token = $this->Tokens->findByToken($token)->contain('Users')->first();
         $this->assertEquals(2, $token->user->id);
         $this->assertEquals('testType', $token->type);
         $this->assertEquals(['extra1', 'extra2'], $token->extra);
         $this->assertInstanceOf('Cake\I18n\Time', $token->expiry);
         $this->assertTrue($token->expiry->isTomorrow());
+    }
 
-        $token = $this->TokenTrait->create('token_3', ['type' => 'aa']);
-        $this->assertFalse($token);
-        $this->assertEquals(['type' => ['lengthBetween' => 'The provided value is invalid']], $this->TokenTrait->errors());
+    /**
+     * Test for `create()` method, with error
+     * @expectedException Cake\Network\Exception\InternalErrorException
+     * @expectedExceptionMessage Error for `type` field: the provided value is invalid
+     * @test
+     */
+    public function testCreateWithError()
+    {
+        $this->TokenTrait->create('token_3', ['type' => 'aa']);
     }
 
     /**

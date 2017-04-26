@@ -22,6 +22,7 @@
  */
 namespace Tokens\Utility;
 
+use Cake\Network\Exception\InternalErrorException;
 use Cake\ORM\TableRegistry;
 use Tokens\Model\Entity\Token;
 
@@ -31,12 +32,6 @@ use Tokens\Model\Entity\Token;
  */
 trait TokenTrait
 {
-    /**
-     * Errors occurred during the creation of the last token
-     * @var array
-     */
-    protected $errors = [];
-
     /**
      * Returns the table instance
      * @return \Tokens\Model\Table\TokensTable
@@ -86,15 +81,12 @@ trait TokenTrait
      * Valid optios values: `user_id`, `type`, `extra`, `expiry`.
      * @param string $token Token value
      * @param array $options Options
-     * @return string|false Token value, otherwise `false` on failure
+     * @return string Token value
+     * @throws InternalErrorException
      * @uses _getTable()
-     * @uses $errors
      */
     public function create($token, array $options = [])
     {
-        //Resets errors
-        $this->errors = [];
-
         $entity = new Token(compact('token'));
 
         foreach (['user_id', 'type', 'extra', 'expiry'] as $key) {
@@ -104,24 +96,13 @@ trait TokenTrait
         }
 
         if (!$this->_getTable()->save($entity)) {
-            //If the token has not been saved, stores the returned errors.
-            //Errors will be accessible via the `errors()` method
-            $this->errors = $entity->errors();
+            $field = collection(array_keys($entity->getErrors()))->first();
+            $error = collection(collection(($entity->getErrors()))->first())->first();
 
-            return false;
+            throw new InternalErrorException(sprintf('Error for `%s` field: %s', $field, lcfirst($error)));
         }
 
         return $entity->token;
-    }
-
-    /**
-     * Returns errors that occurred during the creation of the last token
-     * @return array
-     * @uses $errors
-     */
-    public function errors()
-    {
-        return $this->errors;
     }
 
     /**
