@@ -22,11 +22,16 @@
  */
 namespace Tokens\Model\Table;
 
+use ArrayObject;
 use Cake\Core\Configure;
+use Cake\Event\Event;
 use Cake\I18n\Time;
+use Cake\ORM\Entity;
+use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Tokens\Model\Entity\Token;
 
 /**
  * Tokens Model
@@ -50,7 +55,7 @@ class TokensTable extends Table
      * @return bool
      * @uses deleteExpired()
      */
-    public function beforeSave(\Cake\Event\Event $event, \Cake\ORM\Entity $entity, \ArrayObject $options)
+    public function beforeSave(Event $event, Entity $entity, ArrayObject $options)
     {
         if (empty($entity->expiry)) {
             $entity->expiry = Configure::read('Tokens.expiryDefaultValue');
@@ -79,7 +84,7 @@ class TokensTable extends Table
      * @param \Tokens\Model\Entity\Token|null $entity Token entity
      * @return int Affected rows
      */
-    public function deleteExpired(\Tokens\Model\Entity\Token $entity = null)
+    public function deleteExpired(Token $entity = null)
     {
         $conditions[] = ['expiry <=' => new Time()];
 
@@ -110,7 +115,7 @@ class TokensTable extends Table
         //Unserializes the `extra` field.
         $query->formatResults(function ($results) {
             return $results->map(function ($row) {
-                if (!empty($row->extra)) {
+                if ($row->extra) {
                     $row->extra = unserialize($row->extra);
                 }
 
@@ -127,9 +132,9 @@ class TokensTable extends Table
      * @param array $options The options to use for the find
      * @return \Cake\ORM\Query
      */
-    public function findActive(\Cake\ORM\Query $query, array $options)
+    public function findActive(Query $query, array $options)
     {
-        $query->where(['expiry >' => new Time()]);
+        $query->where(['expiry >' => new Time]);
 
         return $query;
     }
@@ -140,9 +145,9 @@ class TokensTable extends Table
      * @param array $options The options to use for the find
      * @return \Cake\ORM\Query
      */
-    public function findExpired(\Cake\ORM\Query $query, array $options)
+    public function findExpired(Query $query, array $options)
     {
-        $query->where(['expiry <=' => new Time()]);
+        $query->where(['expiry <=' => new Time]);
 
         return $query;
     }
