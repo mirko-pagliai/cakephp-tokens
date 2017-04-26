@@ -22,44 +22,21 @@
  */
 namespace Tokens\Test\TestCase\Utility;
 
+use Cake\Controller\ComponentRegistry;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use Tokens\Utility\TokenTrait as BaseTokenTrait;
+use Reflection\ReflectionTrait;
+use Tokens\Controller\Component\TokenComponent;
 
 /**
- * Makes public some protected methods/properties from `TokenTrait`
- */
-class TokenTrait
-{
-    use BaseTokenTrait;
-
-    public function getFind(array $conditions = [])
-    {
-        return $this->_find($conditions);
-    }
-
-    public function getTable()
-    {
-        return $this->_getTable();
-    }
-}
-
-/**
- * Tokens\Utility\TokenTrait Test Case
+ * TokenTraitTest Test Case
  */
 class TokenTraitTest extends TestCase
 {
-    /**
-     * Fixtures
-     * @var array
-     */
-    public $fixtures = [
-        'core.users',
-        'plugin.tokens.tokens',
-    ];
+    use ReflectionTrait;
 
     /**
-     * Instance of the trait
+     * A class that uses the trait
      * @var \TokenTrait
      */
     public $TokenTrait;
@@ -70,6 +47,15 @@ class TokenTraitTest extends TestCase
     public $Tokens;
 
     /**
+     * Fixtures
+     * @var array
+     */
+    public $fixtures = [
+        'core.users',
+        'plugin.tokens.tokens',
+    ];
+
+    /**
      * setUp method
      * @return void
      */
@@ -77,8 +63,8 @@ class TokenTraitTest extends TestCase
     {
         parent::setUp();
 
-        $this->Tokens = TableRegistry::get('Tokens', ['className' => 'Tokens\Model\Table\TokensTable']);
-        $this->TokenTrait = new TokenTrait;
+        $this->Tokens = TableRegistry::get('Tokens.Tokens');
+        $this->TokenTrait = new TokenComponent(new ComponentRegistry);
     }
 
     /**
@@ -100,7 +86,7 @@ class TokenTraitTest extends TestCase
      */
     public function testFind()
     {
-        $this->assertInstanceOf('Cake\ORM\Query', $this->TokenTrait->getFind());
+        $this->assertInstanceOf('Cake\ORM\Query', $this->invokeMethod($this->TokenTrait, '_find'));
     }
 
     /**
@@ -109,7 +95,7 @@ class TokenTraitTest extends TestCase
      */
     public function testGetTable()
     {
-        $this->assertInstanceOf('Tokens\Model\Table\TokensTable', $this->TokenTrait->getTable());
+        $this->assertInstanceOf('Tokens\Model\Table\TokensTable', $this->invokeMethod($this->TokenTrait, '_getTable'));
     }
 
     /**
@@ -150,12 +136,8 @@ class TokenTraitTest extends TestCase
      */
     public function testCreate()
     {
-        //No errors for now
-        $this->assertEmpty($this->TokenTrait->errors());
-
         $token = $this->TokenTrait->create('token_1');
         $this->assertNotEmpty($token);
-        $this->assertEmpty($this->TokenTrait->errors());
         $token = $this->Tokens->findByToken($token)->contain('Users')->first();
         $this->assertNotEmpty($token);
 
@@ -166,17 +148,23 @@ class TokenTraitTest extends TestCase
             'expiry' => '+1 days',
         ]);
         $this->assertNotEmpty($token);
-        $this->assertEmpty($this->TokenTrait->errors());
         $token = $this->Tokens->findByToken($token)->contain('Users')->first();
         $this->assertEquals(2, $token->user->id);
         $this->assertEquals('testType', $token->type);
         $this->assertEquals(['extra1', 'extra2'], $token->extra);
         $this->assertInstanceOf('Cake\I18n\Time', $token->expiry);
         $this->assertTrue($token->expiry->isTomorrow());
+    }
 
-        $token = $this->TokenTrait->create('token_3', ['type' => 'aa']);
-        $this->assertFalse($token);
-        $this->assertEquals(['type' => ['lengthBetween' => 'The provided value is invalid']], $this->TokenTrait->errors());
+    /**
+     * Test for `create()` method, with error
+     * @expectedException Cake\Network\Exception\InternalErrorException
+     * @expectedExceptionMessage Error for `type` field: the provided value is invalid
+     * @test
+     */
+    public function testCreateWithError()
+    {
+        $this->TokenTrait->create('token_3', ['type' => 'aa']);
     }
 
     /**

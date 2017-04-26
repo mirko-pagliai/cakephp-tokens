@@ -22,6 +22,7 @@
  */
 namespace Tokens\Test\TestCase\Model\Entity;
 
+use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
 use Tokens\Model\Entity\Token;
 
@@ -36,27 +37,21 @@ class TokenTest extends TestCase
      */
     public function testExpirySetMutator()
     {
-        $entity = new Token();
+        $entity = new Token;
 
         $entity->set('expiry', '+1 day');
         $this->assertInstanceOf('Cake\I18n\Time', $entity->expiry);
         $this->assertTrue($entity->expiry->isTomorrow());
 
-        $entity->set('expiry', new \Cake\I18n\Time);
-        $this->assertInstanceOf('Cake\I18n\Time', $entity->expiry);
-
-        $entity->set('expiry', new \Cake\I18n\Time('+1 day'));
+        $entity->set('expiry', new Time('+1 day'));
         $this->assertInstanceOf('Cake\I18n\Time', $entity->expiry);
         $this->assertTrue($entity->expiry->isTomorrow());
 
-        $entity->set('expiry', new \Cake\I18n\FrozenTime);
-        $this->assertInstanceOf('Cake\I18n\FrozenTime', $entity->expiry);
-
-        $entity->set('expiry', new \Cake\I18n\Date);
-        $this->assertInstanceOf('Cake\I18n\Date', $entity->expiry);
-
-        $entity->set('expiry', new \Cake\I18n\FrozenDate);
-        $this->assertInstanceOf('Cake\I18n\FrozenDate', $entity->expiry);
+        foreach (['Date', 'FrozenDate', 'FrozenTime', 'Time'] as $class) {
+            $class = 'Cake\I18n\\' . $class;
+            $entity->set('expiry', new $class);
+            $this->assertInstanceOf($class, $entity->expiry);
+        }
     }
 
     /**
@@ -67,7 +62,7 @@ class TokenTest extends TestCase
     {
         $regex = '/^[a-z0-9]{25}$/';
 
-        $entity = new Token();
+        $entity = new Token;
 
         $entity->set('token', null);
         $this->assertNull($entity->token);
