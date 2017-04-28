@@ -293,7 +293,7 @@ class TokensTableTest extends TestCase
             'token' => 'firstToken',
         ]);
         $this->assertNotEmpty($this->Tokens->save($token));
-        $this->assertEmpty($token->errors());
+        $this->assertEmpty($token->getErrors());
 
         //Invalid `user_id` value (the user does not exist)
         $token = $this->Tokens->newEntity([
@@ -301,7 +301,7 @@ class TokensTableTest extends TestCase
             'token' => 'secondToken',
         ]);
         $this->assertFalse($this->Tokens->save($token));
-        $this->assertEquals(['user_id' => ['_existsIn' => 'This value does not exist']], $token->errors());
+        $this->assertEquals(['user_id' => ['_existsIn' => 'This value does not exist']], $token->getErrors());
     }
 
     /**
@@ -333,7 +333,7 @@ class TokensTableTest extends TestCase
                 'token' => 'test',
                 'expiry' => new $class,
             ]);
-            $this->assertEmpty($token->errors());
+            $this->assertEmpty($token->getErrors());
         }
 
         //Invalid `expiry` value
@@ -341,7 +341,7 @@ class TokensTableTest extends TestCase
             'token' => 'test',
             'expiry' => 'thisIsAString',
         ]);
-        $this->assertEquals(['expiry' => ['dateTime' => 'The provided value is invalid']], $token->errors());
+        $this->assertEquals(['expiry' => ['dateTime' => 'The provided value is invalid']], $token->getErrors());
     }
 
     /**
@@ -351,10 +351,10 @@ class TokensTableTest extends TestCase
     public function testValidationForToken()
     {
         $token = $this->Tokens->newEntity(['token' => 'test']);
-        $this->assertEmpty($token->errors());
+        $this->assertEmpty($token->getErrors());
 
         $token = $this->Tokens->newEntity([]);
-        $this->assertEquals(['token' => ['_required' => 'This field is required']], $token->errors());
+        $this->assertEquals(['token' => ['_required' => 'This field is required']], $token->getErrors());
     }
 
     /**
@@ -368,27 +368,27 @@ class TokensTableTest extends TestCase
             'token' => 'test',
             'type' => '123',
         ]);
-        $this->assertEmpty($token->errors());
+        $this->assertEmpty($token->getErrors());
 
         //Valid `type` value
         $token = $this->Tokens->newEntity([
             'token' => 'test',
             'type' => str_repeat('a', 255),
         ]);
-        $this->assertEmpty($token->errors());
+        $this->assertEmpty($token->getErrors());
 
         //Invalid `type` value (it is too short)
         $token = $this->Tokens->newEntity([
             'token' => 'test',
             'type' => '12',
         ]);
-        $this->assertEquals(['type' => ['lengthBetween' => 'The provided value is invalid']], $token->errors());
+        $this->assertEquals(['type' => ['lengthBetween' => 'The provided value is invalid']], $token->getErrors());
 
         //Invalid `type` value (it is too long)
         $token = $this->Tokens->newEntity([
             'token' => 'test',
             'type' => str_repeat('a', 256),
         ]);
-        $this->assertEquals(['type' => ['lengthBetween' => 'The provided value is invalid']], $token->errors());
+        $this->assertEquals(['type' => ['lengthBetween' => 'The provided value is invalid']], $token->getErrors());
     }
 }
