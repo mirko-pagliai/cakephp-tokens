@@ -134,7 +134,7 @@ class TokensTable extends Table
      */
     public function findActive(Query $query, array $options)
     {
-        $query->where(['expiry >' => new Time]);
+        $query->where(['expiry >=' => new Time]);
 
         return $query;
     }
