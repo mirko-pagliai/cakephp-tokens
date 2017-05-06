@@ -86,7 +86,7 @@ class TokensTable extends Table
      */
     public function deleteExpired(Token $entity = null)
     {
-        $conditions[] = ['expiry <=' => new Time()];
+        $conditions[] = ['expiry <' => new Time()];
 
         if (!empty($entity->token)) {
             $conditions[] = ['token' => $entity->token];
@@ -134,7 +134,7 @@ class TokensTable extends Table
      */
     public function findActive(Query $query, array $options)
     {
-        $query->where(['expiry >' => new Time]);
+        $query->where(['expiry >=' => new Time]);
 
         return $query;
     }
@@ -147,7 +147,7 @@ class TokensTable extends Table
      */
     public function findExpired(Query $query, array $options)
     {
-        $query->where(['expiry <=' => new Time]);
+        $query->where(['expiry <' => new Time]);
 
         return $query;
     }
