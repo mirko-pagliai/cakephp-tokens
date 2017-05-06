@@ -189,7 +189,7 @@ class TokensTable extends Table
                 $entity->extract($this->getSchema()->columns(), true),
                 $entity->isNew()
             );
-            $entity->errors($errors);
+            $entity->setErrors($errors);
 
             return empty($errors);
         });
