@@ -36,7 +36,7 @@ trait TokenTrait
      * Returns the table instance
      * @return \Tokens\Model\Table\TokensTable
      */
-    protected function _getTable()
+    protected function getTable()
     {
         return TableRegistry::get('Tokens.Tokens');
     }
@@ -45,11 +45,11 @@ trait TokenTrait
      * Internal `find()` method
      * @param array $conditions Conditions for `where()`
      * @return \Cake\ORM\Query
-     * @uses _getTable()
+     * @uses getTable()
      */
-    protected function _find(array $conditions = [])
+    protected function find(array $conditions = [])
     {
-        return $this->_getTable()->find('active')->where($conditions);
+        return $this->getTable()->find('active')->where($conditions);
     }
 
     /**
@@ -62,7 +62,7 @@ trait TokenTrait
      * @param string $token Token value
      * @param array $options Options
      * @return bool
-     * @uses _find()
+     * @uses find()
      */
     public function check($token, array $options = [])
     {
@@ -72,7 +72,7 @@ trait TokenTrait
             $conditions[$key] = empty($options[$key]) ? null : $options[$key];
         }
 
-        return (bool)$this->_find($conditions)->count();
+        return (bool)$this->find($conditions)->count();
     }
 
     /**
@@ -83,7 +83,7 @@ trait TokenTrait
      * @param array $options Options
      * @return string Token value
      * @throws InternalErrorException
-     * @uses _getTable()
+     * @uses getTable()
      */
     public function create($token, array $options = [])
     {
@@ -95,7 +95,7 @@ trait TokenTrait
             }
         }
 
-        if (!$this->_getTable()->save($entity)) {
+        if (!$this->getTable()->save($entity)) {
             $field = collection(array_keys($entity->getErrors()))->first();
             $error = collection(collection(($entity->getErrors()))->first())->first();
 
@@ -109,17 +109,17 @@ trait TokenTrait
      * Deletes a token
      * @param string $token Token value
      * @return bool
-     * @uses _find()
-     * @uses _getTable()
+     * @uses find()
+     * @uses getTable()
      */
     public function delete($token)
     {
-        $query = $this->_find(compact('token'));
+        $query = $this->find(compact('token'));
 
         if (!$query->count()) {
             return false;
         }
 
-        return $this->_getTable()->delete($query->first());
+        return $this->getTable()->delete($query->first());
     }
 }

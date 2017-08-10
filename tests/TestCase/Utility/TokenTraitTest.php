@@ -81,21 +81,21 @@ class TokenTraitTest extends TestCase
     }
 
     /**
-     * Test for `_find()` method
+     * Test for `find()` method
      * @test
      */
     public function testFind()
     {
-        $this->assertInstanceOf('Cake\ORM\Query', $this->invokeMethod($this->TokenTrait, '_find'));
+        $this->assertInstanceOf('Cake\ORM\Query', $this->invokeMethod($this->TokenTrait, 'find'));
     }
 
     /**
-     * Test for `_getTable()` method
+     * Test for `getTable()` method
      * @test
      */
     public function testGetTable()
     {
-        $this->assertInstanceOf('Tokens\Model\Table\TokensTable', $this->invokeMethod($this->TokenTrait, '_getTable'));
+        $this->assertInstanceOf('Tokens\Model\Table\TokensTable', $this->invokeMethod($this->TokenTrait, 'getTable'));
     }
 
     /**
