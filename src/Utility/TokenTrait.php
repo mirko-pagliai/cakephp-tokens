@@ -33,7 +33,7 @@ use Tokens\Model\Entity\Token;
 trait TokenTrait
 {
     /**
-     * Returns the table instance
+     * Internal method to get the table instance
      * @return \Tokens\Model\Table\TokensTable
      */
     protected function getTable()
