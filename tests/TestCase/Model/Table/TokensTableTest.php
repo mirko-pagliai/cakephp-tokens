@@ -23,6 +23,7 @@
 namespace Tokens\Test\TestCase\Model\Table;
 
 use Cake\Core\Configure;
+use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Tokens\Model\Entity\Token;
@@ -107,7 +108,7 @@ class TokensTableTest extends TestCase
         $this->assertEquals(4, $tokens[1]->id);
 
         //Token with ID 3 matches with the user with ID
-        $token = $this->Tokens->find()->matching('Users', function ($q) {
+        $token = $this->Tokens->find()->matching('Users', function (Query $q) {
             return $q->where(['Users.id' => 1]);
         })->extract('id')->toArray();
         $this->assertEquals([3], $token);

@@ -28,6 +28,7 @@ use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
+use Cake\ORM\ResultSet;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -113,13 +114,13 @@ class TokensTable extends Table
         $query = parent::find($type, $options);
 
         //Unserializes the `extra` field.
-        $query->formatResults(function ($results) {
-            return $results->map(function ($row) {
-                if ($row->extra) {
-                    $row->extra = unserialize($row->extra);
+        $query->formatResults(function (ResultSet $results) {
+            return $results->map(function (Token $token) {
+                if ($token->extra) {
+                    $token->extra = unserialize($token->extra);
                 }
 
-                return $row;
+                return $token;
             });
         });
 
@@ -129,10 +130,9 @@ class TokensTable extends Table
     /**
      * `active` find method
      * @param \Cake\ORM\Query $query Query
-     * @param array $options The options to use for the find
      * @return \Cake\ORM\Query
      */
-    public function findActive(Query $query, array $options)
+    public function findActive(Query $query)
     {
         $query->where(['expiry >=' => new Time]);
 
@@ -142,10 +142,9 @@ class TokensTable extends Table
     /**
      * `expired` find method
      * @param \Cake\ORM\Query $query Query
-     * @param array $options The options to use for the find
      * @return \Cake\ORM\Query
      */
-    public function findExpired(Query $query, array $options)
+    public function findExpired(Query $query)
     {
         $query->where(['expiry <' => new Time]);
 
@@ -184,7 +183,7 @@ class TokensTable extends Table
     public function buildRules(RulesChecker $rules)
     {
         //Uses validation rules as application rules
-        $rules->add(function ($entity) {
+        $rules->add(function (Token $entity) {
             $errors = $this->validator('default')->errors(
                 $entity->extract($this->getSchema()->columns(), true),
                 $entity->isNew()
