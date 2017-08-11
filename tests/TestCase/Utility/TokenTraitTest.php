@@ -2,23 +2,13 @@
 /**
  * This file is part of cakephp-tokens.
  *
- * cakephp-tokens is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
  *
- * cakephp-tokens is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with cakephp-tokens.  If not, see <http://www.gnu.org/licenses/>.
- *
- * @author      Mirko Pagliai <mirko.pagliai@gmail.com>
- * @copyright   Copyright (c) 2016, Mirko Pagliai for Nova Atlantis Ltd
- * @license     http://www.gnu.org/licenses/agpl.txt AGPL License
- * @link        http://git.novatlantis.it Nova Atlantis Ltd
+ * @copyright   Copyright (c) Mirko Pagliai
+ * @link        https://github.com/mirko-pagliai/cakephp-thumber
+ * @license     https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Tokens\Test\TestCase\Utility;
 
@@ -75,27 +65,25 @@ class TokenTraitTest extends TestCase
     {
         $this->Tokens->deleteAll(['id >=' => 1]);
 
-        unset($this->Tokens, $this->TokenTrait);
-
         parent::tearDown();
     }
 
     /**
-     * Test for `_find()` method
+     * Test for `find()` method
      * @test
      */
     public function testFind()
     {
-        $this->assertInstanceOf('Cake\ORM\Query', $this->invokeMethod($this->TokenTrait, '_find'));
+        $this->assertInstanceOf('Cake\ORM\Query', $this->invokeMethod($this->TokenTrait, 'find'));
     }
 
     /**
-     * Test for `_getTable()` method
+     * Test for `getTable()` method
      * @test
      */
     public function testGetTable()
     {
-        $this->assertInstanceOf('Tokens\Model\Table\TokensTable', $this->invokeMethod($this->TokenTrait, '_getTable'));
+        $this->assertInstanceOf('Tokens\Model\Table\TokensTable', $this->invokeMethod($this->TokenTrait, 'getTable'));
     }
 
     /**

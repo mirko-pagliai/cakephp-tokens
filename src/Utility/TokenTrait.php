@@ -2,23 +2,13 @@
 /**
  * This file is part of cakephp-tokens.
  *
- * cakephp-tokens is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
  *
- * cakephp-tokens is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with cakephp-tokens.  If not, see <http://www.gnu.org/licenses/>.
- *
- * @author      Mirko Pagliai <mirko.pagliai@gmail.com>
- * @copyright   Copyright (c) 2016, Mirko Pagliai for Nova Atlantis Ltd
- * @license     http://www.gnu.org/licenses/agpl.txt AGPL License
- * @link        http://git.novatlantis.it Nova Atlantis Ltd
+ * @copyright   Copyright (c) Mirko Pagliai
+ * @link        https://github.com/mirko-pagliai/cakephp-thumber
+ * @license     https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Tokens\Utility;
 
@@ -33,10 +23,10 @@ use Tokens\Model\Entity\Token;
 trait TokenTrait
 {
     /**
-     * Returns the table instance
+     * Internal method to get the table instance
      * @return \Tokens\Model\Table\TokensTable
      */
-    protected function _getTable()
+    protected function getTable()
     {
         return TableRegistry::get('Tokens.Tokens');
     }
@@ -45,11 +35,11 @@ trait TokenTrait
      * Internal `find()` method
      * @param array $conditions Conditions for `where()`
      * @return \Cake\ORM\Query
-     * @uses _getTable()
+     * @uses getTable()
      */
-    protected function _find(array $conditions = [])
+    protected function find(array $conditions = [])
     {
-        return $this->_getTable()->find('active')->where($conditions);
+        return $this->getTable()->find('active')->where($conditions);
     }
 
     /**
@@ -62,7 +52,7 @@ trait TokenTrait
      * @param string $token Token value
      * @param array $options Options
      * @return bool
-     * @uses _find()
+     * @uses find()
      */
     public function check($token, array $options = [])
     {
@@ -72,7 +62,7 @@ trait TokenTrait
             $conditions[$key] = empty($options[$key]) ? null : $options[$key];
         }
 
-        return (bool)$this->_find($conditions)->count();
+        return (bool)$this->find($conditions)->count();
     }
 
     /**
@@ -83,7 +73,7 @@ trait TokenTrait
      * @param array $options Options
      * @return string Token value
      * @throws InternalErrorException
-     * @uses _getTable()
+     * @uses getTable()
      */
     public function create($token, array $options = [])
     {
@@ -95,7 +85,7 @@ trait TokenTrait
             }
         }
 
-        if (!$this->_getTable()->save($entity)) {
+        if (!$this->getTable()->save($entity)) {
             $field = collection(array_keys($entity->getErrors()))->first();
             $error = collection(collection(($entity->getErrors()))->first())->first();
 
@@ -109,17 +99,17 @@ trait TokenTrait
      * Deletes a token
      * @param string $token Token value
      * @return bool
-     * @uses _find()
-     * @uses _getTable()
+     * @uses find()
+     * @uses getTable()
      */
     public function delete($token)
     {
-        $query = $this->_find(compact('token'));
+        $query = $this->find(compact('token'));
 
         if (!$query->count()) {
             return false;
         }
 
-        return $this->_getTable()->delete($query->first());
+        return $this->getTable()->delete($query->first());
     }
 }

@@ -3,7 +3,7 @@
     "description": "A plugin to handle tokens for CakePHP",
     "homepage": "https://github.com/mirko-pagliai/cakephp-tokens",
     "type": "cakephp-plugin",
-    "license": "AGPL",
+    "license": "MIT",
     "authors": [{
         "name": "Mirko Pagliai",
         "email": "mirko.pagliai@gmail.com"
@@ -13,7 +13,7 @@
         "cakephp/cakephp": ">=3.2.0 <4.0"
     },
     "require-dev": {
-        "cakephp/cakephp-codesniffer": "2.*",
+        "cakephp/cakephp-codesniffer": "^3.0",
         "mirko-pagliai/reflection": "^1.0",
         "phpunit/phpunit": "^5.7|^6.0"
     },

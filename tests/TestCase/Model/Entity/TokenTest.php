@@ -2,23 +2,13 @@
 /**
  * This file is part of cakephp-tokens.
  *
- * cakephp-tokens is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
  *
- * cakephp-tokens is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with cakephp-tokens.  If not, see <http://www.gnu.org/licenses/>.
- *
- * @author      Mirko Pagliai <mirko.pagliai@gmail.com>
- * @copyright   Copyright (c) 2016, Mirko Pagliai for Nova Atlantis Ltd
- * @license     http://www.gnu.org/licenses/agpl.txt AGPL License
- * @link        http://git.novatlantis.it Nova Atlantis Ltd
+ * @copyright   Copyright (c) Mirko Pagliai
+ * @link        https://github.com/mirko-pagliai/cakephp-thumber
+ * @license     https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Tokens\Test\TestCase\Model\Entity;
 
@@ -39,13 +29,11 @@ class TokenTest extends TestCase
     {
         $entity = new Token;
 
-        $entity->set('expiry', '+1 day');
-        $this->assertInstanceOf('Cake\I18n\Time', $entity->expiry);
-        $this->assertTrue($entity->expiry->isTomorrow());
-
-        $entity->set('expiry', new Time('+1 day'));
-        $this->assertInstanceOf('Cake\I18n\Time', $entity->expiry);
-        $this->assertTrue($entity->expiry->isTomorrow());
+        foreach (['+1 day', new Time('+1 day')] as $expiry) {
+            $entity->set('expiry', $expiry);
+            $this->assertInstanceOf('Cake\I18n\Time', $entity->expiry);
+            $this->assertTrue($entity->expiry->isTomorrow());
+        }
 
         foreach (['Date', 'FrozenDate', 'FrozenTime', 'Time'] as $class) {
             $class = 'Cake\I18n\\' . $class;
@@ -67,13 +55,13 @@ class TokenTest extends TestCase
         $entity->set('token', null);
         $this->assertNull($entity->token);
 
-        $entity->set('token', 'test');
-        $this->assertRegExp($regex, $entity->token);
-
-        $entity->set('token', ['first', 'second']);
-        $this->assertRegExp($regex, $entity->token);
-
-        $entity->set('token', (object)['first', 'second']);
-        $this->assertRegExp($regex, $entity->token);
+        foreach ([
+            'test',
+            ['first', 'second'],
+            (object)['first', 'second'],
+        ] as $token) {
+            $entity->set('token', $token);
+            $this->assertRegExp($regex, $entity->token);
+        }
     }
 }

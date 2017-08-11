@@ -2,23 +2,13 @@
 /**
  * This file is part of cakephp-tokens.
  *
- * cakephp-tokens is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
  *
- * cakephp-tokens is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with cakephp-tokens.  If not, see <http://www.gnu.org/licenses/>.
- *
- * @author      Mirko Pagliai <mirko.pagliai@gmail.com>
- * @copyright   Copyright (c) 2016, Mirko Pagliai for Nova Atlantis Ltd
- * @license     http://www.gnu.org/licenses/agpl.txt AGPL License
- * @link        http://git.novatlantis.it Nova Atlantis Ltd
+ * @copyright   Copyright (c) Mirko Pagliai
+ * @link        https://github.com/mirko-pagliai/cakephp-thumber
+ * @license     https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Tokens\Model\Table;
 
@@ -28,6 +18,7 @@ use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
+use Cake\ORM\ResultSet;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -113,13 +104,13 @@ class TokensTable extends Table
         $query = parent::find($type, $options);
 
         //Unserializes the `extra` field.
-        $query->formatResults(function ($results) {
-            return $results->map(function ($row) {
-                if ($row->extra) {
-                    $row->extra = unserialize($row->extra);
+        $query->formatResults(function (ResultSet $results) {
+            return $results->map(function (Token $token) {
+                if ($token->extra) {
+                    $token->extra = unserialize($token->extra);
                 }
 
-                return $row;
+                return $token;
             });
         });
 
@@ -129,10 +120,9 @@ class TokensTable extends Table
     /**
      * `active` find method
      * @param \Cake\ORM\Query $query Query
-     * @param array $options The options to use for the find
      * @return \Cake\ORM\Query
      */
-    public function findActive(Query $query, array $options)
+    public function findActive(Query $query)
     {
         $query->where(['expiry >=' => new Time]);
 
@@ -142,10 +132,9 @@ class TokensTable extends Table
     /**
      * `expired` find method
      * @param \Cake\ORM\Query $query Query
-     * @param array $options The options to use for the find
      * @return \Cake\ORM\Query
      */
-    public function findExpired(Query $query, array $options)
+    public function findExpired(Query $query)
     {
         $query->where(['expiry <' => new Time]);
 
@@ -184,7 +173,7 @@ class TokensTable extends Table
     public function buildRules(RulesChecker $rules)
     {
         //Uses validation rules as application rules
-        $rules->add(function ($entity) {
+        $rules->add(function (Token $entity) {
             $errors = $this->validator('default')->errors(
                 $entity->extract($this->getSchema()->columns(), true),
                 $entity->isNew()

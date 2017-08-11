@@ -1,5 +1,9 @@
 # 1.x branch
 ## 1.0 branch
+### 1.0.4
+* added initial schema of the plugin database;
+* the MIT license has been applied.
+
 ### 1.0.3
 * fixed bug on `deleteExpired()` and `findExpired()` methods.
 
