@@ -29,13 +29,11 @@ class TokenTest extends TestCase
     {
         $entity = new Token;
 
-        $entity->set('expiry', '+1 day');
-        $this->assertInstanceOf('Cake\I18n\Time', $entity->expiry);
-        $this->assertTrue($entity->expiry->isTomorrow());
-
-        $entity->set('expiry', new Time('+1 day'));
-        $this->assertInstanceOf('Cake\I18n\Time', $entity->expiry);
-        $this->assertTrue($entity->expiry->isTomorrow());
+        foreach (['+1 day', new Time('+1 day')] as $expiry) {
+            $entity->set('expiry', $expiry);
+            $this->assertInstanceOf('Cake\I18n\Time', $entity->expiry);
+            $this->assertTrue($entity->expiry->isTomorrow());
+        }
 
         foreach (['Date', 'FrozenDate', 'FrozenTime', 'Time'] as $class) {
             $class = 'Cake\I18n\\' . $class;
@@ -57,13 +55,13 @@ class TokenTest extends TestCase
         $entity->set('token', null);
         $this->assertNull($entity->token);
 
-        $entity->set('token', 'test');
-        $this->assertRegExp($regex, $entity->token);
-
-        $entity->set('token', ['first', 'second']);
-        $this->assertRegExp($regex, $entity->token);
-
-        $entity->set('token', (object)['first', 'second']);
-        $this->assertRegExp($regex, $entity->token);
+        foreach ([
+            'test',
+            ['first', 'second'],
+            (object)['first', 'second'],
+        ] as $token) {
+            $entity->set('token', $token);
+            $this->assertRegExp($regex, $entity->token);
+        }
     }
 }

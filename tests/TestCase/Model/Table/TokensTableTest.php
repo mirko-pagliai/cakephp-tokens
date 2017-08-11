@@ -71,8 +71,6 @@ class TokensTableTest extends TestCase
     {
         $this->Tokens->deleteAll(['id >=' => 1]);
 
-        unset($this->Users, $this->Tokens);
-
         parent::tearDown();
     }
 

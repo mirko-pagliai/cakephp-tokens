@@ -65,8 +65,6 @@ class TokenTraitTest extends TestCase
     {
         $this->Tokens->deleteAll(['id >=' => 1]);
 
-        unset($this->Tokens, $this->TokenTrait);
-
         parent::tearDown();
     }
 
