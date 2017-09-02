@@ -174,7 +174,7 @@ class TokensTable extends Table
     {
         //Uses validation rules as application rules
         $rules->add(function (Token $entity) {
-            $errors = $this->validator('default')->errors(
+            $errors = $this->getValidator('default')->errors(
                 $entity->extract($this->getSchema()->columns(), true),
                 $entity->isNew()
             );

@@ -1,4 +1,8 @@
 # 1.x branch
+## 1.1 branch
+### 1.1.0
+* updated for CakePHP 3.5.
+
 ## 1.0 branch
 ### 1.0.4
 * added initial schema of the plugin database;

@@ -201,7 +201,7 @@ class TokensTableTest extends TestCase
 
         $this->assertStringEndsWith('FROM tokens Tokens WHERE expiry >= :c0', $query->sql());
 
-        $this->assertInstanceOf('Cake\I18n\Time', $query->valueBinder()->bindings()[':c0']['value']);
+        $this->assertInstanceOf('Cake\I18n\Time', $query->getValueBinder()->bindings()[':c0']['value']);
 
         //Results are tokens with ID 1, 3 and 4
         $this->assertEquals([1, 3, 4], $query->extract('id')->toArray());
@@ -218,7 +218,7 @@ class TokensTableTest extends TestCase
 
         $this->assertStringEndsWith('FROM tokens Tokens WHERE expiry < :c0', $query->sql());
 
-        $this->assertInstanceOf('Cake\I18n\Time', $query->valueBinder()->bindings()[':c0']['value']);
+        $this->assertInstanceOf('Cake\I18n\Time', $query->getValueBinder()->bindings()[':c0']['value']);
 
         //Results is token with ID 2
         $this->assertEquals([2], $query->extract('id')->toArray());
