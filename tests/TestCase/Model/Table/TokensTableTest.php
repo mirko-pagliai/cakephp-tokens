@@ -52,7 +52,9 @@ class TokensTableTest extends TestCase
     }
 
     /**
-     * setUp method
+     * Setup the test case, backup the static object values so they can be
+     * restored. Specifically backs up the contents of Configure and paths in
+     *  App if they have not already been backed up
      * @return void
      */
     public function setUp()
@@ -64,7 +66,7 @@ class TokensTableTest extends TestCase
     }
 
     /**
-     * tearDown method
+     * Teardown any static object changes and restore them
      * @return void
      */
     public function tearDown()
@@ -226,7 +228,7 @@ class TokensTableTest extends TestCase
 
     /**
      * Test initialize method
-     * @return void
+     * @test
      */
     public function testInitialize()
     {
