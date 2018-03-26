@@ -12,8 +12,8 @@
  */
 namespace Tokens\Utility;
 
-use Cake\Network\Exception\InternalErrorException;
 use Cake\ORM\TableRegistry;
+use LogicException;
 use Tokens\Model\Entity\Token;
 
 /**
@@ -72,7 +72,7 @@ trait TokenTrait
      * @param string $token Token value
      * @param array $options Options
      * @return string Token value
-     * @throws InternalErrorException
+     * @throws LogicException
      * @uses getTable()
      */
     public function create($token, array $options = [])
@@ -89,7 +89,7 @@ trait TokenTrait
             $field = collection(array_keys($entity->getErrors()))->first();
             $error = collection(collection(($entity->getErrors()))->first())->first();
 
-            throw new InternalErrorException(sprintf('Error for `%s` field: %s', $field, lcfirst($error)));
+            throw new LogicException(sprintf('Error for `%s` field: %s', $field, lcfirst($error)));
         }
 
         return $entity->token;

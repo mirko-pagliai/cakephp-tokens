@@ -148,7 +148,7 @@ class TokenTraitTest extends TestCase
 
     /**
      * Test for `create()` method, with error
-     * @expectedException Cake\Network\Exception\InternalErrorException
+     * @expectedException LogicException
      * @expectedExceptionMessage Error for `type` field: the provided value is invalid
      * @test
      */
