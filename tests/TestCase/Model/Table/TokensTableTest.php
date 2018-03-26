@@ -29,11 +29,6 @@ class TokensTableTest extends TestCase
     protected $Tokens;
 
     /**
-     * @var \Cake\ORM\Association\BelongsTo
-     */
-    protected $Users;
-
-    /**
      * Fixtures
      * @var array
      */
@@ -52,7 +47,9 @@ class TokensTableTest extends TestCase
     }
 
     /**
-     * setUp method
+     * Setup the test case, backup the static object values so they can be
+     * restored. Specifically backs up the contents of Configure and paths in
+     *  App if they have not already been backed up
      * @return void
      */
     public function setUp()
@@ -60,11 +57,10 @@ class TokensTableTest extends TestCase
         parent::setUp();
 
         $this->Tokens = $this->getTable();
-        $this->Users = $this->Tokens->Users;
     }
 
     /**
-     * tearDown method
+     * Teardown any static object changes and restore them
      * @return void
      */
     public function tearDown()
@@ -90,7 +86,7 @@ class TokensTableTest extends TestCase
         $this->assertEquals(1, $token->user->id);
 
         //User with ID 2 has tokens with ID 3 and 4
-        $tokens = $this->Users->findById(2)->contain('Tokens')->extract('tokens')->first();
+        $tokens = $this->Tokens->Users->findById(2)->contain('Tokens')->extract('tokens')->first();
         $this->assertEquals(2, count($tokens));
         $this->assertEquals(2, $tokens[0]->id);
         $this->assertEquals(4, $tokens[1]->id);
@@ -144,10 +140,9 @@ class TokensTableTest extends TestCase
      */
     public function testDeleteExpired()
     {
+        //Token with ID 2 does not exist anymore
         $count = $this->Tokens->deleteExpired();
         $this->assertEquals(1, $count);
-
-        //Token with ID 2 does not exist anymore
         $this->assertEmpty($this->Tokens->findById(2)->first());
 
         $this->loadFixtures('Tokens');
@@ -155,22 +150,20 @@ class TokensTableTest extends TestCase
         //Same as tokens with ID 2 and 4
         $token = new Token(['user_id' => 2]);
 
+        //Tokens with ID 2 and 4 do not exist anymore
         $count = $this->Tokens->deleteExpired($token);
         $this->assertEquals(2, $count);
-
-        //Tokens with ID 2 and 4 do not exist anymore
-        $this->assertEmpty($this->Tokens->find()->where(['id' => 2])->orWhere(['id' => 4])->toArray());
+        $this->assertEmpty($this->Tokens->find()->where(['OR' => [['id' => 2], ['id' => 4]]])->all());
 
         $this->loadFixtures('Tokens');
 
         //Same as token with ID 3
         $token = new Token(['token' => 'token3']);
 
+        //Tokens with ID 2 and 3 do not exist anymore
         $count = $this->Tokens->deleteExpired($token);
         $this->assertEquals(2, $count);
-
-        //Tokens with ID 2 and 3 do not exist anymore
-        $this->assertEmpty($this->Tokens->find()->where(['id' => 2])->orWhere(['id' => 3])->toArray());
+        $this->assertEmpty($this->Tokens->find()->where(['OR' => [['id' => 2], ['id' => 3]]])->all());
     }
 
     /**
@@ -183,7 +176,6 @@ class TokensTableTest extends TestCase
         $this->assertInstanceOf('Cake\ORM\Query', $query);
 
         $tokens = $query->extract('extra')->toArray();
-
         $this->assertEquals(null, $tokens[0]);
         $this->assertEquals('testExtra', $tokens[1]);
         $this->assertEquals(['first', 'second'], $tokens[2]);
@@ -198,9 +190,7 @@ class TokensTableTest extends TestCase
     {
         $query = $this->Tokens->find('active');
         $this->assertInstanceOf('Cake\ORM\Query', $query);
-
         $this->assertStringEndsWith('FROM tokens Tokens WHERE expiry >= :c0', $query->sql());
-
         $this->assertInstanceOf('Cake\I18n\Time', $query->getValueBinder()->bindings()[':c0']['value']);
 
         //Results are tokens with ID 1, 3 and 4
@@ -215,9 +205,7 @@ class TokensTableTest extends TestCase
     {
         $query = $this->Tokens->find('expired');
         $this->assertInstanceOf('Cake\ORM\Query', $query);
-
         $this->assertStringEndsWith('FROM tokens Tokens WHERE expiry < :c0', $query->sql());
-
         $this->assertInstanceOf('Cake\I18n\Time', $query->getValueBinder()->bindings()[':c0']['value']);
 
         //Results is token with ID 2
@@ -226,7 +214,7 @@ class TokensTableTest extends TestCase
 
     /**
      * Test initialize method
-     * @return void
+     * @test
      */
     public function testInitialize()
     {
@@ -270,8 +258,7 @@ class TokensTableTest extends TestCase
         Configure::write('Tokens.usersClassOptions', false);
 
         TableRegistry::clear();
-        $this->Tokens = $this->getTable();
-        $this->Tokens->Users;
+        $this->getTable()->Users;
     }
 
     /**

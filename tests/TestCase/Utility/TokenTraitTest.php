@@ -46,7 +46,9 @@ class TokenTraitTest extends TestCase
     ];
 
     /**
-     * setUp method
+     * Setup the test case, backup the static object values so they can be
+     * restored. Specifically backs up the contents of Configure and paths in
+     *  App if they have not already been backed up
      * @return void
      */
     public function setUp()
@@ -58,7 +60,7 @@ class TokenTraitTest extends TestCase
     }
 
     /**
-     * tearDown method
+     * Teardown any static object changes and restore them
      * @return void
      */
     public function tearDown()
@@ -146,7 +148,7 @@ class TokenTraitTest extends TestCase
 
     /**
      * Test for `create()` method, with error
-     * @expectedException Cake\Network\Exception\InternalErrorException
+     * @expectedException LogicException
      * @expectedExceptionMessage Error for `type` field: the provided value is invalid
      * @test
      */
