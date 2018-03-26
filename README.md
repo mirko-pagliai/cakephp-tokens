@@ -1,6 +1,8 @@
 # Tokens plugin
 
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.txt)
 [![Build Status](https://travis-ci.org/mirko-pagliai/cakephp-tokens.svg?branch=master)](https://travis-ci.org/mirko-pagliai/cakephp-tokens)
+[![Build status](https://ci.appveyor.com/api/projects/status/03gdahoap22rbkkh?svg=true)](https://ci.appveyor.com/project/mirko-pagliai/cakephp-tokens)
 [![Coverage Status](https://img.shields.io/codecov/c/github/mirko-pagliai/cakephp-tokens.svg?style=flat-square)](https://codecov.io/github/mirko-pagliai/cakephp-tokens)
 
 *Tokens* is a CakePHP plugin to allows you to handle tokens.
