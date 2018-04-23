@@ -14,7 +14,6 @@ use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
-use Cake\Routing\DispatcherFactory;
 
 ini_set('intl.default_locale', 'en_US');
 
@@ -108,5 +107,4 @@ Configure::write('Session', [
  */
 Plugin::load('Tokens', ['bootstrap' => true, 'path' => ROOT]);
 
-DispatcherFactory::add('Routing');
-DispatcherFactory::add('ControllerFactory');
+$_SERVER['PHP_SELF'] = '/';
