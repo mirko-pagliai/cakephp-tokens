@@ -15,8 +15,8 @@ namespace Tokens\Test\TestCase\Utility;
 use Cake\Controller\ComponentRegistry;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use Reflection\ReflectionTrait;
 use Tokens\Controller\Component\TokenComponent;
+use Tools\ReflectionTrait;
 
 /**
  * TokenTraitTest Test Case
