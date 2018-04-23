@@ -1,5 +1,9 @@
 # 1.x branch
 ## 1.1 branch
+### 1.1.2
+* now it uses the `mirko-pagliai/php-tools` package. This also replaces
+    `mirko-pagliai/reflection`.
+
 ### 1.1.1
 * some changes to be ready for CakePHP 3.6;
 * added config for AppVeyor tests.
