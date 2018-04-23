@@ -157,7 +157,7 @@ class TokensTable extends Table
         if (Configure::read('Tokens.usersClassOptions')) {
             $this->belongsTo('Users', Configure::read('Tokens.usersClassOptions'));
 
-            if (!$this->Users->association('tokens')) {
+            if (!$this->Users->hasAssociation('tokens')) {
                 $this->Users->hasMany('Tokens')->setForeignKey('user_id');
             }
         }
