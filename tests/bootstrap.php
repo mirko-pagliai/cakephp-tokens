@@ -40,13 +40,11 @@ define('CACHE', TMP);
 define('LOGS', TMP);
 define('SESSIONS', TMP . 'sessions' . DS);
 
-//@codingStandardsIgnoreStart
-@mkdir(LOGS);
-@mkdir(SESSIONS);
-@mkdir(CACHE);
-@mkdir(CACHE . 'views');
-@mkdir(CACHE . 'models');
-//@codingStandardsIgnoreEnd
+safe_mkdir(LOGS);
+safe_mkdir(SESSIONS);
+safe_mkdir(CACHE);
+safe_mkdir(CACHE . 'views');
+safe_mkdir(CACHE . 'models');
 
 require CORE_PATH . 'config' . DS . 'bootstrap.php';
 
@@ -68,7 +66,6 @@ Configure::write('App', [
     'cssBaseUrl' => 'css/',
     'paths' => [
         'plugins' => [APP . 'Plugin' . DS],
-        'templates' => [APP . 'TestApp' . DS . 'Template' . DS],
     ]
 ]);
 
@@ -91,16 +88,9 @@ Cache::setConfig([
 ]);
 
 // Ensure default test connection is defined
-if (!getenv('db_dsn')) {
-    putenv('db_dsn=sqlite://127.0.0.1/' . TMP . 'debug_kit_test.sqlite');
-}
+ConnectionManager::setConfig('test', ['url' => 'sqlite:///' . TMP . 'test.sq3']);
 
-// Use the test connection for 'debug_kit' as well.
-ConnectionManager::setConfig('test', ['url' => getenv('db_dsn'), 'timezone' => 'UTC']);
-
-Configure::write('Session', [
-    'defaults' => 'php'
-]);
+Configure::write('Session', ['defaults' => 'php']);
 
 /**
  * Loads plugin
