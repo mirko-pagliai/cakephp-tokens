@@ -131,7 +131,7 @@ class TokensTableTest extends TestCase
             'extra' => (object)['first', 'second'],
         ]));
         $this->assertNotEmpty($token);
-        $this->assertEquals('O:8:"stdClass":2:{i:0;s:5:"first";i:1;s:6:"second";}', $token->extra);
+        $this->assertEquals((object)['first', 'second'], unserialize($token->extra));
     }
 
     /**
