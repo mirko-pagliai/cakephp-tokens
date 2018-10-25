@@ -12,7 +12,6 @@
  */
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 
 ini_set('intl.default_locale', 'en_US');
@@ -91,10 +90,5 @@ Cache::setConfig([
 ConnectionManager::setConfig('test', ['url' => 'sqlite:///' . TMP . 'test.sq3']);
 
 Configure::write('Session', ['defaults' => 'php']);
-
-/**
- * Loads plugin
- */
-Plugin::load('Tokens', ['bootstrap' => true, 'path' => ROOT]);
 
 $_SERVER['PHP_SELF'] = '/';

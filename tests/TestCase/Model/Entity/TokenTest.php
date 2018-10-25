@@ -12,6 +12,7 @@
  */
 namespace Tokens\Test\TestCase\Model\Entity;
 
+use Cake\Http\BaseApplication;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
 use Tokens\Model\Entity\Token;
@@ -21,6 +22,20 @@ use Tokens\Model\Entity\Token;
  */
 class TokenTest extends TestCase
 {
+    /**
+     * Setup the test case, backup the static object values so they can be
+     * restored. Specifically backs up the contents of Configure and paths in
+     *  App if they have not already been backed up
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+
+        $app = $this->getMockForAbstractClass(BaseApplication::class, ['']);
+        $app->addPlugin('Tokens')->pluginBootstrap();
+    }
+
     /**
      * Test for `_setExpiry()` method
      * @test

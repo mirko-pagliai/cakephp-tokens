@@ -13,6 +13,7 @@
 namespace Tokens\Test\TestCase\Model\Table;
 
 use Cake\Core\Configure;
+use Cake\Http\BaseApplication;
 use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -33,8 +34,8 @@ class TokensTableTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.users',
-        'plugin.tokens.tokens',
+        'core.Users',
+        'plugin.Tokens.Tokens',
     ];
 
     /**
@@ -55,6 +56,9 @@ class TokensTableTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+
+        $app = $this->getMockForAbstractClass(BaseApplication::class, ['']);
+        $app->addPlugin('Tokens')->pluginBootstrap();
 
         $this->Tokens = $this->getTable();
     }
