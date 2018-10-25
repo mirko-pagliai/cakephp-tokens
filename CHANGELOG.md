@@ -1,5 +1,8 @@
 # 1.x branch
 ## 1.2 branch
+### 1.2.1
+* updated again for CakePHP 3.6.
+
 ### 1.2.0
 * updated for CakePHP 3.6;
 * now it uses the `mirko-pagliai/php-tools` package. This also replaces

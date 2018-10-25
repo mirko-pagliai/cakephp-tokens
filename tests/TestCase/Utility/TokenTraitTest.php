@@ -13,6 +13,7 @@
 namespace Tokens\Test\TestCase\Utility;
 
 use Cake\Controller\ComponentRegistry;
+use Cake\Http\BaseApplication;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Tokens\Controller\Component\TokenComponent;
@@ -41,8 +42,8 @@ class TokenTraitTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.users',
-        'plugin.tokens.tokens',
+        'core.Users',
+        'plugin.Tokens.Tokens',
     ];
 
     /**
@@ -54,6 +55,9 @@ class TokenTraitTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+
+        $app = $this->getMockForAbstractClass(BaseApplication::class, ['']);
+        $app->addPlugin('Tokens')->pluginBootstrap();
 
         $this->Tokens = TableRegistry::get('Tokens.Tokens');
         $this->TokenTrait = new TokenComponent(new ComponentRegistry);
