@@ -14,9 +14,12 @@ namespace Tokens\Test\TestCase\Utility;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Http\BaseApplication;
+use Cake\I18n\Time;
+use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Tokens\Controller\Component\TokenComponent;
+use Tokens\Model\Table\TokensTable;
 use Tools\ReflectionTrait;
 
 /**
@@ -80,7 +83,7 @@ class TokenTraitTest extends TestCase
      */
     public function testFind()
     {
-        $this->assertInstanceOf('Cake\ORM\Query', $this->invokeMethod($this->TokenTrait, 'find'));
+        $this->assertInstanceOf(Query::class, $this->invokeMethod($this->TokenTrait, 'find'));
     }
 
     /**
@@ -89,7 +92,7 @@ class TokenTraitTest extends TestCase
      */
     public function testGetTable()
     {
-        $this->assertInstanceOf('Tokens\Model\Table\TokensTable', $this->invokeMethod($this->TokenTrait, 'getTable'));
+        $this->assertInstanceOf(TokensTable::class, $this->invokeMethod($this->TokenTrait, 'getTable'));
     }
 
     /**
@@ -146,7 +149,7 @@ class TokenTraitTest extends TestCase
         $this->assertEquals(2, $token->user->id);
         $this->assertEquals('testType', $token->type);
         $this->assertEquals(['extra1', 'extra2'], $token->extra);
-        $this->assertInstanceOf('Cake\I18n\Time', $token->expiry);
+        $this->assertInstanceOf(Time::class, $token->expiry);
         $this->assertTrue($token->expiry->isTomorrow());
     }
 
