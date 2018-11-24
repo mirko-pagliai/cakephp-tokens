@@ -229,7 +229,7 @@ class TokensTableTest extends TestCase
 
         $this->assertInstanceOf('Cake\ORM\Association\BelongsTo', $this->Tokens->Users);
         $this->assertEquals('user_id', $this->Tokens->Users->getForeignKey());
-        $this->assertEquals('Users', $this->Tokens->Users->className());
+        $this->assertEquals('Users', $this->Tokens->Users->getClassName());
     }
 
     /**
@@ -243,7 +243,7 @@ class TokensTableTest extends TestCase
         TableRegistry::clear();
         $this->Tokens = $this->getTable();
 
-        $this->assertEquals('TestApp.Users', $this->Tokens->Users->className());
+        $this->assertEquals('TestApp.Users', $this->Tokens->Users->getClassName());
         $this->assertEquals('This is a test method', $this->Tokens->Users->test());
 
         $token = $this->Tokens->findById(2)->contain('Users')->first();
