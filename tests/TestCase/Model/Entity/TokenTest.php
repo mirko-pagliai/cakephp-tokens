@@ -46,7 +46,7 @@ class TokenTest extends TestCase
 
         foreach (['+1 day', new Time('+1 day')] as $expiry) {
             $entity->set('expiry', $expiry);
-            $this->assertInstanceOf('Cake\I18n\Time', $entity->expiry);
+            $this->assertInstanceOf(Time::class, $entity->expiry);
             $this->assertTrue($entity->expiry->isTomorrow());
         }
 
@@ -64,9 +64,7 @@ class TokenTest extends TestCase
     public function testTokenSetMutator()
     {
         $regex = '/^[a-z0-9]{25}$/';
-
         $entity = new Token;
-
         $entity->set('token', null);
         $this->assertNull($entity->token);
 
