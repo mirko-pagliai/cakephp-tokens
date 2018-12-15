@@ -13,19 +13,17 @@
 namespace Tokens\Test\TestCase\Utility;
 
 use Cake\Controller\ComponentRegistry;
-use Cake\Http\BaseApplication;
+use Cake\I18n\Time;
+use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Tokens\Controller\Component\TokenComponent;
-use Tools\ReflectionTrait;
 
 /**
  * TokenTraitTest Test Case
  */
 class TokenTraitTest extends TestCase
 {
-    use ReflectionTrait;
-
     /**
      * A class that uses the trait
      * @var \TokenTrait
@@ -47,24 +45,20 @@ class TokenTraitTest extends TestCase
     ];
 
     /**
-     * Setup the test case, backup the static object values so they can be
-     * restored. Specifically backs up the contents of Configure and paths in
-     *  App if they have not already been backed up
+     * Called before every test method
      * @return void
      */
     public function setUp()
     {
         parent::setUp();
 
-        $app = $this->getMockForAbstractClass(BaseApplication::class, ['']);
-        $app->addPlugin('Tokens')->pluginBootstrap();
-
+        $this->loadPlugins(['Tokens']);
         $this->Tokens = TableRegistry::get('Tokens.Tokens');
         $this->TokenTrait = new TokenComponent(new ComponentRegistry);
     }
 
     /**
-     * Teardown any static object changes and restore them
+     * Called after every test method
      * @return void
      */
     public function tearDown()
@@ -80,16 +74,7 @@ class TokenTraitTest extends TestCase
      */
     public function testFind()
     {
-        $this->assertInstanceOf('Cake\ORM\Query', $this->invokeMethod($this->TokenTrait, 'find'));
-    }
-
-    /**
-     * Test for `getTable()` method
-     * @test
-     */
-    public function testGetTable()
-    {
-        $this->assertInstanceOf('Tokens\Model\Table\TokensTable', $this->invokeMethod($this->TokenTrait, 'getTable'));
+        $this->assertInstanceOf(Query::class, $this->TokenTrait->find());
     }
 
     /**
@@ -146,7 +131,7 @@ class TokenTraitTest extends TestCase
         $this->assertEquals(2, $token->user->id);
         $this->assertEquals('testType', $token->type);
         $this->assertEquals(['extra1', 'extra2'], $token->extra);
-        $this->assertInstanceOf('Cake\I18n\Time', $token->expiry);
+        $this->assertInstanceOf(Time::class, $token->expiry);
         $this->assertTrue($token->expiry->isTomorrow());
     }
 

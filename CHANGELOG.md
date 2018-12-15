@@ -1,5 +1,9 @@
 # 1.x branch
 ## 1.2 branch
+### 1.2.2
+* `TokenTrait::find()`  method is now public;
+* updated for CakePHP 3.7.
+
 ### 1.2.1
 * updated again for CakePHP 3.6.
 

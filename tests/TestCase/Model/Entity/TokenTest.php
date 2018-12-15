@@ -23,9 +23,7 @@ use Tokens\Model\Entity\Token;
 class TokenTest extends TestCase
 {
     /**
-     * Setup the test case, backup the static object values so they can be
-     * restored. Specifically backs up the contents of Configure and paths in
-     *  App if they have not already been backed up
+     * Called before every test method
      * @return void
      */
     public function setUp()
@@ -46,7 +44,7 @@ class TokenTest extends TestCase
 
         foreach (['+1 day', new Time('+1 day')] as $expiry) {
             $entity->set('expiry', $expiry);
-            $this->assertInstanceOf('Cake\I18n\Time', $entity->expiry);
+            $this->assertInstanceOf(Time::class, $entity->expiry);
             $this->assertTrue($entity->expiry->isTomorrow());
         }
 
@@ -64,9 +62,7 @@ class TokenTest extends TestCase
     public function testTokenSetMutator()
     {
         $regex = '/^[a-z0-9]{25}$/';
-
         $entity = new Token;
-
         $entity->set('token', null);
         $this->assertNull($entity->token);
 
