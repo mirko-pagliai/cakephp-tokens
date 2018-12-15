@@ -13,22 +13,17 @@
 namespace Tokens\Test\TestCase\Utility;
 
 use Cake\Controller\ComponentRegistry;
-use Cake\Http\BaseApplication;
 use Cake\I18n\Time;
 use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Tokens\Controller\Component\TokenComponent;
-use Tokens\Model\Table\TokensTable;
-use Tools\ReflectionTrait;
 
 /**
  * TokenTraitTest Test Case
  */
 class TokenTraitTest extends TestCase
 {
-    use ReflectionTrait;
-
     /**
      * A class that uses the trait
      * @var \TokenTrait
@@ -57,9 +52,7 @@ class TokenTraitTest extends TestCase
     {
         parent::setUp();
 
-        $app = $this->getMockForAbstractClass(BaseApplication::class, ['']);
-        $app->addPlugin('Tokens')->pluginBootstrap();
-
+        $this->loadPlugins(['Tokens']);
         $this->Tokens = TableRegistry::get('Tokens.Tokens');
         $this->TokenTrait = new TokenComponent(new ComponentRegistry);
     }
@@ -81,16 +74,7 @@ class TokenTraitTest extends TestCase
      */
     public function testFind()
     {
-        $this->assertInstanceOf(Query::class, $this->invokeMethod($this->TokenTrait, 'find'));
-    }
-
-    /**
-     * Test for `getTable()` method
-     * @test
-     */
-    public function testGetTable()
-    {
-        $this->assertInstanceOf(TokensTable::class, $this->invokeMethod($this->TokenTrait, 'getTable'));
+        $this->assertInstanceOf(Query::class, $this->TokenTrait->find());
     }
 
     /**
