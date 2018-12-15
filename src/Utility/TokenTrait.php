@@ -32,12 +32,12 @@ trait TokenTrait
     }
 
     /**
-     * Internal `find()` method
+     * `find()` method
      * @param array $conditions Conditions for `where()`
      * @return \Cake\ORM\Query
      * @uses getTable()
      */
-    protected function find(array $conditions = [])
+    public function find(array $conditions = [])
     {
         return $this->getTable()->find('active')->where($conditions);
     }
@@ -62,7 +62,7 @@ trait TokenTrait
             $conditions[$key] = empty($options[$key]) ? null : $options[$key];
         }
 
-        return (bool)$this->find($conditions)->count();
+        return (bool)!$this->find($conditions)->isEmpty();
     }
 
     /**
@@ -106,10 +106,6 @@ trait TokenTrait
     {
         $query = $this->find(compact('token'));
 
-        if (!$query->count()) {
-            return false;
-        }
-
-        return $this->getTable()->delete($query->first());
+        return $query->count() ? $this->getTable()->delete($query->first()) : false;
     }
 }
