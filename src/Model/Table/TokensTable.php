@@ -77,7 +77,7 @@ class TokensTable extends Table
      */
     public function deleteExpired(Token $entity = null)
     {
-        $conditions[] = ['expiry <' => new Time()];
+        $conditions[] = ['expiry <' => new Time];
 
         if (!empty($entity->token)) {
             $conditions[] = ['token' => $entity->token];
@@ -195,24 +195,11 @@ class TokensTable extends Table
      */
     public function validationDefault(Validator $validator)
     {
-        $validator
-            ->integer('id')
-            ->allowEmpty('id', 'create');
-
-        $validator
-            ->requirePresence('token', 'create')
-            ->notEmpty('token');
-
-        $validator
-            ->lengthBetween('type', [3, 255])
-            ->allowEmpty('type');
-
-        $validator
-            ->allowEmpty('extra');
-
-        $validator
-            ->dateTime('expiry')
-            ->allowEmpty('expiry');
+        $validator->integer('id')->allowEmpty('id', 'create');
+        $validator->requirePresence('token', 'create')->notEmpty('token');
+        $validator->lengthBetween('type', [3, 255])->allowEmpty('type');
+        $validator->allowEmpty('extra');
+        $validator->dateTime('expiry')->allowEmpty('expiry');
 
         return $validator;
     }

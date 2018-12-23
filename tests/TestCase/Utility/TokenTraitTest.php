@@ -15,8 +15,8 @@ namespace Tokens\Test\TestCase\Utility;
 use Cake\Controller\ComponentRegistry;
 use Cake\I18n\Time;
 use Cake\ORM\Query;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use LogicException;
 use Tokens\Controller\Component\TokenComponent;
 
 /**
@@ -53,7 +53,8 @@ class TokenTraitTest extends TestCase
         parent::setUp();
 
         $this->loadPlugins(['Tokens']);
-        $this->Tokens = TableRegistry::get('Tokens.Tokens');
+
+        $this->Tokens = $this->getMockForModel('Tokens.Tokens', null);
         $this->TokenTrait = new TokenComponent(new ComponentRegistry);
     }
 
@@ -133,16 +134,10 @@ class TokenTraitTest extends TestCase
         $this->assertEquals(['extra1', 'extra2'], $token->extra);
         $this->assertInstanceOf(Time::class, $token->expiry);
         $this->assertTrue($token->expiry->isTomorrow());
-    }
 
-    /**
-     * Test for `create()` method, with error
-     * @expectedException LogicException
-     * @expectedExceptionMessage Error for `type` field: the provided value is invalid
-     * @test
-     */
-    public function testCreateWithError()
-    {
+        //With error
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('Error for `type` field: the provided value is invalid');
         $this->TokenTrait->create('token_3', ['type' => 'aa']);
     }
 

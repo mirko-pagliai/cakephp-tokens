@@ -13,6 +13,9 @@
 namespace Tokens\Model\Entity;
 
 use Cake\Core\Configure;
+use Cake\I18n\Date;
+use Cake\I18n\FrozenDate;
+use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\Utility\Security;
@@ -49,12 +52,7 @@ class Token extends Entity
      */
     protected function _setExpiry($expiry)
     {
-        if (is_object($expiry) && in_array(get_class($expiry), [
-            'Cake\I18n\Date',
-            'Cake\I18n\Time',
-            'Cake\I18n\FrozenDate',
-            'Cake\I18n\FrozenTime',
-        ])) {
+        if (is_object($expiry) && in_array(get_class($expiry), [Date::class, FrozenDate::class, FrozenTime::class, Time::class])) {
             return $expiry;
         }
 
@@ -69,13 +67,10 @@ class Token extends Entity
     protected function _setToken($token)
     {
         //Prevents an empty value is serialized
-        if (empty($token)) {
+        if (!$token) {
             return $token;
         }
-
-        if (!is_string($token)) {
-            $token = serialize($token);
-        }
+        $token = is_string($token) ? $token : serialize($token);
 
         return substr(Security::hash($token, 'sha1', Configure::read('Tokens.tokenSalt')), 0, 25);
     }

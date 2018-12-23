@@ -59,10 +59,10 @@ trait TokenTrait
         $conditions = compact('token');
 
         foreach (['user_id', 'type'] as $key) {
-            $conditions[$key] = empty($options[$key]) ? null : $options[$key];
+            $conditions[$key] = array_key_exists($key, $options) ? $options[$key] : null;
         }
 
-        return (bool)!$this->find($conditions)->isEmpty();
+        return !$this->find($conditions)->isEmpty();
     }
 
     /**
@@ -80,7 +80,7 @@ trait TokenTrait
         $entity = new Token(compact('token'));
 
         foreach (['user_id', 'type', 'extra', 'expiry'] as $key) {
-            if (!empty($options[$key])) {
+            if (array_key_exists($key, $options)) {
                 $entity->set($key, $options[$key]);
             }
         }

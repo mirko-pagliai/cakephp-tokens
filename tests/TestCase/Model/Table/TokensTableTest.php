@@ -13,12 +13,16 @@
 namespace Tokens\Test\TestCase\Model\Table;
 
 use Cake\Core\Configure;
-use Cake\Http\BaseApplication;
+use Cake\I18n\Date;
+use Cake\I18n\FrozenDate;
+use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
+use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use TestApp\Model\Entity\User;
 use Tokens\Model\Entity\Token;
 use Tokens\Model\Table\TokensTable;
 
@@ -58,10 +62,9 @@ class TokensTableTest extends TestCase
     {
         parent::setUp();
 
-        $app = $this->getMockForAbstractClass(BaseApplication::class, ['']);
-        $app->addPlugin('Tokens')->pluginBootstrap();
+        $this->loadPlugins(['Tokens']);
 
-        $this->Tokens = $this->getTable();
+        $this->Tokens = $this->getMockForModel('Tokens.Tokens', null);
     }
 
     /**
@@ -109,18 +112,12 @@ class TokensTableTest extends TestCase
      */
     public function testBeforeSave()
     {
-        $token = $this->Tokens->save(new Token([
-            'token' => 'test1',
-            'expiry' => '+1 day',
-        ]));
+        $token = $this->Tokens->save(new Token(['token' => 'test1', 'expiry' => '+1 day']));
         $this->assertNotEmpty($token);
         $this->assertTrue($token->expiry->isTomorrow());
         $this->assertInstanceOf(Time::class, $token->expiry);
 
-        $token = $this->Tokens->save(new Token([
-            'token' => 'test2',
-            'extra' => 'testExtra',
-        ]));
+        $token = $this->Tokens->save(new Token(['token' => 'test2', 'extra' => 'testExtra']));
         $this->assertNotEmpty($token);
         $this->assertEquals('s:9:"testExtra";', $token->extra);
 
@@ -150,9 +147,8 @@ class TokensTableTest extends TestCase
         $this->assertEquals(1, $count);
         $this->assertEmpty($this->Tokens->findById(2)->first());
 
-        $this->loadFixtures('Tokens');
-
         //Same as tokens with ID 2 and 4
+        $this->loadFixtures('Tokens');
         $token = new Token(['user_id' => 2]);
 
         //Tokens with ID 2 and 4 do not exist anymore
@@ -160,9 +156,8 @@ class TokensTableTest extends TestCase
         $this->assertEquals(2, $count);
         $this->assertEmpty($this->Tokens->find()->where(['OR' => [['id' => 2], ['id' => 4]]])->all());
 
-        $this->loadFixtures('Tokens');
-
         //Same as token with ID 3
+        $this->loadFixtures('Tokens');
         $token = new Token(['token' => 'token3']);
 
         //Tokens with ID 2 and 3 do not exist anymore
@@ -230,7 +225,7 @@ class TokensTableTest extends TestCase
         $this->assertEquals('token', $this->Tokens->getDisplayField());
         $this->assertEquals('id', $this->Tokens->getPrimaryKey());
 
-        $this->assertInstanceOf('Cake\ORM\Association\BelongsTo', $this->Tokens->Users);
+        $this->assertInstanceOf(BelongsTo::class, $this->Tokens->Users);
         $this->assertEquals('user_id', $this->Tokens->Users->getForeignKey());
         $this->assertEquals('Users', $this->Tokens->Users->getClassName());
     }
@@ -250,7 +245,7 @@ class TokensTableTest extends TestCase
         $this->assertEquals('This is a test method', $this->Tokens->Users->test());
 
         $token = $this->Tokens->findById(2)->contain('Users')->first();
-        $this->assertInstanceOf('TestApp\Model\Entity\User', $token->user);
+        $this->assertInstanceOf(User::class, $token->user);
         $this->assertEquals('This is a test property', $token->user->test);
     }
 
@@ -275,18 +270,12 @@ class TokensTableTest extends TestCase
     public function testRulesForUserId()
     {
         //Valid `user_id` value
-        $token = $this->Tokens->newEntity([
-            'user_id' => '2',
-            'token' => 'firstToken',
-        ]);
+        $token = $this->Tokens->newEntity(['user_id' => '2', 'token' => 'firstToken']);
         $this->assertNotEmpty($this->Tokens->save($token));
         $this->assertEmpty($token->getErrors());
 
         //Invalid `user_id` value (the user does not exist)
-        $token = $this->Tokens->newEntity([
-            'user_id' => '999',
-            'token' => 'secondToken',
-        ]);
+        $token = $this->Tokens->newEntity(['user_id' => '999', 'token' => 'secondToken']);
         $this->assertFalse($this->Tokens->save($token));
         $this->assertEquals(['user_id' => ['_existsIn' => 'This value does not exist']], $token->getErrors());
     }
@@ -300,7 +289,7 @@ class TokensTableTest extends TestCase
         $token = $this->Tokens->save(new Token(['token' => 'test1']));
         $this->assertInstanceOf(Token::class, $token);
         $this->assertEquals(null, $token->user_id);
-        $this->assertRegExp('/^[a-z0-9]{25}$/', $token->token);
+        $this->assertRegExp('/^[\w\d]{25}$/', $token->token);
         $this->assertEmpty($token->type);
         $this->assertInstanceOf(Time::class, $token->expiry);
         $this->assertEmpty($token->extra);
@@ -313,20 +302,13 @@ class TokensTableTest extends TestCase
     public function testValidationForExpiry()
     {
         //Valid `expiry` values
-        foreach (['Date', 'FrozenDate', 'FrozenTime', 'Time'] as $class) {
-            $class = '\Cake\I18n\\' . $class;
-            $token = $this->Tokens->newEntity([
-                'token' => 'test',
-                'expiry' => new $class,
-            ]);
+        foreach ([Date::class, FrozenDate::class, FrozenTime::class, Time::class] as $class) {
+            $token = $this->Tokens->newEntity(['token' => 'test', 'expiry' => new $class]);
             $this->assertEmpty($token->getErrors());
         }
 
         //Invalid `expiry` value
-        $token = $this->Tokens->newEntity([
-            'token' => 'test',
-            'expiry' => 'thisIsAString',
-        ]);
+        $token = $this->Tokens->newEntity(['token' => 'test', 'expiry' => 'string']);
         $this->assertEquals(['expiry' => ['dateTime' => 'The provided value is invalid']], $token->getErrors());
     }
 
@@ -350,31 +332,19 @@ class TokensTableTest extends TestCase
     public function testValidationForType()
     {
         //Valid `type` value
-        $token = $this->Tokens->newEntity([
-            'token' => 'test',
-            'type' => '123',
-        ]);
+        $token = $this->Tokens->newEntity(['token' => 'test', 'type' => '123']);
         $this->assertEmpty($token->getErrors());
 
         //Valid `type` value
-        $token = $this->Tokens->newEntity([
-            'token' => 'test',
-            'type' => str_repeat('a', 255),
-        ]);
+        $token = $this->Tokens->newEntity(['token' => 'test', 'type' => str_repeat('a', 255)]);
         $this->assertEmpty($token->getErrors());
 
         //Invalid `type` value (it is too short)
-        $token = $this->Tokens->newEntity([
-            'token' => 'test',
-            'type' => '12',
-        ]);
+        $token = $this->Tokens->newEntity(['token' => 'test', 'type' => '12']);
         $this->assertEquals(['type' => ['lengthBetween' => 'The provided value is invalid']], $token->getErrors());
 
         //Invalid `type` value (it is too long)
-        $token = $this->Tokens->newEntity([
-            'token' => 'test',
-            'type' => str_repeat('a', 256),
-        ]);
+        $token = $this->Tokens->newEntity(['token' => 'test', 'type' => str_repeat('a', 256)]);
         $this->assertEquals(['type' => ['lengthBetween' => 'The provided value is invalid']], $token->getErrors());
     }
 }
