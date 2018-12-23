@@ -228,6 +228,13 @@ class TokensTableTest extends TestCase
         $this->assertInstanceOf(BelongsTo::class, $this->Tokens->Users);
         $this->assertEquals('user_id', $this->Tokens->Users->getForeignKey());
         $this->assertEquals('Users', $this->Tokens->Users->getClassName());
+
+        //Using another table
+        $usersClassOptions = ['className' => 'AnotherUserTable',  'foreignKey' => 'user_id'];
+        $Tokens = $this->getMockForModel('Tokens.Tokens', null, compact('usersClassOptions'));
+        $this->assertInstanceOf(BelongsTo::class, $Tokens->Users);
+        $this->assertEquals('user_id', $Tokens->Users->getForeignKey());
+        $this->assertEquals('AnotherUserTable', $Tokens->Users->getClassName());
     }
 
     /**

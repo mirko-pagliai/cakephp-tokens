@@ -154,8 +154,9 @@ class TokensTable extends Table
         $this->setDisplayField('token');
         $this->setPrimaryKey('id');
 
-        if (Configure::read('Tokens.usersClassOptions')) {
-            $this->belongsTo('Users', Configure::read('Tokens.usersClassOptions'));
+        $usersClass = empty($config['usersClassOptions']) ? Configure::read('Tokens.usersClassOptions') : $config['usersClassOptions'];
+        if ($usersClass) {
+            $this->belongsTo('Users', $usersClass);
 
             if (!$this->Users->hasAssociation('tokens')) {
                 $this->Users->hasMany('Tokens')->setForeignKey('user_id');
