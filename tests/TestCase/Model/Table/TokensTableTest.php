@@ -20,7 +20,6 @@ use Cake\I18n\Time;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use TestApp\Model\Entity\User;
 use Tokens\Model\Entity\Token;
@@ -44,15 +43,6 @@ class TokensTableTest extends TestCase
         'core.Users',
         'plugin.Tokens.Tokens',
     ];
-
-    /**
-     * Internal method to get the `Tokens.Tokens` table
-     * @return \Tokens\Model\Table\TokensTable
-     */
-    protected function getTable()
-    {
-        return TableRegistry::get('Tokens.Tokens');
-    }
 
     /**
      * Called before every test method
@@ -230,7 +220,7 @@ class TokensTableTest extends TestCase
         $this->assertEquals('Users', $this->Tokens->Users->getClassName());
 
         //Using another table
-        $usersClassOptions = ['className' => 'AnotherUserTable',  'foreignKey' => 'user_id'];
+        $usersClassOptions = ['className' => 'AnotherUserTable', 'foreignKey' => 'user_id'];
         $Tokens = $this->getMockForModel('Tokens.Tokens', null, compact('usersClassOptions'));
         $this->assertInstanceOf(BelongsTo::class, $Tokens->Users);
         $this->assertEquals('user_id', $Tokens->Users->getForeignKey());
@@ -243,31 +233,26 @@ class TokensTableTest extends TestCase
      */
     public function testForCustomUsersTable()
     {
-        Configure::write('Tokens.usersClassOptions.className', 'TestApp.Users');
+        $Tokens = $this->getMockForModel('Tokens.Tokens', null, ['usersClassOptions' => ['className' => 'TestApp.Users']]);
 
-        TableRegistry::clear();
-        $this->Tokens = $this->getTable();
+        $this->assertEquals('TestApp.Users', $Tokens->Users->getClassName());
+        $this->assertEquals('This is a test method', $Tokens->Users->test());
 
-        $this->assertEquals('TestApp.Users', $this->Tokens->Users->getClassName());
-        $this->assertEquals('This is a test method', $this->Tokens->Users->test());
-
-        $token = $this->Tokens->findById(2)->contain('Users')->first();
+        $token = $Tokens->findById(2)->contain('Users')->first();
         $this->assertInstanceOf(User::class, $token->user);
         $this->assertEquals('This is a test property', $token->user->test);
     }
 
     /**
      * Test for a no `Users` table
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Table "Tokens\Model\Table\TokensTable" is not associated with "Users"
      * @test
      */
     public function testForNoUsersTable()
     {
         Configure::write('Tokens.usersClassOptions', false);
-
-        TableRegistry::clear();
-        $this->getTable()->Users;
+        $Tokens = $this->getMockForModel('Tokens.Tokens', null);
+        $this->expectExceptionMessage('Table "' . get_class($Tokens) . '" is not associated with "Users"');
+        $Tokens->Users;
     }
 
     /**
