@@ -12,11 +12,11 @@
  */
 namespace Tokens\Test\TestCase\Utility;
 
-use Cake\Controller\ComponentRegistry;
 use Cake\I18n\Time;
 use Cake\ORM\Query;
-use Cake\TestSuite\TestCase;
 use LogicException;
+use MeTools\TestSuite\MockTrait;
+use MeTools\TestSuite\TestCase;
 use Tokens\Controller\Component\TokenComponent;
 
 /**
@@ -24,6 +24,8 @@ use Tokens\Controller\Component\TokenComponent;
  */
 class TokenTraitTest extends TestCase
 {
+    use MockTrait;
+
     /**
      * A class that uses the trait
      * @var \TokenTrait
@@ -52,10 +54,8 @@ class TokenTraitTest extends TestCase
     {
         parent::setUp();
 
-        $this->loadPlugins(['Tokens']);
-
         $this->Tokens = $this->getMockForModel('Tokens.Tokens', null);
-        $this->TokenTrait = new TokenComponent(new ComponentRegistry);
+        $this->TokenTrait = $this->getMockForComponent(TokenComponent::class, null);
     }
 
     /**
@@ -64,9 +64,9 @@ class TokenTraitTest extends TestCase
      */
     public function tearDown()
     {
-        $this->Tokens->deleteAll(['id >=' => 1]);
-
         parent::tearDown();
+
+        $this->Tokens->deleteAll(['id >=' => 1]);
     }
 
     /**

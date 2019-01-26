@@ -16,7 +16,7 @@ use Cake\I18n\Date;
 use Cake\I18n\FrozenDate;
 use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
-use Cake\TestSuite\TestCase;
+use MeTools\TestSuite\TestCase;
 use Tokens\Model\Entity\Token;
 
 /**
@@ -24,17 +24,6 @@ use Tokens\Model\Entity\Token;
  */
 class TokenTest extends TestCase
 {
-    /**
-     * Called before every test method
-     * @return void
-     */
-    public function setUp()
-    {
-        parent::setUp();
-
-        $this->loadPlugins(['Tokens']);
-    }
-
     /**
      * Test for `_setExpiry()` method
      * @test
