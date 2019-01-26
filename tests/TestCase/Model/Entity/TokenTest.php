@@ -12,7 +12,9 @@
  */
 namespace Tokens\Test\TestCase\Model\Entity;
 
-use Cake\Http\BaseApplication;
+use Cake\I18n\Date;
+use Cake\I18n\FrozenDate;
+use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
 use Tokens\Model\Entity\Token;
@@ -30,8 +32,7 @@ class TokenTest extends TestCase
     {
         parent::setUp();
 
-        $app = $this->getMockForAbstractClass(BaseApplication::class, ['']);
-        $app->addPlugin('Tokens')->pluginBootstrap();
+        $this->loadPlugins(['Tokens']);
     }
 
     /**
@@ -48,8 +49,7 @@ class TokenTest extends TestCase
             $this->assertTrue($entity->expiry->isTomorrow());
         }
 
-        foreach (['Date', 'FrozenDate', 'FrozenTime', 'Time'] as $class) {
-            $class = 'Cake\I18n\\' . $class;
+        foreach ([Date::class, FrozenDate::class, FrozenTime::class, Time::class] as $class) {
             $entity->set('expiry', new $class);
             $this->assertInstanceOf($class, $entity->expiry);
         }
@@ -61,7 +61,6 @@ class TokenTest extends TestCase
      */
     public function testTokenSetMutator()
     {
-        $regex = '/^[a-z0-9]{25}$/';
         $entity = new Token;
         $entity->set('token', null);
         $this->assertNull($entity->token);
@@ -72,7 +71,7 @@ class TokenTest extends TestCase
             (object)['first', 'second'],
         ] as $token) {
             $entity->set('token', $token);
-            $this->assertRegExp($regex, $entity->token);
+            $this->assertRegExp('/^[\d\w]{25}$/', $entity->token);
         }
     }
 }

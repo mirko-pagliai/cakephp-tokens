@@ -77,7 +77,7 @@ class TokensTable extends Table
      */
     public function deleteExpired(Token $entity = null)
     {
-        $conditions[] = ['expiry <' => new Time()];
+        $conditions[] = ['expiry <' => new Time];
 
         if (!empty($entity->token)) {
             $conditions[] = ['token' => $entity->token];
@@ -107,7 +107,7 @@ class TokensTable extends Table
         $query->formatResults(function (ResultSet $results) {
             return $results->map(function (Token $token) {
                 if ($token->extra) {
-                    $token->extra = safe_unserialize($token->extra);
+                    $token->extra = @unserialize($token->extra);
                 }
 
                 return $token;
@@ -154,8 +154,9 @@ class TokensTable extends Table
         $this->setDisplayField('token');
         $this->setPrimaryKey('id');
 
-        if (Configure::read('Tokens.usersClassOptions')) {
-            $this->belongsTo('Users', Configure::read('Tokens.usersClassOptions'));
+        $usersClass = empty($config['usersClassOptions']) ? Configure::read('Tokens.usersClassOptions') : $config['usersClassOptions'];
+        if ($usersClass) {
+            $this->belongsTo('Users', $usersClass);
 
             if (!$this->Users->hasAssociation('tokens')) {
                 $this->Users->hasMany('Tokens')->setForeignKey('user_id');
@@ -195,24 +196,11 @@ class TokensTable extends Table
      */
     public function validationDefault(Validator $validator)
     {
-        $validator
-            ->integer('id')
-            ->allowEmpty('id', 'create');
-
-        $validator
-            ->requirePresence('token', 'create')
-            ->notEmpty('token');
-
-        $validator
-            ->lengthBetween('type', [3, 255])
-            ->allowEmpty('type');
-
-        $validator
-            ->allowEmpty('extra');
-
-        $validator
-            ->dateTime('expiry')
-            ->allowEmpty('expiry');
+        $validator->integer('id')->allowEmpty('id', 'create');
+        $validator->requirePresence('token', 'create')->notEmpty('token');
+        $validator->lengthBetween('type', [3, 255])->allowEmpty('type');
+        $validator->allowEmpty('extra');
+        $validator->dateTime('expiry')->allowEmpty('expiry');
 
         return $validator;
     }
