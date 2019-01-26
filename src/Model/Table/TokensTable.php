@@ -107,7 +107,7 @@ class TokensTable extends Table
         $query->formatResults(function (ResultSet $results) {
             return $results->map(function (Token $token) {
                 if ($token->extra) {
-                    $token->extra = safe_unserialize($token->extra);
+                    $token->extra = @unserialize($token->extra);
                 }
 
                 return $token;
