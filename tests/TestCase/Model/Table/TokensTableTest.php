@@ -20,7 +20,7 @@ use Cake\I18n\Time;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
-use Cake\TestSuite\TestCase;
+use MeTools\TestSuite\TestCase;
 use TestApp\Model\Entity\User;
 use Tokens\Model\Entity\Token;
 use Tokens\Model\Table\TokensTable;
@@ -52,8 +52,6 @@ class TokensTableTest extends TestCase
     {
         parent::setUp();
 
-        $this->loadPlugins(['Tokens']);
-
         $this->Tokens = $this->getMockForModel('Tokens.Tokens', null);
     }
 
@@ -63,9 +61,9 @@ class TokensTableTest extends TestCase
      */
     public function tearDown()
     {
-        $this->Tokens->deleteAll(['id >=' => 1]);
-
         parent::tearDown();
+
+        $this->Tokens->deleteAll(['id >=' => 1]);
     }
 
     /**

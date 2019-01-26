@@ -4,6 +4,7 @@
 * now you can set the `Users` class options (`className` and `foreignKey`)
     using the `usersClassOptions` key of the `TokensTable` configuration;
 * small code fixes;
+* requires `me-tools` package for dev;
 * updated for `php-tools` 1.1.12.
 
 ### 1.2.2

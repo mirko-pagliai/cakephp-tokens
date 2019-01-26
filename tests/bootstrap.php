@@ -90,5 +90,6 @@ Cache::setConfig([
 ConnectionManager::setConfig('test', ['url' => 'sqlite:///' . TMP . 'test.sq3']);
 
 Configure::write('Session', ['defaults' => 'php']);
+Configure::write('pluginsToLoad', ['Tokens']);
 
 $_SERVER['PHP_SELF'] = '/';
