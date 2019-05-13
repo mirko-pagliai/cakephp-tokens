@@ -29,7 +29,7 @@ class User extends Entity
 {
     protected $_virtual = ['test'];
 
-    protected function _getTest()
+    protected function _getTest(): string
     {
         return 'This is a test property';
     }

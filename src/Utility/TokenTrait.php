@@ -13,6 +13,7 @@ declare(strict_types=1);
  */
 namespace Tokens\Utility;
 
+use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
 use LogicException;
 use Tokens\Model\Entity\Token;
@@ -27,7 +28,7 @@ trait TokenTrait
      * Internal method to get the table instance
      * @return \Tokens\Model\Table\TokensTable
      */
-    protected function getTable()
+    protected function getTable(): object
     {
         return TableRegistry::get('Tokens.Tokens');
     }
@@ -38,7 +39,7 @@ trait TokenTrait
      * @return \Cake\ORM\Query
      * @uses getTable()
      */
-    public function find(array $conditions = [])
+    public function find(array $conditions = []): Query
     {
         return $this->getTable()->find('active')->where($conditions);
     }
@@ -55,12 +56,12 @@ trait TokenTrait
      * @return bool
      * @uses find()
      */
-    public function check($token, array $options = [])
+    public function check(string $token, array $options = []): bool
     {
         $conditions = compact('token');
 
         foreach (['user_id', 'type'] as $key) {
-            $conditions[$key] = array_key_exists($key, $options) ? $options[$key] : null;
+            $conditions[$key] = $options[$key] ?? null;
         }
 
         return !$this->find($conditions)->isEmpty();
@@ -76,7 +77,7 @@ trait TokenTrait
      * @throws \LogicException
      * @uses getTable()
      */
-    public function create($token, array $options = [])
+    public function create(string $token, array $options = []): string
     {
         $entity = new Token(compact('token'));
 
@@ -103,7 +104,7 @@ trait TokenTrait
      * @uses find()
      * @uses getTable()
      */
-    public function delete($token)
+    public function delete(string $token): bool
     {
         $query = $this->find(compact('token'));
 

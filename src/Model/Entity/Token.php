@@ -49,7 +49,7 @@ class Token extends Entity
      *  be created
      * @return object
      */
-    protected function _setExpiry($expiry)
+    protected function _setExpiry($expiry): object
     {
         if (is_object($expiry) &&
             in_array(get_class($expiry), [Date::class, FrozenDate::class, FrozenTime::class, Time::class])) {

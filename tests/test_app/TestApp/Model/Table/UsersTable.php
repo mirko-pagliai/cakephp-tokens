@@ -27,7 +27,7 @@ use Cake\ORM\Table;
 
 class UsersTable extends Table
 {
-    public function test()
+    public function test(): string
     {
         return 'This is a test method';
     }
