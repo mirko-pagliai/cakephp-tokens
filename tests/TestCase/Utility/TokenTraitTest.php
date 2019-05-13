@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * This file is part of cakephp-tokens.
  *
@@ -12,7 +13,7 @@
  */
 namespace Tokens\Test\TestCase\Utility;
 
-use Cake\I18n\Time;
+use Cake\I18n\FrozenTime;
 use Cake\ORM\Query;
 use LogicException;
 use MeTools\TestSuite\MockTrait;
@@ -50,7 +51,7 @@ class TokenTraitTest extends TestCase
      * Called before every test method
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -62,7 +63,7 @@ class TokenTraitTest extends TestCase
      * Called after every test method
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 
@@ -132,7 +133,7 @@ class TokenTraitTest extends TestCase
         $this->assertEquals(2, $token->user->id);
         $this->assertEquals('testType', $token->type);
         $this->assertEquals(['extra1', 'extra2'], $token->extra);
-        $this->assertInstanceOf(Time::class, $token->expiry);
+        $this->assertInstanceOf(FrozenTime::class, $token->expiry);
         $this->assertTrue($token->expiry->isTomorrow());
 
         //With error

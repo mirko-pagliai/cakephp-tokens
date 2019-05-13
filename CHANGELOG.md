@@ -1,4 +1,8 @@
 # 1.x branch
+## 1.3 branch
+### 1.3.0
+* updated for `cakephp` 4 and `phpunit` 8.
+
 ## 1.2 branch
 ### 1.2.3
 * now you can set the `Users` class options (`className` and `foreignKey`)

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * This file is part of cakephp-tokens.
  *
@@ -75,7 +76,7 @@ class TokensTable extends Table
      * @param \Tokens\Model\Entity\Token|null $entity Token entity
      * @return int Affected rows
      */
-    public function deleteExpired(Token $entity = null)
+    public function deleteExpired(?Token $entity = null)
     {
         $conditions[] = ['expiry <' => new Time()];
 
@@ -99,7 +100,7 @@ class TokensTable extends Table
      * @param array $options The options to use for the find
      * @return \Cake\ORM\Query
      */
-    public function find($type = 'all', $options = [])
+    public function find(string $type = 'all', $options = []): Query
     {
         $query = parent::find($type, $options);
 
@@ -142,7 +143,7 @@ class TokensTable extends Table
      * @param array $config Configuration for the table
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         parent::initialize($config);
 
@@ -150,7 +151,7 @@ class TokensTable extends Table
         $this->setDisplayField('token');
         $this->setPrimaryKey('id');
 
-        $usersClass = empty($config['usersClassOptions']) ? Configure::read('Tokens.usersClassOptions') : $config['usersClassOptions'];
+        $usersClass = $config['usersClassOptions'] ?? Configure::read('Tokens.usersClassOptions');
         if ($usersClass) {
             $this->belongsTo('Users', $usersClass);
 
@@ -167,7 +168,7 @@ class TokensTable extends Table
      * @param \Cake\ORM\RulesChecker $rules The rules object to be modified
      * @return \Cake\ORM\RulesChecker
      */
-    public function buildRules(RulesChecker $rules)
+    public function buildRules(RulesChecker $rules): RulesChecker
     {
         //Uses validation rules as application rules
         $rules->add(function (Token $entity) {
@@ -190,7 +191,7 @@ class TokensTable extends Table
      * @param \Cake\Validation\Validator $validator Validator instance
      * @return \Cake\Validation\Validator
      */
-    public function validationDefault(Validator $validator)
+    public function validationDefault(Validator $validator): Validator
     {
         $validator->integer('id')->allowEmpty('id', 'create');
         $validator->requirePresence('token', 'create')->notEmpty('token');

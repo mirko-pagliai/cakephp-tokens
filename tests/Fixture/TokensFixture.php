@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * This file is part of cakephp-tokens.
  *
@@ -43,7 +44,7 @@ class TokensFixture extends TestFixture
     /**
      * Init. Adds some records
      */
-    public function init()
+    public function init(): void
     {
         $this->records = [
             [
