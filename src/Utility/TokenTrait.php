@@ -72,7 +72,7 @@ trait TokenTrait
      * @param string $token Token value
      * @param array $options Options
      * @return string Token value
-     * @throws LogicException
+     * @throws \LogicException
      * @uses getTable()
      */
     public function create($token, array $options = [])
@@ -87,7 +87,7 @@ trait TokenTrait
 
         if (!$this->getTable()->save($entity)) {
             $field = collection(array_keys($entity->getErrors()))->first();
-            $error = collection(collection(($entity->getErrors()))->first())->first();
+            $error = collection(collection($entity->getErrors())->first())->first();
 
             throw new LogicException(sprintf('Error for `%s` field: %s', $field, lcfirst($error)));
         }

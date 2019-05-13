@@ -293,7 +293,7 @@ class TokensTableTest extends TestCase
     {
         //Valid `expiry` values
         foreach ([Date::class, FrozenDate::class, FrozenTime::class, Time::class] as $class) {
-            $token = $this->Tokens->newEntity(['token' => 'test', 'expiry' => new $class]);
+            $token = $this->Tokens->newEntity(['token' => 'test', 'expiry' => new $class()]);
             $this->assertEmpty($token->getErrors());
         }
 

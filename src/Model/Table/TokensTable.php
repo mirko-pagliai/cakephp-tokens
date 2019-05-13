@@ -77,7 +77,7 @@ class TokensTable extends Table
      */
     public function deleteExpired(Token $entity = null)
     {
-        $conditions[] = ['expiry <' => new Time];
+        $conditions[] = ['expiry <' => new Time()];
 
         if (!empty($entity->token)) {
             $conditions[] = ['token' => $entity->token];
@@ -124,9 +124,7 @@ class TokensTable extends Table
      */
     public function findActive(Query $query)
     {
-        $query->where(['expiry >=' => new Time]);
-
-        return $query;
+        return $query->where(['expiry >=' => new Time()]);
     }
 
     /**
@@ -136,9 +134,7 @@ class TokensTable extends Table
      */
     public function findExpired(Query $query)
     {
-        $query->where(['expiry <' => new Time]);
-
-        return $query;
+        return $query->where(['expiry <' => new Time()]);
     }
 
     /**
@@ -168,8 +164,8 @@ class TokensTable extends Table
      * Build rules.
      *
      * It uses validation rules as application rules.
-     * @param Cake\ORM\RulesChecker $rules The rules object to be modified
-     * @return Cake\ORM\RulesChecker
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified
+     * @return \Cake\ORM\RulesChecker
      */
     public function buildRules(RulesChecker $rules)
     {
