@@ -87,8 +87,8 @@ trait TokenTrait
         }
 
         if (!$this->getTable()->save($entity)) {
-            $field = collection(array_keys($entity->getErrors()))->first();
-            $error = collection(collection($entity->getErrors())->first())->first();
+            $field = array_key_first($entity->getErrors());
+            $error = array_value_first_recursive($entity->getErrors());
 
             throw new LogicException(sprintf('Error for `%s` field: %s', $field, lcfirst($error)));
         }
