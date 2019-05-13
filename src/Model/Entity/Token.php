@@ -46,9 +46,7 @@ class Token extends Entity
      * @param string|object $expiry `expiry` value. Can be a string or a time
      *  instance. If the value is a string, an instance of `Cake\I18n\Time` will
      *  be created
-     * @return string
-     * @see http://book.cakephp.org/3.0/en/core-libraries/time.html#creating-time-instances
-     * @see http://book.cakephp.org/3.0/en/core-libraries/time.html#immutable-dates-and-times
+     * @return object
      */
     protected function _setExpiry($expiry)
     {
