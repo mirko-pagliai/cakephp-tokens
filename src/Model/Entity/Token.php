@@ -62,7 +62,7 @@ class Token extends Entity
     /**
      * `set` mutators for `token` property
      * @param mixed $token Value. If it's not a string, it will be serialized
-     * @return string
+     * @return mixed
      */
     protected function _setToken($token)
     {
