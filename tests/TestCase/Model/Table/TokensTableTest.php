@@ -249,8 +249,8 @@ class TokensTableTest extends TestCase
     {
         Configure::write('Tokens.usersClassOptions', false);
         $Tokens = $this->getMockForModel('Tokens.Tokens', null);
-        $this->expectExceptionMessage('Table "' . get_class($Tokens) . '" is not associated with "Users"');
-        $Tokens->Users;
+        $this->expectExceptionMessage('The Users association is not defined on Tokens.');
+        $Tokens->getAssociation('Users');
     }
 
     /**
