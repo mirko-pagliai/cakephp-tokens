@@ -30,7 +30,7 @@ class TokenTest extends TestCase
      */
     public function testExpirySetMutator()
     {
-        $entity = new Token;
+        $entity = new Token();
 
         foreach (['+1 day', new Time('+1 day')] as $expiry) {
             $entity->set('expiry', $expiry);
@@ -39,7 +39,7 @@ class TokenTest extends TestCase
         }
 
         foreach ([Date::class, FrozenDate::class, FrozenTime::class, Time::class] as $class) {
-            $entity->set('expiry', new $class);
+            $entity->set('expiry', new $class());
             $this->assertInstanceOf($class, $entity->expiry);
         }
     }
@@ -50,7 +50,7 @@ class TokenTest extends TestCase
      */
     public function testTokenSetMutator()
     {
-        $entity = new Token;
+        $entity = new Token();
         $entity->set('token', null);
         $this->assertNull($entity->token);
 

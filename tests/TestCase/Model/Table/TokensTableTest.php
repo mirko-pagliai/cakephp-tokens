@@ -249,8 +249,8 @@ class TokensTableTest extends TestCase
     {
         Configure::write('Tokens.usersClassOptions', false);
         $Tokens = $this->getMockForModel('Tokens.Tokens', null);
-        $this->expectExceptionMessage('Table "' . get_class($Tokens) . '" is not associated with "Users"');
-        $Tokens->Users;
+        $this->expectExceptionMessage('The Users association is not defined on Tokens.');
+        $Tokens->getAssociation('Users');
     }
 
     /**
@@ -293,7 +293,7 @@ class TokensTableTest extends TestCase
     {
         //Valid `expiry` values
         foreach ([Date::class, FrozenDate::class, FrozenTime::class, Time::class] as $class) {
-            $token = $this->Tokens->newEntity(['token' => 'test', 'expiry' => new $class]);
+            $token = $this->Tokens->newEntity(['token' => 'test', 'expiry' => new $class()]);
             $this->assertEmpty($token->getErrors());
         }
 
