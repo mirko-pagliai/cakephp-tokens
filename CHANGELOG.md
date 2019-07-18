@@ -4,6 +4,9 @@
 * updated for `cakephp` 4 and `phpunit` 8.
 
 ## 1.2 branch
+### 1.2.4
+* little fixes.
+
 ### 1.2.3
 * now you can set the `Users` class options (`className` and `foreignKey`)
     using the `usersClassOptions` key of the `TokensTable` configuration;

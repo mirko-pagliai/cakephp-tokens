@@ -14,9 +14,6 @@ declare(strict_types=1);
 namespace Tokens\Model\Entity;
 
 use Cake\Core\Configure;
-use Cake\I18n\Date;
-use Cake\I18n\FrozenDate;
-use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\Utility\Security;
@@ -28,7 +25,7 @@ use Cake\Utility\Security;
  * @property string $token
  * @property string $type
  * @property string $extra
- * @property \Cake\I18n\FrozenTime $expiry
+ * @property \Cake\I18n\Time $expiry
  * @property \Tokens\Model\Entity\User $user
  */
 class Token extends Entity
@@ -51,12 +48,7 @@ class Token extends Entity
      */
     protected function _setExpiry($expiry): object
     {
-        if (is_object($expiry) &&
-            in_array(get_class($expiry), [Date::class, FrozenDate::class, FrozenTime::class, Time::class])) {
-            return $expiry;
-        }
-
-        return new Time($expiry);
+        return is_object($expiry) && method_exists($expiry, 'i18nFormat') ? $expiry : new Time($expiry);
     }
 
     /**
