@@ -139,13 +139,13 @@ class TokensTableTest extends TestCase
         //Tokens with ID 2 and 4 do not exist anymore
         $this->loadFixtures('Tokens');
         $this->assertEquals(2, $this->Tokens->deleteExpired(new Token(['user_id' => 2])));
-        $this->assertEmpty($this->Tokens->find()->where(['OR' => [['id' => 2], ['id' => 4]]])->all());
+        $this->assertEmpty($this->Tokens->find()->where(['OR' => [['id' => 2], ['id' => 4]]])->count());
 
-        //`user_id` equal to the token with ID 3
+        //`token` equal to the token with ID 3
         //Tokens with ID 2 and 3 do not exist anymore
         $this->loadFixtures('Tokens');
         $this->assertEquals(2, $this->Tokens->deleteExpired(new Token(['token' => 'token3'])));
-        $this->assertEmpty($this->Tokens->find()->where(['OR' => [['id' => 2], ['id' => 3]]])->all());
+        $this->assertEmpty($this->Tokens->find()->where(['OR' => [['id' => 2], ['id' => 3]]])->count());
     }
 
     /**
