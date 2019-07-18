@@ -132,26 +132,19 @@ class TokensTableTest extends TestCase
     public function testDeleteExpired()
     {
         //Token with ID 2 does not exist anymore
-        $count = $this->Tokens->deleteExpired();
-        $this->assertEquals(1, $count);
+        $this->assertEquals(1, $this->Tokens->deleteExpired());
         $this->assertEmpty($this->Tokens->findById(2)->first());
 
-        //Same as tokens with ID 2 and 4
-        $this->loadFixtures('Tokens');
-        $token = new Token(['user_id' => 2]);
-
+        //`user_id` equal to the tokens with ID 2 and 4
         //Tokens with ID 2 and 4 do not exist anymore
-        $count = $this->Tokens->deleteExpired($token);
-        $this->assertEquals(2, $count);
+        $this->loadFixtures('Tokens');
+        $this->assertEquals(2, $this->Tokens->deleteExpired(new Token(['user_id' => 2])));
         $this->assertEmpty($this->Tokens->find()->where(['OR' => [['id' => 2], ['id' => 4]]])->all());
 
-        //Same as token with ID 3
-        $this->loadFixtures('Tokens');
-        $token = new Token(['token' => 'token3']);
-
+        //`user_id` equal to the token with ID 3
         //Tokens with ID 2 and 3 do not exist anymore
-        $count = $this->Tokens->deleteExpired($token);
-        $this->assertEquals(2, $count);
+        $this->loadFixtures('Tokens');
+        $this->assertEquals(2, $this->Tokens->deleteExpired(new Token(['token' => 'token3'])));
         $this->assertEmpty($this->Tokens->find()->where(['OR' => [['id' => 2], ['id' => 3]]])->all());
     }
 

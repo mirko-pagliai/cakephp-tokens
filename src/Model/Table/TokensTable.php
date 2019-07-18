@@ -78,17 +78,19 @@ class TokensTable extends Table
      */
     public function deleteExpired(?Token $entity = null): int
     {
-        $conditions[] = ['expiry <' => Time::now()];
+        $conditions = ['expiry <' => Time::now()];
 
         if ($entity && $entity->has('token')) {
-            $conditions[] = ['token' => $entity->get('token')];
+            $conditions['token'] = $entity->get('token');
         }
 
         if ($entity && $entity->has('user_id')) {
-            $conditions[] = ['user_id' => $entity->get('user_id')];
+            $conditions['user_id'] = $entity->get('user_id');
         }
 
-        return $this->deleteAll(count($conditions) > 1 ? ['OR' => $conditions] : $conditions);
+        $conditions = count($conditions) > 1 ? ['OR' => $conditions] : $conditions;
+
+        return $this->deleteAll($conditions);
     }
 
     /**
