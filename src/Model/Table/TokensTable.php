@@ -48,12 +48,12 @@ class TokensTable extends Table
      */
     public function beforeSave(Event $event, Entity $entity, ArrayObject $options)
     {
-        if (empty($entity->expiry)) {
-            $entity->expiry = Configure::read('Tokens.expiryDefaultValue');
+        if (!$entity->has('expiry')) {
+            $entity->set('expiry', Configure::read('Tokens.expiryDefaultValue'));
         }
 
-        if (!empty($entity->extra)) {
-            $entity->extra = serialize($entity->extra);
+        if ($entity->has('extra')) {
+            $entity->set('extra', serialize($entity->get('extra')));
         }
 
         //Deletes all expired tokens and tokens with the same token value
@@ -79,12 +79,12 @@ class TokensTable extends Table
     {
         $conditions[] = ['expiry <' => new Time()];
 
-        if (!empty($entity->token)) {
-            $conditions[] = ['token' => $entity->token];
+        if ($entity && $entity->has('token')) {
+            $conditions[] = ['token' => $entity->get('token')];
         }
 
-        if (!empty($entity->user_id)) {
-            $conditions[] = ['user_id' => $entity->user_id];
+        if ($entity && $entity->has('user_id')) {
+            $conditions[] = ['user_id' => $entity->get('user_id')];
         }
 
         return $this->deleteAll(['OR' => $conditions]);
@@ -104,17 +104,15 @@ class TokensTable extends Table
         $query = parent::find($type, $options);
 
         //Unserializes the `extra` field.
-        $query->formatResults(function (ResultSet $results) {
+        return $query->formatResults(function (ResultSet $results) {
             return $results->map(function (Token $token) {
-                if ($token->extra) {
-                    $token->extra = @unserialize($token->extra);
+                if ($token->has('extra')) {
+                    $token->set('extra', @unserialize($token->get('extra')));
                 }
 
                 return $token;
             });
         });
-
-        return $query;
     }
 
     /**
