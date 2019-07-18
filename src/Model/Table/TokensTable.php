@@ -48,12 +48,12 @@ class TokensTable extends Table
      */
     public function beforeSave(Event $event, Entity $entity, ArrayObject $options)
     {
-        if (empty($entity->expiry)) {
-            $entity->expiry = Configure::read('Tokens.expiryDefaultValue');
+        if (!$entity->has('expiry')) {
+            $entity->set('expiry', Configure::read('Tokens.expiryDefaultValue'));
         }
 
-        if (!empty($entity->extra)) {
-            $entity->extra = serialize($entity->extra);
+        if ($entity->has('extra')) {
+            $entity->set('extra', serialize($entity->get('extra')));
         }
 
         //Deletes all expired tokens and tokens with the same token value
@@ -77,17 +77,19 @@ class TokensTable extends Table
      */
     public function deleteExpired(Token $entity = null)
     {
-        $conditions[] = ['expiry <' => new Time()];
+        $conditions = ['expiry <' => Time::now()];
 
-        if (!empty($entity->token)) {
-            $conditions[] = ['token' => $entity->token];
+        if ($entity && $entity->has('token')) {
+            $conditions['token'] = $entity->get('token');
         }
 
-        if (!empty($entity->user_id)) {
-            $conditions[] = ['user_id' => $entity->user_id];
+        if ($entity && $entity->has('user_id')) {
+            $conditions['user_id'] = $entity->get('user_id');
         }
 
-        return $this->deleteAll(['OR' => $conditions]);
+        $conditions = count($conditions) > 1 ? ['OR' => $conditions] : $conditions;
+
+        return $this->deleteAll($conditions);
     }
 
     /**
@@ -104,17 +106,15 @@ class TokensTable extends Table
         $query = parent::find($type, $options);
 
         //Unserializes the `extra` field.
-        $query->formatResults(function (ResultSet $results) {
+        return $query->formatResults(function (ResultSet $results) {
             return $results->map(function (Token $token) {
-                if ($token->extra) {
-                    $token->extra = @unserialize($token->extra);
+                if ($token->has('extra')) {
+                    $token->set('extra', @unserialize($token->get('extra')));
                 }
 
                 return $token;
             });
         });
-
-        return $query;
     }
 
     /**
@@ -124,7 +124,7 @@ class TokensTable extends Table
      */
     public function findActive(Query $query)
     {
-        return $query->where(['expiry >=' => new Time()]);
+        return $query->where(['expiry >=' => Time::now()]);
     }
 
     /**
@@ -134,7 +134,7 @@ class TokensTable extends Table
      */
     public function findExpired(Query $query)
     {
-        return $query->where(['expiry <' => new Time()]);
+        return $query->where(['expiry <' => Time::now()]);
     }
 
     /**
@@ -180,9 +180,7 @@ class TokensTable extends Table
             return empty($errors);
         });
 
-        $rules->add($rules->existsIn(['user_id'], 'Users'));
-
-        return $rules;
+        return $rules->add($rules->existsIn(['user_id'], 'Users'));
     }
 
     /**
@@ -192,12 +190,10 @@ class TokensTable extends Table
      */
     public function validationDefault(Validator $validator)
     {
-        $validator->integer('id')->allowEmpty('id', 'create');
-        $validator->requirePresence('token', 'create')->notEmpty('token');
-        $validator->lengthBetween('type', [3, 255])->allowEmpty('type');
-        $validator->allowEmpty('extra');
-        $validator->dateTime('expiry')->allowEmpty('expiry');
-
-        return $validator;
+        return $validator->integer('id')->allowEmpty('id', 'create')
+            ->requirePresence('token', 'create')->notEmpty('token')
+            ->lengthBetween('type', [3, 255])->allowEmpty('type')
+            ->allowEmpty('extra')
+            ->dateTime('expiry')->allowEmpty('expiry');
     }
 }

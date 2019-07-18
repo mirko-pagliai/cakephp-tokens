@@ -92,7 +92,7 @@ trait TokenTrait
             throw new LogicException(sprintf('Error for `%s` field: %s', $field, lcfirst($error)));
         }
 
-        return $entity->token;
+        return $entity->get('token');
     }
 
     /**
