@@ -77,7 +77,7 @@ class TokensTable extends Table
      */
     public function deleteExpired(Token $entity = null)
     {
-        $conditions[] = ['expiry <' => new Time()];
+        $conditions[] = ['expiry <' => Time::now()];
 
         if ($entity && $entity->has('token')) {
             $conditions[] = ['token' => $entity->get('token')];
@@ -87,7 +87,7 @@ class TokensTable extends Table
             $conditions[] = ['user_id' => $entity->get('user_id')];
         }
 
-        return $this->deleteAll(['OR' => $conditions]);
+        return $this->deleteAll(count($conditions) > 1 ? ['OR' => $conditions] : $conditions);
     }
 
     /**
@@ -122,7 +122,7 @@ class TokensTable extends Table
      */
     public function findActive(Query $query)
     {
-        return $query->where(['expiry >=' => new Time()]);
+        return $query->where(['expiry >=' => Time::now()]);
     }
 
     /**
@@ -132,7 +132,7 @@ class TokensTable extends Table
      */
     public function findExpired(Query $query)
     {
-        return $query->where(['expiry <' => new Time()]);
+        return $query->where(['expiry <' => Time::now()]);
     }
 
     /**
@@ -178,9 +178,7 @@ class TokensTable extends Table
             return empty($errors);
         });
 
-        $rules->add($rules->existsIn(['user_id'], 'Users'));
-
-        return $rules;
+        return $rules->add($rules->existsIn(['user_id'], 'Users'));
     }
 
     /**
@@ -190,12 +188,10 @@ class TokensTable extends Table
      */
     public function validationDefault(Validator $validator)
     {
-        $validator->integer('id')->allowEmpty('id', 'create');
-        $validator->requirePresence('token', 'create')->notEmpty('token');
-        $validator->lengthBetween('type', [3, 255])->allowEmpty('type');
-        $validator->allowEmpty('extra');
-        $validator->dateTime('expiry')->allowEmpty('expiry');
-
-        return $validator;
+        return $validator->integer('id')->allowEmpty('id', 'create')
+            ->requirePresence('token', 'create')->notEmpty('token')
+            ->lengthBetween('type', [3, 255])->allowEmpty('type')
+            ->allowEmpty('extra')
+            ->dateTime('expiry')->allowEmpty('expiry');
     }
 }
