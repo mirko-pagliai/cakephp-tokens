@@ -91,7 +91,7 @@ class TokenTraitTest extends TestCase
         //This token exists, but it has expired
         $this->assertFalse($this->TokenTrait->check('036b303f058a35ed48220ee5h'));
 
-        $value = 'c658ffdd8d26875d2539cf78c';
+        $value = '553790c2c20b2ec1d2a406b44';
 
         $this->assertTrue($this->TokenTrait->check($value, ['user_id' => 1, 'type' => 'registration']));
 
@@ -152,7 +152,7 @@ class TokenTraitTest extends TestCase
         $this->assertFalse($this->TokenTrait->delete('tokenNotExists'));
 
         $this->assertNotEmpty($this->Tokens->findById(3)->first());
-        $this->assertTrue($this->TokenTrait->delete('c658ffdd8d26875d2539cf78c'));
+        $this->assertTrue($this->TokenTrait->delete('553790c2c20b2ec1d2a406b44'));
         $this->assertEmpty($this->Tokens->findById(3)->first());
     }
 }
