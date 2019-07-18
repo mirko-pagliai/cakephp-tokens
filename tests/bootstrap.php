@@ -15,6 +15,7 @@ declare(strict_types=1);
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
+use Cake\Utility\Security;
 
 ini_set('intl.default_locale', 'en_US');
 
@@ -91,6 +92,7 @@ Cache::setConfig([
 // Ensure default test connection is defined
 ConnectionManager::setConfig('test', ['url' => 'sqlite:///' . TMP . 'test.sq3']);
 
+Security::setSalt('a-long-but-not-random-value');
 Configure::write('Session', ['defaults' => 'php']);
 Configure::write('pluginsToLoad', ['Tokens']);
 
