@@ -58,7 +58,7 @@ class TokensFixture extends TestFixture
             [
                 'id' => 3,
                 'user_id' => 1,
-                'token' => 'c658ffdd8d26875d2539cf78c',
+                'token' => '553790c2c20b2ec1d2a406b44',
                 'type' => 'registration',
                 'extra' => 'a:2:{i:0;s:5:"first";i:1;s:6:"second";}',
                 'expiry' => new FrozenTime('+2 day'),
