@@ -61,6 +61,9 @@ trait TokenTrait
         $conditions = compact('token');
 
         foreach (['user_id', 'type'] as $key) {
+            if (!isset($options[$key])) {
+                $key = sprintf('%s IS', $key);
+            }
             $conditions[$key] = $options[$key] ?? null;
         }
 
