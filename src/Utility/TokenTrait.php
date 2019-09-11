@@ -59,7 +59,11 @@ trait TokenTrait
         $conditions = compact('token');
 
         foreach (['user_id', 'type'] as $key) {
-            $conditions[$key] = array_key_exists($key, $options) ? $options[$key] : null;
+            $value = array_key_exists($key, $options) ? $options[$key] : null;
+            if (!isset($options[$key])) {
+                $key = sprintf('%s IS', $key);
+            }
+            $conditions[$key] = $value;
         }
 
         return !$this->find($conditions)->isEmpty();

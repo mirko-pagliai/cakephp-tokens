@@ -1,5 +1,9 @@
 # 1.x branch
 ## 1.2 branch
+### 1.2.5
+* updated for `me-tools` 2.18.11;
+* added tests for lower dependencies.
+
 ### 1.2.4
 * little fixes.
 

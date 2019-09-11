@@ -12,7 +12,6 @@
  */
 namespace Tokens\Model\Table;
 
-use ArrayObject;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\I18n\Time;
@@ -42,11 +41,10 @@ class TokensTable extends Table
      * Stopping this event will abort the save operation.
      * @param \Cake\Event\Event $event Event
      * @param \Cake\ORM\Entity $entity Entity
-     * @param \ArrayObject $options Options
      * @return bool
      * @uses deleteExpired()
      */
-    public function beforeSave(Event $event, Entity $entity, ArrayObject $options)
+    public function beforeSave(Event $event, Entity $entity)
     {
         if (!$entity->has('expiry')) {
             $entity->set('expiry', Configure::read('Tokens.expiryDefaultValue'));

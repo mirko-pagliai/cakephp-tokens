@@ -54,7 +54,7 @@ class TokenTraitTest extends TestCase
     {
         parent::setUp();
 
-        $this->Tokens = $this->getMockForModel('Tokens.Tokens', null);
+        $this->Tokens = $this->getTable('Tokens.Tokens');
         $this->TokenTrait = $this->getMockForComponent(TokenComponent::class, null);
     }
 

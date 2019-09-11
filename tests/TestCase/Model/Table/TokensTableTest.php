@@ -52,7 +52,7 @@ class TokensTableTest extends TestCase
     {
         parent::setUp();
 
-        $this->Tokens = $this->getMockForModel('Tokens.Tokens', null);
+        $this->Tokens = $this->getTable('Tokens.Tokens');
     }
 
     /**
@@ -138,13 +138,13 @@ class TokensTableTest extends TestCase
         //Tokens with ID 2 and 4 do not exist anymore
         $this->loadFixtures('Tokens');
         $this->assertEquals(2, $this->Tokens->deleteExpired(new Token(['user_id' => 2])));
-        $this->assertEmpty($this->Tokens->find()->where(['OR' => [['id' => 2], ['id' => 4]]])->all());
+        $this->assertEmpty($this->Tokens->find()->where(['OR' => [['id' => 2], ['id' => 4]]])->count());
 
-        //`user_id` equal to the token with ID 3
+        //`token` equal to the token with ID 3
         //Tokens with ID 2 and 3 do not exist anymore
         $this->loadFixtures('Tokens');
         $this->assertEquals(2, $this->Tokens->deleteExpired(new Token(['token' => 'token3'])));
-        $this->assertEmpty($this->Tokens->find()->where(['OR' => [['id' => 2], ['id' => 3]]])->all());
+        $this->assertEmpty($this->Tokens->find()->where(['OR' => [['id' => 2], ['id' => 3]]])->count());
     }
 
     /**
@@ -212,7 +212,7 @@ class TokensTableTest extends TestCase
 
         //Using another table
         $usersClassOptions = ['className' => 'AnotherUserTable', 'foreignKey' => 'user_id'];
-        $Tokens = $this->getMockForModel('Tokens.Tokens', null, compact('usersClassOptions'));
+        $Tokens = $this->getTable('Tokens.Tokens', compact('usersClassOptions'));
         $this->assertInstanceOf(BelongsTo::class, $Tokens->Users);
         $this->assertEquals('user_id', $Tokens->Users->getForeignKey());
         $this->assertEquals('AnotherUserTable', $Tokens->Users->getClassName());
@@ -224,7 +224,7 @@ class TokensTableTest extends TestCase
      */
     public function testForCustomUsersTable()
     {
-        $Tokens = $this->getMockForModel('Tokens.Tokens', null, ['usersClassOptions' => ['className' => 'TestApp.Users']]);
+        $Tokens = $this->getTable('Tokens.Tokens', ['usersClassOptions' => ['className' => 'TestApp.Users']]);
 
         $this->assertEquals('TestApp.Users', $Tokens->Users->getClassName());
         $this->assertEquals('This is a test method', $Tokens->Users->test());
@@ -241,7 +241,7 @@ class TokensTableTest extends TestCase
     public function testForNoUsersTable()
     {
         Configure::write('Tokens.usersClassOptions', false);
-        $Tokens = $this->getMockForModel('Tokens.Tokens', null);
+        $Tokens = $this->getTable('Tokens.Tokens');
         $this->expectExceptionMessage('The Users association is not defined on Tokens.');
         $Tokens->getAssociation('Users');
     }
