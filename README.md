@@ -1,4 +1,4 @@
-# Tokens plugin
+# cakephp-tokens
 
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.txt)
 [![Build Status](https://travis-ci.org/mirko-pagliai/cakephp-tokens.svg?branch=master)](https://travis-ci.org/mirko-pagliai/cakephp-tokens)
@@ -15,24 +15,27 @@ Please consider the possibility of making [a donation](//paypal.me/mirkopagliai)
 ## Installation
 You can install the plugin via composer:
 
-    $ composer require --prefer-dist mirko-pagliai/cakephp-tokens
-    
+```bash
+$ composer require --prefer-dist mirko-pagliai/cakephp-tokens
+```
+
 Then you have to edit `APP/config/bootstrap.php` to load the plugin:
 
-    Plugin::load('Tokens', ['bootstrap' => true]);
+```php
+Plugin::load('Tokens', ['bootstrap' => true]);
+```
 
 For more information on how to load the plugin, please refer to the 
 [Cookbook](http://book.cakephp.org/3.0/en/plugins.html#loading-a-plugin).
 
 ## Configuration
 The plugin uses some configuration parameters and you can set them using the 
-`\Cake\Core\Configure` class, **before** loading 
-the plugin.
+`\Cake\Core\Configure` class, **before** loading the plugin.
 
 For example, you can do this at the bottom of the file `APP/config/app.php`
 of your application.
 
 ## Versioning
 For transparency and insight into our release cycle and to maintain backward 
-compatibility, *Assets* will be maintained under the 
+compatibility, *Tokens* will be maintained under the 
 [Semantic Versioning guidelines](http://semver.org).
