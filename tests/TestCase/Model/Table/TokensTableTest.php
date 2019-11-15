@@ -89,8 +89,8 @@ class TokensTableTest extends TestCase
         $this->assertEquals(4, $tokens[1]->id);
 
         //Token with ID 3 matches with the user with ID
-        $token = $this->Tokens->find()->matching('Users', function (Query $q) {
-            return $q->where(['Users.id' => 1]);
+        $token = $this->Tokens->find()->matching('Users', function (Query $query) {
+            return $query->where(['Users.id' => 1]);
         })->extract('id')->toArray();
         $this->assertEquals([3], $token);
     }
