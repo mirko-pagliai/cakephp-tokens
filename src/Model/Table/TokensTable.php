@@ -188,7 +188,8 @@ class TokensTable extends Table
      */
     public function validationDefault(Validator $validator)
     {
-        return $validator->integer('id')->allowEmpty('id', 'create')
+        return $validator->integer('id')->allowEmpty('id')
+            ->allowEmpty('create')
             ->requirePresence('token', 'create')->notEmpty('token')
             ->lengthBetween('type', [3, 255])->allowEmpty('type')
             ->allowEmpty('extra')
