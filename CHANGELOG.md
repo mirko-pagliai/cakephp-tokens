@@ -4,6 +4,9 @@
 * updated for `cakephp` 4 and `phpunit` 8.
 
 ## 1.2 branch
+### 1.2.6
+* little fixes.
+
 ### 1.2.5
 * updated for `me-tools` 2.18.11;
 * added tests for lower dependencies.
