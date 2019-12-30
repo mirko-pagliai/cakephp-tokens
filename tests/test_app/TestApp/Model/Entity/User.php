@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * This file is part of cakephp-tokens.
  *
@@ -28,7 +29,7 @@ class User extends Entity
 {
     protected $_virtual = ['test'];
 
-    protected function _getTest()
+    protected function _getTest(): string
     {
         return 'This is a test property';
     }
