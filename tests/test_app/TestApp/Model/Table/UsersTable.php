@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * This file is part of cakephp-tokens.
  *
@@ -26,7 +27,7 @@ use Cake\ORM\Table;
 
 class UsersTable extends Table
 {
-    public function test()
+    public function test(): string
     {
         return 'This is a test method';
     }

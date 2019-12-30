@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * This file is part of cakephp-tokens.
  *
@@ -45,7 +46,7 @@ class Token extends Entity
      *  be created
      * @return object
      */
-    protected function _setExpiry($expiry)
+    protected function _setExpiry($expiry): object
     {
         return is_object($expiry) && method_exists($expiry, 'i18nFormat') ? $expiry : new Time($expiry);
     }

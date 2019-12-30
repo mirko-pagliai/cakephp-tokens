@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * This file is part of cakephp-tokens.
  *
@@ -12,7 +13,7 @@
  */
 namespace Tokens\Test\TestCase\Utility;
 
-use Cake\I18n\Time;
+use Cake\I18n\FrozenTime;
 use Cake\ORM\Query;
 use LogicException;
 use MeTools\TestSuite\MockTrait;
@@ -50,7 +51,7 @@ class TokenTraitTest extends TestCase
      * Called before every test method
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -62,7 +63,7 @@ class TokenTraitTest extends TestCase
      * Called after every test method
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 
@@ -90,7 +91,7 @@ class TokenTraitTest extends TestCase
         //This token exists, but it has expired
         $this->assertFalse($this->TokenTrait->check('036b303f058a35ed48220ee5h'));
 
-        $value = 'c658ffdd8d26875d2539cf78c';
+        $value = '553790c2c20b2ec1d2a406b44';
 
         $this->assertTrue($this->TokenTrait->check($value, ['user_id' => 1, 'type' => 'registration']));
 
@@ -132,7 +133,7 @@ class TokenTraitTest extends TestCase
         $this->assertEquals(2, $token->user->id);
         $this->assertEquals('testType', $token->type);
         $this->assertEquals(['extra1', 'extra2'], $token->extra);
-        $this->assertInstanceOf(Time::class, $token->expiry);
+        $this->assertInstanceOf(FrozenTime::class, $token->expiry);
         $this->assertTrue($token->expiry->isTomorrow());
 
         //With error
@@ -151,7 +152,7 @@ class TokenTraitTest extends TestCase
         $this->assertFalse($this->TokenTrait->delete('tokenNotExists'));
 
         $this->assertNotEmpty($this->Tokens->findById(3)->first());
-        $this->assertTrue($this->TokenTrait->delete('c658ffdd8d26875d2539cf78c'));
+        $this->assertTrue($this->TokenTrait->delete('553790c2c20b2ec1d2a406b44'));
         $this->assertEmpty($this->Tokens->findById(3)->first());
     }
 }

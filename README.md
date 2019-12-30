@@ -8,7 +8,7 @@
 
 *Tokens* is a CakePHP plugin to allows you to handle tokens.
 
-Did you like this plugin? Its development requires a lot of time for me.  
+Did you like this plugin? Its development requires a lot of time for me.
 Please consider the possibility of making [a donation](//paypal.me/mirkopagliai): even a coffee is enough! Thank you.
 
 [![Make a donation](https://www.paypalobjects.com/webstatic/mktg/logo-center/logo_paypal_carte.jpg)](//paypal.me/mirkopagliai)
@@ -20,23 +20,23 @@ You can install the plugin via composer:
 $ composer require --prefer-dist mirko-pagliai/cakephp-tokens
 ```
 
-Then you have to edit `APP/config/bootstrap.php` to load the plugin:
+Then you have to load the plugin. For more information on how to load the plugin,
+please refer to the [Cookbook](//book.cakephp.org/4.0/en/plugins.html#loading-a-plugin).
 
-```php
-Plugin::load('Tokens', ['bootstrap' => true]);
+Simply, you can execute the shell command to enable the plugin:
+```bash
+bin/cake plugin load Tokens
 ```
-
-For more information on how to load the plugin, please refer to the 
-[Cookbook](http://book.cakephp.org/3.0/en/plugins.html#loading-a-plugin).
+This would update your application's bootstrap method.
 
 ## Configuration
-The plugin uses some configuration parameters and you can set them using the 
+The plugin uses some configuration parameters and you can set them using the
 `\Cake\Core\Configure` class, **before** loading the plugin.
 
 For example, you can do this at the bottom of the file `APP/config/app.php`
 of your application.
 
 ## Versioning
-For transparency and insight into our release cycle and to maintain backward 
-compatibility, *Tokens* will be maintained under the 
+For transparency and insight into our release cycle and to maintain backward
+compatibility, *Tokens* will be maintained under the
 [Semantic Versioning guidelines](http://semver.org).

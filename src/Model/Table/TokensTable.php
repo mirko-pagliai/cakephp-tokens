@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * This file is part of cakephp-tokens.
  *
@@ -44,7 +45,7 @@ class TokensTable extends Table
      * @return bool
      * @uses deleteExpired()
      */
-    public function beforeSave(Event $event, Entity $entity)
+    public function beforeSave(Event $event, Entity $entity): bool
     {
         if (!$entity->has('expiry')) {
             $entity->set('expiry', Configure::read('Tokens.expiryDefaultValue'));
@@ -73,7 +74,7 @@ class TokensTable extends Table
      * @param \Tokens\Model\Entity\Token|null $entity Token entity
      * @return int Affected rows
      */
-    public function deleteExpired(Token $entity = null)
+    public function deleteExpired(?Token $entity = null): int
     {
         $conditions = ['expiry <' => Time::now()];
 
@@ -96,10 +97,11 @@ class TokensTable extends Table
      * This rewrites the method provided by CakePHP, to unserialize the `extra`
      *  field.
      * @param string $type Find type
-     * @param array $options The options to use for the find
+     * @param array|\ArrayAccess $options An array that will be passed to
+     *  Query::applyOptions()
      * @return \Cake\ORM\Query
      */
-    public function find($type = 'all', $options = [])
+    public function find(string $type = 'all', $options = []): Query
     {
         $query = parent::find($type, $options);
 
@@ -120,7 +122,7 @@ class TokensTable extends Table
      * @param \Cake\ORM\Query $query Query
      * @return \Cake\ORM\Query
      */
-    public function findActive(Query $query)
+    public function findActive(Query $query): Query
     {
         return $query->where(['expiry >=' => Time::now()]);
     }
@@ -130,7 +132,7 @@ class TokensTable extends Table
      * @param \Cake\ORM\Query $query Query
      * @return \Cake\ORM\Query
      */
-    public function findExpired(Query $query)
+    public function findExpired(Query $query): Query
     {
         return $query->where(['expiry <' => Time::now()]);
     }
@@ -140,7 +142,7 @@ class TokensTable extends Table
      * @param array $config Configuration for the table
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         parent::initialize($config);
 
@@ -148,7 +150,7 @@ class TokensTable extends Table
         $this->setDisplayField('token');
         $this->setPrimaryKey('id');
 
-        $usersClass = empty($config['usersClassOptions']) ? Configure::read('Tokens.usersClassOptions') : $config['usersClassOptions'];
+        $usersClass = $config['usersClassOptions'] ?? Configure::read('Tokens.usersClassOptions');
         if ($usersClass) {
             $this->belongsTo('Users', $usersClass);
 
@@ -165,11 +167,11 @@ class TokensTable extends Table
      * @param \Cake\ORM\RulesChecker $rules The rules object to be modified
      * @return \Cake\ORM\RulesChecker
      */
-    public function buildRules(RulesChecker $rules)
+    public function buildRules(RulesChecker $rules): RulesChecker
     {
         //Uses validation rules as application rules
         $rules->add(function (Token $entity) {
-            $errors = $this->getValidator('default')->errors(
+            $errors = $this->getValidator('default')->validate(
                 $entity->extract($this->getSchema()->columns(), true),
                 $entity->isNew()
             );
@@ -186,13 +188,13 @@ class TokensTable extends Table
      * @param \Cake\Validation\Validator $validator Validator instance
      * @return \Cake\Validation\Validator
      */
-    public function validationDefault(Validator $validator)
+    public function validationDefault(Validator $validator): Validator
     {
-        return $validator->integer('id')->allowEmpty('id')
-            ->allowEmpty('create')
-            ->requirePresence('token', 'create')->notEmpty('token')
-            ->lengthBetween('type', [3, 255])->allowEmpty('type')
-            ->allowEmpty('extra')
-            ->dateTime('expiry')->allowEmpty('expiry');
+        return $validator->integer('id')->allowEmptyString('id')
+            ->allowEmptyDateTime('create')
+            ->requirePresence('token', 'create')->notEmptyString('token')
+            ->lengthBetween('type', [3, 255])->allowEmptyString('type')
+            ->allowEmptyString('extra')
+            ->dateTime('expiry')->allowEmptyDateTime('expiry');
     }
 }
