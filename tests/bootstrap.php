@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * This file is part of cakephp-tokens.
  *
@@ -18,14 +19,9 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Utility\Security;
 
 ini_set('intl.default_locale', 'en_US');
+date_default_timezone_set('UTC');
+mb_internal_encoding('UTF-8');
 
-require dirname(__DIR__) . '/vendor/autoload.php';
-
-if (!defined('DS')) {
-    define('DS', DIRECTORY_SEPARATOR);
-}
-
-// Path constants to a few helpful things.
 define('ROOT', dirname(__DIR__) . DS);
 define('VENDOR', ROOT . 'vendor' . DS);
 define('CAKE_CORE_INCLUDE_PATH', ROOT . 'vendor' . DS . 'cakephp' . DS . 'cakephp');
@@ -41,17 +37,14 @@ define('CONFIG', APP . 'config' . DS);
 define('CACHE', TMP);
 define('LOGS', TMP);
 define('SESSIONS', TMP . 'sessions' . DS);
-
 @mkdir(LOGS);
 @mkdir(SESSIONS);
 @mkdir(CACHE);
 @mkdir(CACHE . 'views');
 @mkdir(CACHE . 'models');
 
+require dirname(__DIR__) . '/vendor/autoload.php';
 require CORE_PATH . 'config' . DS . 'bootstrap.php';
-
-date_default_timezone_set('UTC');
-mb_internal_encoding('UTF-8');
 
 Configure::write('debug', true);
 Configure::write('App', [
@@ -66,10 +59,11 @@ Configure::write('App', [
     'imageBaseUrl' => 'img/',
     'jsBaseUrl' => 'js/',
     'cssBaseUrl' => 'css/',
-    'paths' => [
-        'plugins' => [APP . 'Plugin' . DS],
-    ],
 ]);
+Security::setSalt('a-long-but-not-random-value');
+Configure::write('Session', ['defaults' => 'php']);
+Configure::write('pluginsToLoad', ['Tokens']);
+ConnectionManager::setConfig('test', ['url' => 'sqlite:///' . TMP . 'test.sq3']);
 
 Cache::setConfig([
     '_cake_core_' => [
@@ -77,23 +71,6 @@ Cache::setConfig([
         'prefix' => 'cake_core_',
         'serialize' => true,
     ],
-    '_cake_model_' => [
-        'engine' => 'File',
-        'prefix' => 'cake_model_',
-        'serialize' => true,
-    ],
-    'default' => [
-        'engine' => 'File',
-        'prefix' => 'default_',
-        'serialize' => true,
-    ],
 ]);
-
-// Ensure default test connection is defined
-ConnectionManager::setConfig('test', ['url' => 'sqlite:///' . TMP . 'test.sq3']);
-
-Security::setSalt('a-long-but-not-random-value');
-Configure::write('Session', ['defaults' => 'php']);
-Configure::write('pluginsToLoad', ['Tokens']);
 
 $_SERVER['PHP_SELF'] = '/';
