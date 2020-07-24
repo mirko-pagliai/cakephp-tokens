@@ -242,10 +242,10 @@ class TokensTableTest extends TestCase
      */
     public function testForNoUsersTable()
     {
+        $expected = version_compare(Configure::version(), '4.1', '>=') ? 'The `Users` association is not defined on `Tokens`.' : 'The Users association is not defined on Tokens.';
+        $this->expectExceptionMessage($expected);
         Configure::write('Tokens.usersClassOptions', false);
-        $Tokens = $this->getTable('Tokens.Tokens');
-        $this->expectExceptionMessage('The Users association is not defined on Tokens.');
-        $Tokens->getAssociation('Users');
+        $this->getTable('Tokens.Tokens')->getAssociation('Users');
     }
 
     /**
