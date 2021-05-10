@@ -17,7 +17,6 @@ namespace Tokens\Model\Table;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\I18n\Time;
-use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\ORM\RulesChecker;
@@ -42,11 +41,11 @@ class TokensTable extends Table
      * Called before each entity is saved.
      * Stopping this event will abort the save operation.
      * @param \Cake\Event\Event $event Event
-     * @param \Cake\ORM\Entity $entity Entity
+     * @param \Tokens\Model\Entity\Token $entity A `Token` entity
      * @return bool
      * @uses deleteExpired()
      */
-    public function beforeSave(Event $event, Entity $entity): bool
+    public function beforeSave(Event $event, Token $entity): bool
     {
         if (!$entity->has('expiry')) {
             $entity->set('expiry', Configure::read('Tokens.expiryDefaultValue'));
@@ -79,11 +78,11 @@ class TokensTable extends Table
     {
         $conditions = ['expiry <' => Time::now()];
 
-        if ($entity && $entity->has('token')) {
+        if ($token && $token->has('token')) {
             $conditions['token'] = $token->get('token');
         }
 
-        if ($entity && $entity->has('user_id')) {
+        if ($token && $token->has('user_id')) {
             $conditions['user_id'] = $token->get('user_id');
         }
 
