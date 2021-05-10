@@ -1,6 +1,7 @@
 # 1.x branch
 ## 1.3 branch
 ### 1.3.2
+* ready for `php` 8;
 * added `phpstan`, so fixed some code.
 
 ### 1.3.1
