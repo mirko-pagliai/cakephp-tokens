@@ -33,7 +33,7 @@ use Tokens\Model\Entity\Token;
  * @method \Tokens\Model\Entity\Token|bool save(\Cake\Datasource\EntityInterface $entity, $options = [])
  * @method \Tokens\Model\Entity\Token patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
  * @method \Tokens\Model\Entity\Token[] patchEntities($entities, array $data, array $options = [])
- * @method \Tokens\Model\Entity\Token findOrCreate($search, callable $callback = null)
+ * @method \Tokens\Model\Entity\Token findOrCreate($search, ?callable $callback = null, $options = [])
  */
 class TokensTable extends Table
 {
@@ -97,17 +97,16 @@ class TokensTable extends Table
      * This rewrites the method provided by CakePHP, to unserialize the `extra`
      *  field.
      * @param string $type Find type
-     * @param array|\ArrayAccess $options An array that will be passed to
-     *  Query::applyOptions()
+     * @param array $options An array that will be passed to Query::applyOptions()
      * @return \Cake\ORM\Query
      */
-    public function find(string $type = 'all', $options = []): Query
+    public function find(string $type = 'all', array $options = []): Query
     {
         $query = parent::find($type, $options);
 
         //Unserializes the `extra` field.
         return $query->formatResults(function (ResultSet $results) {
-            return $results->map(function (Token $token) {
+            return $results->map(function (Token $token): Token {
                 if ($token->has('extra')) {
                     $token->set('extra', @unserialize($token->get('extra')));
                 }

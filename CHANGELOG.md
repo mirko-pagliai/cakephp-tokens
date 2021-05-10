@@ -1,5 +1,8 @@
 # 1.x branch
 ## 1.3 branch
+### 1.3.2
+* added `phpstan`, so fixed some code.
+
 ### 1.3.1
 * small fixes to standardize to `cakephp` 4.
 

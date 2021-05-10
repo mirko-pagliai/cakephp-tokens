@@ -35,7 +35,7 @@ class TokenTraitTest extends TestCase
     public $TokenTrait;
 
     /**
-     * @var \Tokens\Model\Table\TokensTable
+     * @var \Tokens\Model\Table\TokensTable|\Cake\ORM\Table|null
      */
     public $Tokens;
 

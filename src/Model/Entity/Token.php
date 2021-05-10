@@ -43,10 +43,10 @@ class Token extends Entity
 
     /**
      * `set` mutators for `expiry` property
-     * @param DateTimeInterface|string $expiry `expiry` value. Can be a string or a time
+     * @param \DateTimeInterface|string $expiry `expiry` value. Can be a string or a time
      *  instance. If the value is a string, an instance of `Cake\I18n\Time` will
      *  be created
-     * @return DateTimeInterface
+     * @return \DateTimeInterface
      */
     protected function _setExpiry($expiry): DateTimeInterface
     {
