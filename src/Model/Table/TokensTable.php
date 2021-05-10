@@ -72,19 +72,19 @@ class TokensTable extends Table
      * This method should be called before creating a new token. In fact, it
      *  prevents a user from having more than token or a token is created with
      *  the same token value.
-     * @param \Tokens\Model\Entity\Token|null $entity Token entity
+     * @param \Tokens\Model\Entity\Token|null $token Token entity
      * @return int Affected rows
      */
-    public function deleteExpired(?Token $entity = null): int
+    public function deleteExpired(?Token $token = null): int
     {
         $conditions = ['expiry <' => Time::now()];
 
         if ($entity && $entity->has('token')) {
-            $conditions['token'] = $entity->get('token');
+            $conditions['token'] = $token->get('token');
         }
 
         if ($entity && $entity->has('user_id')) {
-            $conditions['user_id'] = $entity->get('user_id');
+            $conditions['user_id'] = $token->get('user_id');
         }
 
         $conditions = count($conditions) > 1 ? ['OR' => $conditions] : $conditions;
