@@ -30,7 +30,7 @@ class TokenTraitTest extends TestCase
 
     /**
      * A class that uses the trait
-     * @var \TokenTrait
+     * @var \Tokens\Utility\TokenTrait
      */
     public $TokenTrait;
 
