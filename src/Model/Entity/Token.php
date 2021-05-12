@@ -18,6 +18,7 @@ use Cake\Core\Configure;
 use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\Utility\Security;
+use DateTimeInterface;
 
 /**
  * Token Entity
@@ -42,12 +43,12 @@ class Token extends Entity
 
     /**
      * `set` mutators for `expiry` property
-     * @param string|object $expiry `expiry` value. Can be a string or a time
+     * @param \DateTimeInterface|string $expiry `expiry` value. Can be a string or a time
      *  instance. If the value is a string, an instance of `Cake\I18n\Time` will
      *  be created
-     * @return object
+     * @return \DateTimeInterface
      */
-    protected function _setExpiry($expiry): object
+    protected function _setExpiry($expiry): DateTimeInterface
     {
         return is_object($expiry) && method_exists($expiry, 'i18nFormat') ? $expiry : new Time($expiry);
     }

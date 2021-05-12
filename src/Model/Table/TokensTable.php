@@ -17,7 +17,6 @@ namespace Tokens\Model\Table;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\I18n\Time;
-use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\ORM\RulesChecker;
@@ -34,7 +33,7 @@ use Tokens\Model\Entity\Token;
  * @method \Tokens\Model\Entity\Token|bool save(\Cake\Datasource\EntityInterface $entity, $options = [])
  * @method \Tokens\Model\Entity\Token patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
  * @method \Tokens\Model\Entity\Token[] patchEntities($entities, array $data, array $options = [])
- * @method \Tokens\Model\Entity\Token findOrCreate($search, callable $callback = null)
+ * @method \Tokens\Model\Entity\Token findOrCreate($search, ?callable $callback = null, $options = [])
  */
 class TokensTable extends Table
 {
@@ -42,11 +41,11 @@ class TokensTable extends Table
      * Called before each entity is saved.
      * Stopping this event will abort the save operation.
      * @param \Cake\Event\Event $event Event
-     * @param \Cake\ORM\Entity $entity Entity
+     * @param \Tokens\Model\Entity\Token $entity A `Token` entity
      * @return bool
      * @uses deleteExpired()
      */
-    public function beforeSave(Event $event, Entity $entity): bool
+    public function beforeSave(Event $event, Token $entity): bool
     {
         if (!$entity->has('expiry')) {
             $entity->set('expiry', Configure::read('Tokens.expiryDefaultValue'));
@@ -72,19 +71,19 @@ class TokensTable extends Table
      * This method should be called before creating a new token. In fact, it
      *  prevents a user from having more than token or a token is created with
      *  the same token value.
-     * @param \Tokens\Model\Entity\Token|null $entity Token entity
+     * @param \Tokens\Model\Entity\Token|null $token Token entity
      * @return int Affected rows
      */
-    public function deleteExpired(?Token $entity = null): int
+    public function deleteExpired(?Token $token = null): int
     {
         $conditions = ['expiry <' => Time::now()];
 
-        if ($entity && $entity->has('token')) {
-            $conditions['token'] = $entity->get('token');
+        if ($token && $token->has('token')) {
+            $conditions['token'] = $token->get('token');
         }
 
-        if ($entity && $entity->has('user_id')) {
-            $conditions['user_id'] = $entity->get('user_id');
+        if ($token && $token->has('user_id')) {
+            $conditions['user_id'] = $token->get('user_id');
         }
 
         $conditions = count($conditions) > 1 ? ['OR' => $conditions] : $conditions;
@@ -98,17 +97,16 @@ class TokensTable extends Table
      * This rewrites the method provided by CakePHP, to unserialize the `extra`
      *  field.
      * @param string $type Find type
-     * @param array|\ArrayAccess $options An array that will be passed to
-     *  Query::applyOptions()
+     * @param array $options An array that will be passed to Query::applyOptions()
      * @return \Cake\ORM\Query
      */
-    public function find(string $type = 'all', $options = []): Query
+    public function find(string $type = 'all', array $options = []): Query
     {
         $query = parent::find($type, $options);
 
         //Unserializes the `extra` field.
         return $query->formatResults(function (ResultSet $results) {
-            return $results->map(function (Token $token) {
+            return $results->map(function (Token $token): Token {
                 if ($token->has('extra')) {
                     $token->set('extra', @unserialize($token->get('extra')));
                 }

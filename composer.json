@@ -4,10 +4,12 @@
     "homepage": "https://github.com/mirko-pagliai/cakephp-tokens",
     "type": "cakephp-plugin",
     "license": "MIT",
-    "authors": [{
+    "authors": [
+        {
             "name": "Mirko Pagliai",
             "email": "mirko.pagliai@gmail.com"
-        }],
+        }
+    ],
     "require": {
         "php": ">=7.2",
         "cakephp/cakephp": "^4.0",
@@ -15,8 +17,8 @@
     },
     "require-dev": {
         "cakephp/cakephp-codesniffer": "^4.0",
-        "mirko-pagliai/me-tools": "^2.19",
-        "phpunit/phpunit": "^8.0"
+        "mirko-pagliai/me-tools": "^2.20",
+        "phpunit/phpunit": "^8.5|^9.0"
     },
     "autoload": {
         "psr-4": {
@@ -29,5 +31,28 @@
             "TestApp\\": "tests/test_app/TestApp",
             "Tokens\\Test\\": "tests"
         }
+    },
+    "scripts": {
+        "check": [
+            "@cs-check",
+            "@update-lowest",
+            "@test",
+            "@composer update",
+            "@test",
+            "@stan"
+        ],
+        "cs-check": "phpcs --standard=phpcs.xml.dist",
+        "cs-fix": "phpcbf --standard=phpcs.xml.dist",
+        "test": "rm -f -r /tmp/cake* && phpunit",
+        "coverage": "XDEBUG_MODE=coverage phpunit --coverage-html=coverage",
+        "phpstan": "phpstan.phar analyse",
+        "psalm": "psalm.phar",
+        "stan": [
+            "@stan-setup",
+            "@phpstan",
+            "@psalm"
+        ],
+        "stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:^0.12 psalm/phar:\"^3.18|^4\" && mv composer.backup composer.json",
+        "update-lowest": "@composer update --prefer-lowest"
     }
 }

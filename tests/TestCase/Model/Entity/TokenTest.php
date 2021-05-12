@@ -36,13 +36,13 @@ class TokenTest extends TestCase
 
         foreach (['+1 day', new Time('+1 day')] as $expiry) {
             $entity->set('expiry', $expiry);
-            $this->assertInstanceOf(Time::class, $entity->expiry);
-            $this->assertTrue($entity->expiry->isTomorrow());
+            $this->assertInstanceOf(Time::class, $entity->get('expiry'));
+            $this->assertTrue($entity->get('expiry')->isTomorrow());
         }
 
         foreach ([Date::class, FrozenDate::class, FrozenTime::class, Time::class] as $class) {
             $entity->set('expiry', new $class());
-            $this->assertInstanceOf($class, $entity->expiry);
+            $this->assertInstanceOf($class, $entity->get('expiry'));
         }
     }
 
@@ -54,7 +54,7 @@ class TokenTest extends TestCase
     {
         $entity = new Token();
         $entity->set('token', null);
-        $this->assertNull($entity->token);
+        $this->assertNull($entity->get('token'));
 
         foreach ([
             'test',
@@ -62,7 +62,7 @@ class TokenTest extends TestCase
             (object)['first', 'second'],
         ] as $token) {
             $entity->set('token', $token);
-            $this->assertRegExp('/^[\d\w]{25}$/', $entity->token);
+            $this->assertMatchesRegularExpression('/^[\d\w]{25}$/', $entity->get('token'));
         }
     }
 }

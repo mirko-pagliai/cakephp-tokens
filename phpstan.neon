@@ -1,0 +1,35 @@
+parameters:
+    level: 8
+
+    paths:
+        - config
+        - src
+        - tests
+
+    bootstrapFiles:
+        - tests/bootstrap.php
+
+    checkGenericClassInNonGenericObjectType: false
+    checkMissingIterableValueType: false
+    treatPhpDocTypesAsCertain: false
+
+    excludes_analyse:
+        -  config/
+        -  tests/test_app/
+
+    ignoreErrors:
+        - '#^Ternary operator condition is always true\.$#'
+        - '#^Call to an undefined method (Cake\\ORM\\Association\\BelongsTo|Tokens\\Model\\Table\\TokensTable)::findBy\w+\(\)\.$#'
+
+        -
+            message: '#has no return typehint specified\.$#'
+            path: tests/TestCase
+        -
+            message: '#^Cannot call method get\(\) on bool\|Tokens\\Model\\Entity\\Token\.$#'
+            path: tests/TestCase
+        -
+            message: '#^Cannot access property \$Users on Cake\\ORM\\Table\|null\.$#'
+            path: tests/TestCase
+        -
+            message: '#^Cannot call method \w+\(\) on Cake\\ORM\\Table\|null\.$#'
+            path: tests/TestCase

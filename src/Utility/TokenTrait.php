@@ -14,7 +14,9 @@ declare(strict_types=1);
  */
 namespace Tokens\Utility;
 
+use Cake\Datasource\EntityInterface;
 use Cake\ORM\Query;
+use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use LogicException;
 use Tokens\Model\Entity\Token;
@@ -27,9 +29,9 @@ trait TokenTrait
 {
     /**
      * Internal method to get the table instance
-     * @return \Tokens\Model\Table\TokensTable
+     * @return \Cake\ORM\Table
      */
-    protected function getTable(): object
+    protected function getTable(): Table
     {
         return TableRegistry::get('Tokens.Tokens');
     }
@@ -112,6 +114,8 @@ trait TokenTrait
     {
         $query = $this->find(compact('token'));
 
-        return $query->count() ? $this->getTable()->delete($query->first()) : false;
+        $first = $query->first();
+
+        return $query->count() && $first instanceof EntityInterface ? $this->getTable()->delete($first) : false;
     }
 }

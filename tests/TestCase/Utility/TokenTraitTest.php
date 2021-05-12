@@ -19,7 +19,7 @@ use Cake\ORM\Query;
 use LogicException;
 use MeTools\TestSuite\MockTrait;
 use MeTools\TestSuite\TestCase;
-use Tokens\Controller\Component\TokenComponent;
+use TestApp\TokenTraitClass;
 
 /**
  * TokenTraitTest Test Case
@@ -30,12 +30,12 @@ class TokenTraitTest extends TestCase
 
     /**
      * A class that uses the trait
-     * @var \TokenTrait
+     * @var \TestApp\TokenTraitClass
      */
     public $TokenTrait;
 
     /**
-     * @var \Tokens\Model\Table\TokensTable
+     * @var \Tokens\Model\Table\TokensTable|\Cake\ORM\Table|null
      */
     public $Tokens;
 
@@ -57,7 +57,7 @@ class TokenTraitTest extends TestCase
         parent::setUp();
 
         $this->Tokens = $this->getTable('Tokens.Tokens');
-        $this->TokenTrait = $this->getMockForComponent(TokenComponent::class, null);
+        $this->TokenTrait = new TokenTraitClass();
     }
 
     /**

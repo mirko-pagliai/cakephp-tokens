@@ -54,7 +54,7 @@ class TokensTableTest extends TestCase
     {
         parent::setUp();
 
-        $this->Tokens = $this->getTable('Tokens.Tokens');
+        $this->Tokens = $this->Tokens ?: $this->getTable('Tokens.Tokens');
     }
 
     /**
@@ -76,18 +76,18 @@ class TokensTableTest extends TestCase
     {
         //Token with ID 1 has no user
         $token = $this->Tokens->findById(1)->contain('Users')->first();
-        $this->assertEmpty($token->user);
+        $this->assertEmpty($token->get('user'));
 
         //Token with ID 3 has user with ID 2
         $token = $this->Tokens->findById(3)->contain('Users')->first();
-        $this->assertInstanceOf(Entity::class, $token->user);
-        $this->assertEquals(1, $token->user->id);
+        $this->assertInstanceOf(Entity::class, $token->get('user'));
+        $this->assertEquals(1, $token->get('user')->get('id'));
 
         //User with ID 2 has tokens with ID 3 and 4
         $tokens = $this->Tokens->Users->findById(2)->contain('Tokens')->extract('tokens')->first();
         $this->assertEquals(2, count($tokens));
-        $this->assertEquals(2, $tokens[0]->id);
-        $this->assertEquals(4, $tokens[1]->id);
+        $this->assertEquals(2, $tokens[0]->get('id'));
+        $this->assertEquals(4, $tokens[1]->get('id'));
 
         //Token with ID 3 matches with the user with ID
         $token = $this->Tokens->find()->matching('Users', function (Query $query) {
@@ -104,26 +104,26 @@ class TokensTableTest extends TestCase
     {
         $token = $this->Tokens->save(new Token(['token' => 'test1', 'expiry' => '+1 day']));
         $this->assertNotEmpty($token);
-        $this->assertTrue($token->expiry->isTomorrow());
-        $this->assertInstanceOf(Time::class, $token->expiry);
+        $this->assertTrue($token->get('expiry')->isTomorrow());
+        $this->assertInstanceOf(Time::class, $token->get('expiry'));
 
         $token = $this->Tokens->save(new Token(['token' => 'test2', 'extra' => 'testExtra']));
         $this->assertNotEmpty($token);
-        $this->assertEquals('s:9:"testExtra";', $token->extra);
+        $this->assertEquals('s:9:"testExtra";', $token->get('extra'));
 
         $token = $this->Tokens->save(new Token([
             'token' => 'test3',
             'extra' => ['first', 'second'],
         ]));
         $this->assertNotEmpty($token);
-        $this->assertEquals('a:2:{i:0;s:5:"first";i:1;s:6:"second";}', $token->extra);
+        $this->assertEquals('a:2:{i:0;s:5:"first";i:1;s:6:"second";}', $token->get('extra'));
 
         $token = $this->Tokens->save(new Token([
             'token' => 'test4',
             'extra' => (object)['first', 'second'],
         ]));
         $this->assertNotEmpty($token);
-        $this->assertEquals((object)['first', 'second'], unserialize($token->extra));
+        $this->assertEquals((object)['first', 'second'], unserialize($token->get('extra')));
     }
 
     /**
@@ -135,16 +135,28 @@ class TokensTableTest extends TestCase
         //Token with ID 2 does not exist anymore
         $this->assertEquals(1, $this->Tokens->deleteExpired());
         $this->assertEmpty($this->Tokens->findById(2)->first());
+    }
 
+    /**
+     * Test for `deleteExpired()` method, with an user id
+     * @test
+     */
+    public function testDeleteExpiredWithUserId()
+    {
         //`user_id` equal to the tokens with ID 2 and 4
         //Tokens with ID 2 and 4 do not exist anymore
-        $this->loadFixtures('Tokens');
         $this->assertEquals(2, $this->Tokens->deleteExpired(new Token(['user_id' => 2])));
         $this->assertEmpty($this->Tokens->find()->where(['OR' => [['id' => 2], ['id' => 4]]])->count());
+    }
 
+    /**
+     * Test for `deleteExpired()` method, with a token value
+     * @test
+     */
+    public function testDeleteExpiredWithTokenValue()
+    {
         //`token` equal to the token with ID 3
         //Tokens with ID 2 and 3 do not exist anymore
-        $this->loadFixtures('Tokens');
         $this->assertEquals(2, $this->Tokens->deleteExpired(new Token(['token' => 'token3'])));
         $this->assertEmpty($this->Tokens->find()->where(['OR' => [['id' => 2], ['id' => 3]]])->count());
     }
@@ -232,8 +244,8 @@ class TokensTableTest extends TestCase
         $this->assertEquals('This is a test method', $Tokens->Users->test());
 
         $token = $Tokens->findById(2)->contain('Users')->first();
-        $this->assertInstanceOf(User::class, $token->user);
-        $this->assertEquals('This is a test property', $token->user->test);
+        $this->assertInstanceOf(User::class, $token->get('user'));
+        $this->assertEquals('This is a test property', $token->get('user')->get('test'));
     }
 
     /**
@@ -242,10 +254,10 @@ class TokensTableTest extends TestCase
      */
     public function testForNoUsersTable()
     {
+        $expected = version_compare(Configure::version(), '4.1', '>=') ? 'The `Users` association is not defined on `Tokens`.' : 'The Users association is not defined on Tokens.';
+        $this->expectExceptionMessage($expected);
         Configure::write('Tokens.usersClassOptions', false);
-        $Tokens = $this->getTable('Tokens.Tokens');
-        $this->expectExceptionMessage('The Users association is not defined on Tokens.');
-        $Tokens->getAssociation('Users');
+        $this->getTable('Tokens.Tokens')->getAssociation('Users');
     }
 
     /**
@@ -273,11 +285,11 @@ class TokensTableTest extends TestCase
     {
         $token = $this->Tokens->save(new Token(['token' => 'test1']));
         $this->assertInstanceOf(Token::class, $token);
-        $this->assertEquals(null, $token->user_id);
-        $this->assertRegExp('/^[\w\d]{25}$/', $token->token);
-        $this->assertEmpty($token->type);
-        $this->assertInstanceOf(Time::class, $token->expiry);
-        $this->assertEmpty($token->extra);
+        $this->assertEquals(null, $token->get('user_id'));
+        $this->assertMatchesRegularExpression('/^[\w\d]{25}$/', $token->get('token'));
+        $this->assertEmpty($token->get('type'));
+        $this->assertInstanceOf(Time::class, $token->get('expiry'));
+        $this->assertEmpty($token->get('extra'));
     }
 
     /**
