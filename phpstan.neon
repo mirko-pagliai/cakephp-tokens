@@ -22,9 +22,6 @@ parameters:
         - '#^Call to an undefined method (Cake\\ORM\\Association\\BelongsTo|Tokens\\Model\\Table\\TokensTable)::findBy\w+\(\)\.$#'
 
         -
-            message: '#has no return typehint specified\.$#'
-            path: tests/TestCase
-        -
             message: '#^Cannot call method get\(\) on bool\|Tokens\\Model\\Entity\\Token\.$#'
             path: tests/TestCase
         -

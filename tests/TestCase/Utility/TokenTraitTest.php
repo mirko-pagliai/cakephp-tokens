@@ -75,7 +75,7 @@ class TokenTraitTest extends TestCase
      * Test for `find()` method
      * @test
      */
-    public function testFind()
+    public function testFind(): void
     {
         $this->assertInstanceOf(Query::class, $this->TokenTrait->find());
     }
@@ -84,7 +84,7 @@ class TokenTraitTest extends TestCase
      * Test for `check()` method
      * @test
      */
-    public function testCheck()
+    public function testCheck(): void
     {
         //This token does not exist
         $this->assertFalse($this->TokenTrait->check('tokenNotExists'));
@@ -116,7 +116,7 @@ class TokenTraitTest extends TestCase
      * Test for `create()` method
      * @test
      */
-    public function testCreate()
+    public function testCreate(): void
     {
         $token = $this->TokenTrait->create('token_1');
         $this->assertNotEmpty($token);
@@ -147,7 +147,7 @@ class TokenTraitTest extends TestCase
      * Test for `delete()` method
      * @test
      */
-    public function testDelete()
+    public function testDelete(): void
     {
         //This token does not exist
         $this->assertFalse($this->TokenTrait->delete('tokenNotExists'));
