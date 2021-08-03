@@ -34,6 +34,8 @@ use Tokens\Model\Entity\Token;
  * @method \Tokens\Model\Entity\Token patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
  * @method \Tokens\Model\Entity\Token[] patchEntities($entities, array $data, array $options = [])
  * @method \Tokens\Model\Entity\Token findOrCreate($search, ?callable $callback = null, $options = [])
+ * @method \Cake\ORM\Query findById(int $id)
+ * @method \Cake\ORM\Query findByToken(string $token)
  */
 class TokensTable extends Table
 {
