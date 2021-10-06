@@ -1,9 +1,9 @@
 # cakephp-tokens
 
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.txt)
-[![Build Status](https://travis-ci.org/mirko-pagliai/cakephp-tokens.svg?branch=master)](https://travis-ci.org/mirko-pagliai/cakephp-tokens)
-[![Build status](https://ci.appveyor.com/api/projects/status/03gdahoap22rbkkh?svg=true)](https://ci.appveyor.com/project/mirko-pagliai/cakephp-tokens)
+[![CI](https://github.com/mirko-pagliai/cakephp-tokens/actions/workflows/ci.yml/badge.svg)](https://github.com/mirko-pagliai/cakephp-tokens/actions/workflows/ci.yml)
 [![Coverage Status](https://img.shields.io/codecov/c/github/mirko-pagliai/cakephp-tokens.svg?style=flat-square)](https://codecov.io/github/mirko-pagliai/cakephp-tokens)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/3285af154b94452ab5927747579b6bf7)](https://www.codacy.com/gh/mirko-pagliai/cakephp-tokens/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mirko-pagliai/cakephp-tokens&amp;utm_campaign=Badge_Grade)
 [![CodeFactor](https://www.codefactor.io/repository/github/mirko-pagliai/cakephp-tokens/badge)](https://www.codefactor.io/repository/github/mirko-pagliai/cakephp-tokens)
 
 *Tokens* is a CakePHP plugin to allows you to handle tokens.
