@@ -30,7 +30,7 @@ class TokenTest extends TestCase
      * Test for `_setExpiry()` method
      * @test
      */
-    public function testExpirySetMutator()
+    public function testExpirySetMutator(): void
     {
         $entity = new Token();
 
@@ -50,7 +50,7 @@ class TokenTest extends TestCase
      * Test for `_setToken()` method
      * @test
      */
-    public function testTokenSetMutator()
+    public function testTokenSetMutator(): void
     {
         $entity = new Token();
         $entity->set('token', null);

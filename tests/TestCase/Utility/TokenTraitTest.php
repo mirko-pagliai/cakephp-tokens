@@ -35,7 +35,7 @@ class TokenTraitTest extends TestCase
     public $TokenTrait;
 
     /**
-     * @var \Tokens\Model\Table\TokensTable|\Cake\ORM\Table|null
+     * @var \Tokens\Model\Table\TokensTable
      */
     public $Tokens;
 
@@ -56,8 +56,8 @@ class TokenTraitTest extends TestCase
     {
         parent::setUp();
 
-        $this->Tokens = $this->getTable('Tokens.Tokens');
-        $this->TokenTrait = new TokenTraitClass();
+        $this->Tokens = $this->Tokens ?: $this->getTable('Tokens.Tokens');
+        $this->TokenTrait = $this->TokenTrait ?: new TokenTraitClass();
     }
 
     /**
@@ -75,7 +75,7 @@ class TokenTraitTest extends TestCase
      * Test for `find()` method
      * @test
      */
-    public function testFind()
+    public function testFind(): void
     {
         $this->assertInstanceOf(Query::class, $this->TokenTrait->find());
     }
@@ -84,7 +84,7 @@ class TokenTraitTest extends TestCase
      * Test for `check()` method
      * @test
      */
-    public function testCheck()
+    public function testCheck(): void
     {
         //This token does not exist
         $this->assertFalse($this->TokenTrait->check('tokenNotExists'));
@@ -116,7 +116,7 @@ class TokenTraitTest extends TestCase
      * Test for `create()` method
      * @test
      */
-    public function testCreate()
+    public function testCreate(): void
     {
         $token = $this->TokenTrait->create('token_1');
         $this->assertNotEmpty($token);
@@ -130,12 +130,13 @@ class TokenTraitTest extends TestCase
             'expiry' => '+1 days',
         ]);
         $this->assertNotEmpty($token);
+        /** @var \Tokens\Model\Entity\Token $token */
         $token = $this->Tokens->findByToken($token)->contain('Users')->first();
-        $this->assertEquals(2, $token->user->id);
-        $this->assertEquals('testType', $token->type);
-        $this->assertEquals(['extra1', 'extra2'], $token->extra);
-        $this->assertInstanceOf(FrozenTime::class, $token->expiry);
-        $this->assertTrue($token->expiry->isTomorrow());
+        $this->assertEquals(2, $token->get('user')->get('id'));
+        $this->assertEquals('testType', $token->get('type'));
+        $this->assertEquals(['extra1', 'extra2'], $token->get('extra'));
+        $this->assertInstanceOf(FrozenTime::class, $token->get('expiry'));
+        $this->assertTrue($token->get('expiry')->isTomorrow());
 
         //With error
         $this->expectException(LogicException::class);
@@ -147,7 +148,7 @@ class TokenTraitTest extends TestCase
      * Test for `delete()` method
      * @test
      */
-    public function testDelete()
+    public function testDelete(): void
     {
         //This token does not exist
         $this->assertFalse($this->TokenTrait->delete('tokenNotExists'));

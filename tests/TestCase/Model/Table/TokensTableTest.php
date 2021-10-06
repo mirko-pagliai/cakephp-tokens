@@ -72,19 +72,23 @@ class TokensTableTest extends TestCase
      * Test for `Users` association
      * @test
      */
-    public function testAssociationWithUsers()
+    public function testAssociationWithUsers(): void
     {
         //Token with ID 1 has no user
+        /** @var \Tokens\Model\Entity\Token $token */
         $token = $this->Tokens->findById(1)->contain('Users')->first();
         $this->assertEmpty($token->get('user'));
 
         //Token with ID 3 has user with ID 2
+        /** @var \Tokens\Model\Entity\Token $token */
         $token = $this->Tokens->findById(3)->contain('Users')->first();
         $this->assertInstanceOf(Entity::class, $token->get('user'));
         $this->assertEquals(1, $token->get('user')->get('id'));
 
         //User with ID 2 has tokens with ID 3 and 4
-        $tokens = $this->Tokens->Users->findById(2)->contain('Tokens')->extract('tokens')->first();
+        /** @var \TestApp\Model\Table\UsersTable $Users */
+        $Users = $this->Tokens->Users;
+        $tokens = $Users->findById(2)->contain('Tokens')->extract('tokens')->first();
         $this->assertEquals(2, count($tokens));
         $this->assertEquals(2, $tokens[0]->get('id'));
         $this->assertEquals(4, $tokens[1]->get('id'));
@@ -100,17 +104,20 @@ class TokensTableTest extends TestCase
      * Test for `beforeSave()` method
      * @test
      */
-    public function testBeforeSave()
+    public function testBeforeSave(): void
     {
+        /** @var \Tokens\Model\Entity\Token $token */
         $token = $this->Tokens->save(new Token(['token' => 'test1', 'expiry' => '+1 day']));
         $this->assertNotEmpty($token);
         $this->assertTrue($token->get('expiry')->isTomorrow());
         $this->assertInstanceOf(Time::class, $token->get('expiry'));
 
+        /** @var \Tokens\Model\Entity\Token $token */
         $token = $this->Tokens->save(new Token(['token' => 'test2', 'extra' => 'testExtra']));
         $this->assertNotEmpty($token);
         $this->assertEquals('s:9:"testExtra";', $token->get('extra'));
 
+        /** @var \Tokens\Model\Entity\Token $token */
         $token = $this->Tokens->save(new Token([
             'token' => 'test3',
             'extra' => ['first', 'second'],
@@ -118,6 +125,7 @@ class TokensTableTest extends TestCase
         $this->assertNotEmpty($token);
         $this->assertEquals('a:2:{i:0;s:5:"first";i:1;s:6:"second";}', $token->get('extra'));
 
+        /** @var \Tokens\Model\Entity\Token $token */
         $token = $this->Tokens->save(new Token([
             'token' => 'test4',
             'extra' => (object)['first', 'second'],
@@ -130,7 +138,7 @@ class TokensTableTest extends TestCase
      * Test for `deleteExpired()` method
      * @test
      */
-    public function testDeleteExpired()
+    public function testDeleteExpired(): void
     {
         //Token with ID 2 does not exist anymore
         $this->assertEquals(1, $this->Tokens->deleteExpired());
@@ -141,7 +149,7 @@ class TokensTableTest extends TestCase
      * Test for `deleteExpired()` method, with an user id
      * @test
      */
-    public function testDeleteExpiredWithUserId()
+    public function testDeleteExpiredWithUserId(): void
     {
         //`user_id` equal to the tokens with ID 2 and 4
         //Tokens with ID 2 and 4 do not exist anymore
@@ -153,7 +161,7 @@ class TokensTableTest extends TestCase
      * Test for `deleteExpired()` method, with a token value
      * @test
      */
-    public function testDeleteExpiredWithTokenValue()
+    public function testDeleteExpiredWithTokenValue(): void
     {
         //`token` equal to the token with ID 3
         //Tokens with ID 2 and 3 do not exist anymore
@@ -165,7 +173,7 @@ class TokensTableTest extends TestCase
      * Test for `find()` method. It tests that `extra` is formatted
      * @test
      */
-    public function testFindFormatsExtraFields()
+    public function testFindFormatsExtraFields(): void
     {
         $query = $this->Tokens->find();
         $this->assertInstanceOf(Query::class, $query);
@@ -183,7 +191,7 @@ class TokensTableTest extends TestCase
      * Test for `active` `find()` method
      * @test
      */
-    public function testFindActive()
+    public function testFindActive(): void
     {
         $query = $this->Tokens->find('active');
         $this->assertInstanceOf(Query::class, $query);
@@ -198,7 +206,7 @@ class TokensTableTest extends TestCase
      * Test for `expired` `find()` method
      * @test
      */
-    public function testFindExpired()
+    public function testFindExpired(): void
     {
         $query = $this->Tokens->find('expired');
         $this->assertInstanceOf(Query::class, $query);
@@ -213,7 +221,7 @@ class TokensTableTest extends TestCase
      * Test initialize method
      * @test
      */
-    public function testInitialize()
+    public function testInitialize(): void
     {
         $this->assertInstanceOf(TokensTable::class, $this->Tokens);
         $this->assertEquals('tokens', $this->Tokens->getTable());
@@ -227,6 +235,7 @@ class TokensTableTest extends TestCase
         //Using another table
         $usersClassOptions = ['className' => 'AnotherUserTable', 'foreignKey' => 'user_id'];
         $Tokens = $this->getTable('Tokens.Tokens', compact('usersClassOptions'));
+        /** @var \Tokens\Model\Table\TokensTable $Tokens */
         $this->assertInstanceOf(BelongsTo::class, $Tokens->Users);
         $this->assertEquals('user_id', $Tokens->Users->getForeignKey());
         $this->assertEquals('AnotherUserTable', $Tokens->Users->getClassName());
@@ -236,13 +245,13 @@ class TokensTableTest extends TestCase
      * Test for a custum `Users` table
      * @test
      */
-    public function testForCustomUsersTable()
+    public function testForCustomUsersTable(): void
     {
+        /** @var \Tokens\Model\Table\TokensTable $Tokens */
         $Tokens = $this->getTable('Tokens.Tokens', ['usersClassOptions' => ['className' => 'TestApp.Users']]);
-
         $this->assertEquals('TestApp.Users', $Tokens->Users->getClassName());
-        $this->assertEquals('This is a test method', $Tokens->Users->test());
 
+        /** @var \Tokens\Model\Entity\Token $token */
         $token = $Tokens->findById(2)->contain('Users')->first();
         $this->assertInstanceOf(User::class, $token->get('user'));
         $this->assertEquals('This is a test property', $token->get('user')->get('test'));
@@ -252,19 +261,21 @@ class TokensTableTest extends TestCase
      * Test for a no `Users` table
      * @test
      */
-    public function testForNoUsersTable()
+    public function testForNoUsersTable(): void
     {
         $expected = version_compare(Configure::version(), '4.1', '>=') ? 'The `Users` association is not defined on `Tokens`.' : 'The Users association is not defined on Tokens.';
         $this->expectExceptionMessage($expected);
         Configure::write('Tokens.usersClassOptions', false);
-        $this->getTable('Tokens.Tokens')->getAssociation('Users');
+        /** @var \Tokens\Model\Table\TokensTable $Tokens */
+        $Tokens = $this->getTable('Tokens.Tokens');
+        $Tokens->getAssociation('Users');
     }
 
     /**
      * Test build rules for `user_id` property
      * @test
      */
-    public function testRulesForUserId()
+    public function testRulesForUserId(): void
     {
         //Valid `user_id` value
         $token = $this->Tokens->newEntity(['user_id' => '2', 'token' => 'firstToken']);
@@ -281,8 +292,9 @@ class TokensTableTest extends TestCase
      * Test for `save()` method
      * @test
      */
-    public function testSave()
+    public function testSave(): void
     {
+        /** @var \Tokens\Model\Entity\Token $token */
         $token = $this->Tokens->save(new Token(['token' => 'test1']));
         $this->assertInstanceOf(Token::class, $token);
         $this->assertEquals(null, $token->get('user_id'));
@@ -296,7 +308,7 @@ class TokensTableTest extends TestCase
      * Test validation for `expiry` property
      * @test
      */
-    public function testValidationForExpiry()
+    public function testValidationForExpiry(): void
     {
         //Valid `expiry` values
         foreach ([Date::class, FrozenDate::class, FrozenTime::class, Time::class] as $class) {
@@ -313,7 +325,7 @@ class TokensTableTest extends TestCase
      * Test validation for `token` property
      * @test
      */
-    public function testValidationForToken()
+    public function testValidationForToken(): void
     {
         $token = $this->Tokens->newEntity(['token' => 'test']);
         $this->assertEmpty($token->getErrors());
@@ -326,7 +338,7 @@ class TokensTableTest extends TestCase
      * Test validation for `type` property
      * @test
      */
-    public function testValidationForType()
+    public function testValidationForType(): void
     {
         //Valid `type` value
         $token = $this->Tokens->newEntity(['token' => 'test', 'type' => '123']);
