@@ -1,7 +1,8 @@
 # 1.x branch
 ## 1.3 branch
 ### 1.3.3
-* improvement of function descriptions and tags.
+* improvement of function descriptions and tags;
+* migration to github actions.
 
 ### 1.3.2
 * ready for `php` 8;
