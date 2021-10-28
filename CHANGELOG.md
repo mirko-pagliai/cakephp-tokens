@@ -1,5 +1,8 @@
 # 1.x branch
 ## 1.3 branch
+### 1.3.4
+* ready for `cakephp` 4.3.
+
 ### 1.3.3
 * improvement of function descriptions and tags;
 * migration to github actions.

@@ -60,6 +60,8 @@ Configure::write('App', [
     'jsBaseUrl' => 'js/',
     'cssBaseUrl' => 'css/',
 ]);
+Configure::write('Error.ignoredDeprecationPaths', ['*/cakephp/cakephp/src/TestSuite/Fixture/FixtureInjector.php']);
+
 Security::setSalt('a-long-but-not-random-value');
 Configure::write('Session', ['defaults' => 'php']);
 Configure::write('pluginsToLoad', ['Tokens']);

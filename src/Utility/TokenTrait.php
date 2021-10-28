@@ -70,7 +70,7 @@ trait TokenTrait
             $conditions[$key] = $options[$key] ?? null;
         }
 
-        return !$this->find($conditions)->isEmpty();
+        return !$this->find($conditions)->all()->isEmpty();
     }
 
     /**

@@ -14,10 +14,8 @@ declare(strict_types=1);
  */
 namespace Tokens\Test\TestCase\Model\Entity;
 
-use Cake\I18n\Date;
 use Cake\I18n\FrozenDate;
 use Cake\I18n\FrozenTime;
-use Cake\I18n\Time;
 use MeTools\TestSuite\TestCase;
 use Tokens\Model\Entity\Token;
 
@@ -34,13 +32,13 @@ class TokenTest extends TestCase
     {
         $entity = new Token();
 
-        foreach (['+1 day', new Time('+1 day')] as $expiry) {
+        foreach (['+1 day', new FrozenTime('+1 day')] as $expiry) {
             $entity->set('expiry', $expiry);
-            $this->assertInstanceOf(Time::class, $entity->get('expiry'));
+            $this->assertInstanceOf(FrozenTime::class, $entity->get('expiry'));
             $this->assertTrue($entity->get('expiry')->isTomorrow());
         }
 
-        foreach ([Date::class, FrozenDate::class, FrozenTime::class, Time::class] as $class) {
+        foreach ([FrozenDate::class, FrozenTime::class] as $class) {
             $entity->set('expiry', new $class());
             $this->assertInstanceOf($class, $entity->get('expiry'));
         }

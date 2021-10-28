@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Tokens\Model\Entity;
 
 use Cake\Core\Configure;
-use Cake\I18n\Time;
+use Cake\I18n\FrozenTime;
 use Cake\ORM\Entity;
 use Cake\Utility\Security;
 use DateTimeInterface;
@@ -27,7 +27,7 @@ use DateTimeInterface;
  * @property string $token
  * @property string $type
  * @property string $extra
- * @property \Cake\I18n\Time $expiry
+ * @property \Cake\I18n\FrozenTime $expiry
  * @property \Tokens\Model\Entity\User $user
  */
 class Token extends Entity
@@ -44,13 +44,13 @@ class Token extends Entity
     /**
      * `set` mutators for `expiry` property
      * @param \DateTimeInterface|string $expiry `expiry` value. Can be a string or a time
-     *  instance. If the value is a string, an instance of `Cake\I18n\Time` will
+     *  instance. If the value is a string, an instance of `Cake\I18n\FrozenTime` will
      *  be created
      * @return \DateTimeInterface
      */
     protected function _setExpiry($expiry): DateTimeInterface
     {
-        return is_object($expiry) && method_exists($expiry, 'i18nFormat') ? $expiry : new Time($expiry);
+        return is_object($expiry) && method_exists($expiry, 'i18nFormat') ? $expiry : new FrozenTime($expiry);
     }
 
     /**
