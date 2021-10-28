@@ -16,7 +16,7 @@ namespace Tokens\Model\Table;
 
 use Cake\Core\Configure;
 use Cake\Event\Event;
-use Cake\I18n\Time;
+use Cake\I18n\FrozenTime;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\ORM\RulesChecker;
@@ -78,7 +78,7 @@ class TokensTable extends Table
      */
     public function deleteExpired(?Token $token = null): int
     {
-        $conditions = ['expiry <' => Time::now()];
+        $conditions = ['expiry <' => FrozenTime::now()];
 
         if ($token && $token->has('token')) {
             $conditions['token'] = $token->get('token');
@@ -125,7 +125,7 @@ class TokensTable extends Table
      */
     public function findActive(Query $query): Query
     {
-        return $query->where(['expiry >=' => Time::now()]);
+        return $query->where(['expiry >=' => FrozenTime::now()]);
     }
 
     /**
@@ -135,7 +135,7 @@ class TokensTable extends Table
      */
     public function findExpired(Query $query): Query
     {
-        return $query->where(['expiry <' => Time::now()]);
+        return $query->where(['expiry <' => FrozenTime::now()]);
     }
 
     /**

@@ -15,10 +15,8 @@ declare(strict_types=1);
 namespace Tokens\Test\TestCase\Model\Table;
 
 use Cake\Core\Configure;
-use Cake\I18n\Date;
 use Cake\I18n\FrozenDate;
 use Cake\I18n\FrozenTime;
-use Cake\I18n\Time;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -88,7 +86,7 @@ class TokensTableTest extends TestCase
         //User with ID 2 has tokens with ID 3 and 4
         /** @var \TestApp\Model\Table\UsersTable $Users */
         $Users = $this->Tokens->Users;
-        $tokens = $Users->findById(2)->contain('Tokens')->extract('tokens')->first();
+        $tokens = $Users->findById(2)->contain('Tokens')->all()->extract('tokens')->first();
         $this->assertEquals(2, count($tokens));
         $this->assertEquals(2, $tokens[0]->get('id'));
         $this->assertEquals(4, $tokens[1]->get('id'));
@@ -96,7 +94,7 @@ class TokensTableTest extends TestCase
         //Token with ID 3 matches with the user with ID
         $token = $this->Tokens->find()->matching('Users', function (Query $query) {
             return $query->where(['Users.id' => 1]);
-        })->extract('id')->toArray();
+        })->all()->extract('id')->toArray();
         $this->assertEquals([3], $token);
     }
 
@@ -110,7 +108,7 @@ class TokensTableTest extends TestCase
         $token = $this->Tokens->save(new Token(['token' => 'test1', 'expiry' => '+1 day']));
         $this->assertNotEmpty($token);
         $this->assertTrue($token->get('expiry')->isTomorrow());
-        $this->assertInstanceOf(Time::class, $token->get('expiry'));
+        $this->assertInstanceOf(FrozenTime::class, $token->get('expiry'));
 
         /** @var \Tokens\Model\Entity\Token $token */
         $token = $this->Tokens->save(new Token(['token' => 'test2', 'extra' => 'testExtra']));
@@ -184,7 +182,7 @@ class TokensTableTest extends TestCase
             ['first', 'second'],
             (object)['first', 'second'],
         ];
-        $this->assertEquals($expected, $query->extract('extra')->toArray());
+        $this->assertEquals($expected, $query->all()->extract('extra')->toArray());
     }
 
     /**
@@ -196,10 +194,10 @@ class TokensTableTest extends TestCase
         $query = $this->Tokens->find('active');
         $this->assertInstanceOf(Query::class, $query);
         $this->assertStringEndsWith('FROM tokens Tokens WHERE expiry >= :c0', $query->sql());
-        $this->assertInstanceOf(Time::class, $query->getValueBinder()->bindings()[':c0']['value']);
+        $this->assertInstanceOf(FrozenTime::class, $query->getValueBinder()->bindings()[':c0']['value']);
 
         //Results are tokens with ID 1, 3 and 4
-        $this->assertEquals([1, 3, 4], $query->extract('id')->toArray());
+        $this->assertEquals([1, 3, 4], $query->all()->extract('id')->toArray());
     }
 
     /**
@@ -211,10 +209,10 @@ class TokensTableTest extends TestCase
         $query = $this->Tokens->find('expired');
         $this->assertInstanceOf(Query::class, $query);
         $this->assertStringEndsWith('FROM tokens Tokens WHERE expiry < :c0', $query->sql());
-        $this->assertInstanceOf(Time::class, $query->getValueBinder()->bindings()[':c0']['value']);
+        $this->assertInstanceOf(FrozenTime::class, $query->getValueBinder()->bindings()[':c0']['value']);
 
         //Results is token with ID 2
-        $this->assertEquals([2], $query->extract('id')->toArray());
+        $this->assertEquals([2], $query->all()->extract('id')->toArray());
     }
 
     /**
@@ -300,7 +298,7 @@ class TokensTableTest extends TestCase
         $this->assertEquals(null, $token->get('user_id'));
         $this->assertMatchesRegularExpression('/^[\w\d]{25}$/', $token->get('token'));
         $this->assertEmpty($token->get('type'));
-        $this->assertInstanceOf(Time::class, $token->get('expiry'));
+        $this->assertInstanceOf(FrozenTime::class, $token->get('expiry'));
         $this->assertEmpty($token->get('extra'));
     }
 
@@ -311,7 +309,7 @@ class TokensTableTest extends TestCase
     public function testValidationForExpiry(): void
     {
         //Valid `expiry` values
-        foreach ([Date::class, FrozenDate::class, FrozenTime::class, Time::class] as $class) {
+        foreach ([FrozenDate::class, FrozenTime::class] as $class) {
             $token = $this->Tokens->newEntity(['token' => 'test', 'expiry' => new $class()]);
             $this->assertEmpty($token->getErrors());
         }
