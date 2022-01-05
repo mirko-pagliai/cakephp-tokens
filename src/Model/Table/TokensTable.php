@@ -49,11 +49,11 @@ class TokensTable extends Table
      */
     public function beforeSave(Event $event, Token $entity): bool
     {
-        if (!$entity->has('expiry')) {
+        if (!$entity->hasValue('expiry')) {
             $entity->set('expiry', Configure::read('Tokens.expiryDefaultValue'));
         }
 
-        if ($entity->has('extra')) {
+        if ($entity->hasValue('extra')) {
             $entity->set('extra', serialize($entity->get('extra')));
         }
 
@@ -80,11 +80,11 @@ class TokensTable extends Table
     {
         $conditions = ['expiry <' => FrozenTime::now()];
 
-        if ($token && $token->has('token')) {
+        if ($token && $token->hasValue('token')) {
             $conditions['token'] = $token->get('token');
         }
 
-        if ($token && $token->has('user_id')) {
+        if ($token && $token->hasValue('user_id')) {
             $conditions['user_id'] = $token->get('user_id');
         }
 
@@ -109,7 +109,7 @@ class TokensTable extends Table
         //Unserializes the `extra` field.
         return $query->formatResults(function (ResultSet $results) {
             return $results->map(function (Token $token): Token {
-                if ($token->has('extra')) {
+                if ($token->hasValue('extra')) {
                     $token->set('extra', @unserialize($token->get('extra')));
                 }
 

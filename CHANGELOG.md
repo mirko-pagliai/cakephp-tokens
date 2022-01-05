@@ -1,5 +1,8 @@
 # 1.x branch
 ## 1.3 branch
+### 1.3.5
+* small fixes.
+
 ### 1.3.4
 * ready for `cakephp` 4.3.
 

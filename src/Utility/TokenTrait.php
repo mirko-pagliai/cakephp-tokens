@@ -33,7 +33,7 @@ trait TokenTrait
      */
     protected function getTable(): Table
     {
-        return TableRegistry::get('Tokens.Tokens');
+        return TableRegistry::getTableLocator()->get('Tokens.Tokens');
     }
 
     /**
