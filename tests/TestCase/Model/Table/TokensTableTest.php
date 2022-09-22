@@ -37,7 +37,7 @@ class TokensTableTest extends TestCase
 
     /**
      * Fixtures
-     * @var array
+     * @var array<string>
      */
     public $fixtures = [
         'core.Users',
