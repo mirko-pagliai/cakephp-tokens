@@ -1,10 +1,9 @@
 # 1.x branch
 ## 1.3 branch
-### 1.3.6
-* added tests for PHP 8.1.
-
 ### 1.3.5
-* small fixes.
+* added tests for PHP 8.1;
+* little fixes for `phpstan`, `psalm` and for the `composer.json` file.
+* other small fixes.
 
 ### 1.3.4
 * ready for `cakephp` 4.3.
