@@ -25,42 +25,44 @@ use Tokens\Model\Entity\Token;
 class TokenTest extends TestCase
 {
     /**
-     * Test for `_setExpiry()` method
      * @test
+     * @uses \Tokens\Model\Entity\Token::_setExpiry()
      */
     public function testExpirySetMutator(): void
     {
-        $entity = new Token();
+        $Token = new Token();
 
         foreach (['+1 day', new FrozenTime('+1 day')] as $expiry) {
-            $entity->set('expiry', $expiry);
-            $this->assertInstanceOf(FrozenTime::class, $entity->get('expiry'));
-            $this->assertTrue($entity->get('expiry')->isTomorrow());
+            $Token->set('expiry', $expiry);
+            $this->assertInstanceOf(FrozenTime::class, $Token->get('expiry'));
+            $this->assertTrue($Token->get('expiry')->isTomorrow());
         }
 
         foreach ([FrozenDate::class, FrozenTime::class] as $class) {
-            $entity->set('expiry', new $class());
-            $this->assertInstanceOf($class, $entity->get('expiry'));
+            $Token->set('expiry', new $class());
+            $this->assertInstanceOf($class, $Token->get('expiry'));
         }
     }
 
     /**
-     * Test for `_setToken()` method
      * @test
+     * @uses \Tokens\Model\Entity\Token::_setToken()
      */
     public function testTokenSetMutator(): void
     {
-        $entity = new Token();
-        $entity->set('token', null);
-        $this->assertNull($entity->get('token'));
+        $Token = new Token();
+        $Token->set('token', null);
+        $this->assertEmpty($Token->get('token'));
 
         foreach ([
             'test',
             ['first', 'second'],
             (object)['first', 'second'],
-        ] as $token) {
-            $entity->set('token', $token);
-            $this->assertMatchesRegularExpression('/^[\d\w]{25}$/', $entity->get('token'));
+        ] as $value) {
+            $Token->set('token', $value);
+            /** @var string $token */
+            $token = $Token->get('token');
+            $this->assertMatchesRegularExpression('/^[\d\w]{25}$/', $token);
         }
     }
 }
