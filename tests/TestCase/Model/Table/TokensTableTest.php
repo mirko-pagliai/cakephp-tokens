@@ -52,7 +52,7 @@ class TokensTableTest extends TestCase
     {
         parent::setUp();
 
-        $this->Tokens = $this->Tokens ?: $this->getTable('Tokens.Tokens');
+        $this->Tokens = $this->Tokens ??= $this->getTable('Tokens.Tokens');
     }
 
     /**

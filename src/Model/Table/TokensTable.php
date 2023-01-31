@@ -14,6 +14,7 @@ declare(strict_types=1);
  */
 namespace Tokens\Model\Table;
 
+use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\I18n\FrozenTime;
@@ -45,7 +46,6 @@ class TokensTable extends Table
      * @param \Cake\Event\Event $event Event
      * @param \Tokens\Model\Entity\Token $entity A `Token` entity
      * @return bool
-     * @uses deleteExpired()
      */
     public function beforeSave(Event $event, Token $entity): bool
     {
@@ -57,8 +57,7 @@ class TokensTable extends Table
             $entity->set('extra', serialize($entity->get('extra')));
         }
 
-        //Deletes all expired tokens and tokens with the same token value
-        //  and/or the same user.
+        //Deletes all expired tokens and tokens with the same token value and/or the same user.
         $this->deleteExpired($entity);
 
         return true;
@@ -67,12 +66,10 @@ class TokensTable extends Table
     /**
      * Deletes all expired tokens.
      *
-     * If a `$token` entity is passed, it also clears tokens with the same
-     *  token value and/or the same user.
+     * If a `$token` entity is passed, it also clears tokens with the same token value and/or the same user.
      *
-     * This method should be called before creating a new token. In fact, it
-     *  prevents a user from having more than token or a token is created with
-     *  the same token value.
+     * This method should be called before creating a new token. In fact, it prevents a user from having more than token
+     *  or a token is created with the same token value.
      * @param \Tokens\Model\Entity\Token|null $token Token entity
      * @return int Affected rows
      */
@@ -96,8 +93,7 @@ class TokensTable extends Table
     /**
      * Basic `find()` method.
      *
-     * This rewrites the method provided by CakePHP, to unserialize the `extra`
-     *  field.
+     * This rewrites the method provided by CakePHP, to unserialize the `extra` field.
      * @param string $type Find type
      * @param array $options An array that will be passed to Query::applyOptions()
      * @return \Cake\ORM\Query
@@ -106,9 +102,9 @@ class TokensTable extends Table
     {
         $query = parent::find($type, $options);
 
-        //Unserializes the `extra` field.
-        return $query->formatResults(function (ResultSet $results) {
-            return $results->map(function (Token $token): Token {
+        //Un-serializes the `extra` field.
+        return $query->formatResults(function (ResultSet $results): CollectionInterface {
+            return $results->map(function ($token) {
                 if ($token->hasValue('extra')) {
                     $token->set('extra', @unserialize($token->get('extra')));
                 }
