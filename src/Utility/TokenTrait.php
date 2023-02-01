@@ -97,7 +97,7 @@ trait TokenTrait
         $Token = new Token(compact('token'));
 
         foreach (['user_id', 'type', 'extra', 'expiry'] as $key) {
-            if (array_key_exists($key, $options)) {
+            if (isset($options[$key])) {
                 $Token->set($key, $options[$key]);
             }
         }
