@@ -73,68 +73,66 @@ class TokensTableTest extends TestCase
     public function testAssociationWithUsers(): void
     {
         //Token with ID 1 has no user
-        /** @var \Tokens\Model\Entity\Token $token */
-        $token = $this->Tokens->findById(1)->contain('Users')->first();
-        $this->assertEmpty($token->get('user'));
+        /** @var \Tokens\Model\Entity\Token $Token*/
+        $Token = $this->Tokens->findById(1)->contain('Users')->first();
+        $this->assertEmpty($Token->get('user'));
 
         //Token with ID 3 has user with ID 2
-        /** @var \Tokens\Model\Entity\Token $token */
-        $token = $this->Tokens->findById(3)->contain('Users')->first();
-        $this->assertInstanceOf(Entity::class, $token->get('user'));
-        $this->assertEquals(1, $token->get('user')->get('id'));
+        /** @var \Tokens\Model\Entity\Token $Token*/
+        $Token = $this->Tokens->findById(3)->contain('Users')->first();
+        $this->assertInstanceOf(Entity::class, $Token->get('user'));
+        $this->assertEquals(1, $Token->get('user')->get('id'));
 
         //User with ID 2 has tokens with ID 3 and 4
-        /** @var \TestApp\Model\Table\UsersTable $Users */
-        $Users = $this->Tokens->Users;
-        $tokens = $Users->findById(2)->contain('Tokens')->all()->extract('tokens')->first();
+        /** @var \TestApp\Model\Table\UsersTable $UsersTable */
+        $UsersTable = $this->Tokens->Users;
+        $tokens = $UsersTable->findById(2)->contain('Tokens')->all()->extract('tokens')->first();
         $this->assertEquals(2, count($tokens));
         $this->assertEquals(2, $tokens[0]->get('id'));
         $this->assertEquals(4, $tokens[1]->get('id'));
 
         //Token with ID 3 matches with the user with ID
-        $token = $this->Tokens->find()->matching('Users', function (Query $query) {
-            return $query->where(['Users.id' => 1]);
-        })->all()->extract('id')->toArray();
-        $this->assertEquals([3], $token);
+        $Token = $this->Tokens->find()->matching('Users', fn (Query $query): Query => $query->where(['Users.id' => 1]))->all()->extract('id')->toArray();
+        $this->assertEquals([3], $Token);
     }
 
     /**
-     * Test for `beforeSave()` method
      * @test
+     * @uses \Tokens\Model\Table\TokensTable::beforeSave()
      */
     public function testBeforeSave(): void
     {
-        /** @var \Tokens\Model\Entity\Token $token */
-        $token = $this->Tokens->save(new Token(['token' => 'test1', 'expiry' => '+1 day']));
-        $this->assertNotEmpty($token);
-        $this->assertTrue($token->get('expiry')->isTomorrow());
-        $this->assertInstanceOf(FrozenTime::class, $token->get('expiry'));
+        /** @var \Tokens\Model\Entity\Token $Token */
+        $Token = $this->Tokens->save(new Token(['token' => 'test1', 'expiry' => '+1 day']));
+        $this->assertNotEmpty($Token);
+        $this->assertTrue($Token->get('expiry')->isTomorrow());
+        $this->assertInstanceOf(FrozenTime::class, $Token->get('expiry'));
 
-        /** @var \Tokens\Model\Entity\Token $token */
-        $token = $this->Tokens->save(new Token(['token' => 'test2', 'extra' => 'testExtra']));
-        $this->assertNotEmpty($token);
-        $this->assertEquals('s:9:"testExtra";', $token->get('extra'));
+        /** @var \Tokens\Model\Entity\Token $Token */
+        $Token = $this->Tokens->save(new Token(['token' => 'test2', 'extra' => 'testExtra']));
+        $this->assertNotEmpty($Token);
+        $this->assertEquals('s:9:"testExtra";', $Token->get('extra'));
 
-        /** @var \Tokens\Model\Entity\Token $token */
-        $token = $this->Tokens->save(new Token([
+        /** @var \Tokens\Model\Entity\Token $Token */
+        $Token = $this->Tokens->save(new Token([
             'token' => 'test3',
             'extra' => ['first', 'second'],
         ]));
-        $this->assertNotEmpty($token);
-        $this->assertEquals('a:2:{i:0;s:5:"first";i:1;s:6:"second";}', $token->get('extra'));
+        $this->assertNotEmpty($Token);
+        $this->assertEquals('a:2:{i:0;s:5:"first";i:1;s:6:"second";}', $Token->get('extra'));
 
-        /** @var \Tokens\Model\Entity\Token $token */
-        $token = $this->Tokens->save(new Token([
+        /** @var \Tokens\Model\Entity\Token $Token */
+        $Token = $this->Tokens->save(new Token([
             'token' => 'test4',
             'extra' => (object)['first', 'second'],
         ]));
-        $this->assertNotEmpty($token);
-        $this->assertEquals((object)['first', 'second'], unserialize($token->get('extra')));
+        $this->assertNotEmpty($Token);
+        $this->assertEquals((object)['first', 'second'], unserialize($Token->get('extra')));
     }
 
     /**
-     * Test for `deleteExpired()` method
      * @test
+     * @uses \Tokens\Model\Table\TokensTable::deleteExpired()
      */
     public function testDeleteExpired(): void
     {
@@ -144,8 +142,9 @@ class TokensTableTest extends TestCase
     }
 
     /**
-     * Test for `deleteExpired()` method, with an user id
+     * Test for `deleteExpired()` method, with user id
      * @test
+     * @uses \Tokens\Model\Table\TokensTable::deleteExpired()
      */
     public function testDeleteExpiredWithUserId(): void
     {
@@ -158,6 +157,7 @@ class TokensTableTest extends TestCase
     /**
      * Test for `deleteExpired()` method, with a token value
      * @test
+     * @uses \Tokens\Model\Table\TokensTable::deleteExpired()
      */
     public function testDeleteExpiredWithTokenValue(): void
     {
@@ -170,6 +170,7 @@ class TokensTableTest extends TestCase
     /**
      * Test for `find()` method. It tests that `extra` is formatted
      * @test
+     * @uses \Tokens\Model\Table\TokensTable::find()
      */
     public function testFindFormatsExtraFields(): void
     {
@@ -186,8 +187,8 @@ class TokensTableTest extends TestCase
     }
 
     /**
-     * Test for `active` `find()` method
      * @test
+     * @uses \Tokens\Model\Table\TokensTable::findActive()
      */
     public function testFindActive(): void
     {
@@ -201,8 +202,8 @@ class TokensTableTest extends TestCase
     }
 
     /**
-     * Test for `expired` `find()` method
      * @test
+     * @uses \Tokens\Model\Table\TokensTable::findExpired()
      */
     public function testFindExpired(): void
     {
@@ -216,8 +217,8 @@ class TokensTableTest extends TestCase
     }
 
     /**
-     * Test initialize method
      * @test
+     * @uses \Tokens\Model\Table\TokensTable::initialize()
      */
     public function testInitialize(): void
     {
@@ -240,7 +241,7 @@ class TokensTableTest extends TestCase
     }
 
     /**
-     * Test for a custum `Users` table
+     * Test for a custom `Users` table
      * @test
      */
     public function testForCustomUsersTable(): void
@@ -292,14 +293,14 @@ class TokensTableTest extends TestCase
      */
     public function testSave(): void
     {
-        /** @var \Tokens\Model\Entity\Token $token */
-        $token = $this->Tokens->save(new Token(['token' => 'test1']));
-        $this->assertInstanceOf(Token::class, $token);
-        $this->assertEquals(null, $token->get('user_id'));
-        $this->assertMatchesRegularExpression('/^[\w\d]{25}$/', $token->get('token'));
-        $this->assertEmpty($token->get('type'));
-        $this->assertInstanceOf(FrozenTime::class, $token->get('expiry'));
-        $this->assertEmpty($token->get('extra'));
+        /** @var \Tokens\Model\Entity\Token $Token */
+        $Token = $this->Tokens->save(new Token(['token' => 'test1']));
+        $this->assertInstanceOf(Token::class, $Token);
+        $this->assertEquals(null, $Token->get('user_id'));
+        $this->assertMatchesRegularExpression('/^[\w\d]{25}$/', $Token->get('token'));
+        $this->assertEmpty($Token->get('type'));
+        $this->assertInstanceOf(FrozenTime::class, $Token->get('expiry'));
+        $this->assertEmpty($Token->get('extra'));
     }
 
     /**
@@ -310,13 +311,13 @@ class TokensTableTest extends TestCase
     {
         //Valid `expiry` values
         foreach ([FrozenDate::class, FrozenTime::class] as $class) {
-            $token = $this->Tokens->newEntity(['token' => 'test', 'expiry' => new $class()]);
-            $this->assertEmpty($token->getErrors());
+            $Token = $this->Tokens->newEntity(['token' => 'test', 'expiry' => new $class()]);
+            $this->assertEmpty($Token->getErrors());
         }
 
         //Invalid `expiry` value
-        $token = $this->Tokens->newEntity(['token' => 'test', 'expiry' => 'string']);
-        $this->assertEquals(['expiry' => ['dateTime' => 'The provided value is invalid']], $token->getErrors());
+        $Token = $this->Tokens->newEntity(['token' => 'test', 'expiry' => 'string']);
+        $this->assertEquals(['expiry' => ['dateTime' => 'The provided value is invalid']], $Token->getErrors());
     }
 
     /**
@@ -325,11 +326,11 @@ class TokensTableTest extends TestCase
      */
     public function testValidationForToken(): void
     {
-        $token = $this->Tokens->newEntity(['token' => 'test']);
-        $this->assertEmpty($token->getErrors());
+        $Token = $this->Tokens->newEntity(['token' => 'test']);
+        $this->assertEmpty($Token->getErrors());
 
-        $token = $this->Tokens->newEntity([]);
-        $this->assertEquals(['token' => ['_required' => 'This field is required']], $token->getErrors());
+        $Token = $this->Tokens->newEntity([]);
+        $this->assertEquals(['token' => ['_required' => 'This field is required']], $Token->getErrors());
     }
 
     /**
@@ -339,19 +340,19 @@ class TokensTableTest extends TestCase
     public function testValidationForType(): void
     {
         //Valid `type` value
-        $token = $this->Tokens->newEntity(['token' => 'test', 'type' => '123']);
-        $this->assertEmpty($token->getErrors());
+        $Token = $this->Tokens->newEntity(['token' => 'test', 'type' => '123']);
+        $this->assertEmpty($Token->getErrors());
 
         //Valid `type` value
-        $token = $this->Tokens->newEntity(['token' => 'test', 'type' => str_repeat('a', 255)]);
-        $this->assertEmpty($token->getErrors());
+        $Token = $this->Tokens->newEntity(['token' => 'test', 'type' => str_repeat('a', 255)]);
+        $this->assertEmpty($Token->getErrors());
 
         //Invalid `type` value (it is too short)
-        $token = $this->Tokens->newEntity(['token' => 'test', 'type' => '12']);
-        $this->assertEquals(['type' => ['lengthBetween' => 'The provided value is invalid']], $token->getErrors());
+        $Token = $this->Tokens->newEntity(['token' => 'test', 'type' => '12']);
+        $this->assertEquals(['type' => ['lengthBetween' => 'The provided value is invalid']], $Token->getErrors());
 
         //Invalid `type` value (it is too long)
-        $token = $this->Tokens->newEntity(['token' => 'test', 'type' => str_repeat('a', 256)]);
-        $this->assertEquals(['type' => ['lengthBetween' => 'The provided value is invalid']], $token->getErrors());
+        $Token = $this->Tokens->newEntity(['token' => 'test', 'type' => str_repeat('a', 256)]);
+        $this->assertEquals(['type' => ['lengthBetween' => 'The provided value is invalid']], $Token->getErrors());
     }
 }

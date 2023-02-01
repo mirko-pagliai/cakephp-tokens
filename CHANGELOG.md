@@ -1,5 +1,9 @@
 # 1.x branch
 ## 1.3 branch
+### 1.3.6
+* requires at least PHP 7.4;
+* little fixes.
+
 ### 1.3.5
 * added tests for PHP 8.1;
 * little fixes for `phpstan`, `psalm` and for the `composer.json` file.

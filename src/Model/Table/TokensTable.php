@@ -14,6 +14,7 @@ declare(strict_types=1);
  */
 namespace Tokens\Model\Table;
 
+use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\I18n\FrozenTime;
@@ -40,12 +41,10 @@ use Tokens\Model\Entity\Token;
 class TokensTable extends Table
 {
     /**
-     * Called before each entity is saved.
-     * Stopping this event will abort the save operation.
+     * Called before each entity is saved
      * @param \Cake\Event\Event $event Event
      * @param \Tokens\Model\Entity\Token $entity A `Token` entity
      * @return bool
-     * @uses deleteExpired()
      */
     public function beforeSave(Event $event, Token $entity): bool
     {
@@ -57,8 +56,7 @@ class TokensTable extends Table
             $entity->set('extra', serialize($entity->get('extra')));
         }
 
-        //Deletes all expired tokens and tokens with the same token value
-        //  and/or the same user.
+        //Deletes all expired tokens and tokens with the same token value and/or the same user.
         $this->deleteExpired($entity);
 
         return true;
@@ -67,25 +65,23 @@ class TokensTable extends Table
     /**
      * Deletes all expired tokens.
      *
-     * If a `$token` entity is passed, it also clears tokens with the same
-     *  token value and/or the same user.
+     * If a `$Token` entity is passed, it also clears tokens with the same token value and/or the same user.
      *
-     * This method should be called before creating a new token. In fact, it
-     *  prevents a user from having more than token or a token is created with
-     *  the same token value.
-     * @param \Tokens\Model\Entity\Token|null $token Token entity
+     * This method should be called before creating a new token. In fact, it prevents a user from having more than token
+     *  or a token is created with the same token value.
+     * @param ?\Tokens\Model\Entity\Token $Token Token entity
      * @return int Affected rows
      */
-    public function deleteExpired(?Token $token = null): int
+    public function deleteExpired(?Token $Token = null): int
     {
         $conditions = ['expiry <' => FrozenTime::now()];
 
-        if ($token && $token->hasValue('token')) {
-            $conditions['token'] = $token->get('token');
+        if ($Token && $Token->hasValue('token')) {
+            $conditions['token'] = $Token->get('token');
         }
 
-        if ($token && $token->hasValue('user_id')) {
-            $conditions['user_id'] = $token->get('user_id');
+        if ($Token && $Token->hasValue('user_id')) {
+            $conditions['user_id'] = $Token->get('user_id');
         }
 
         $conditions = count($conditions) > 1 ? ['OR' => $conditions] : $conditions;
@@ -96,8 +92,7 @@ class TokensTable extends Table
     /**
      * Basic `find()` method.
      *
-     * This rewrites the method provided by CakePHP, to unserialize the `extra`
-     *  field.
+     * This rewrites the method provided by CakePHP, to unserialize the `extra` field.
      * @param string $type Find type
      * @param array $options An array that will be passed to Query::applyOptions()
      * @return \Cake\ORM\Query
@@ -106,16 +101,14 @@ class TokensTable extends Table
     {
         $query = parent::find($type, $options);
 
-        //Unserializes the `extra` field.
-        return $query->formatResults(function (ResultSet $results) {
-            return $results->map(function (Token $token): Token {
-                if ($token->hasValue('extra')) {
-                    $token->set('extra', @unserialize($token->get('extra')));
-                }
+        //Un-serializes the `extra` field.
+        return $query->formatResults(fn (ResultSet $results): CollectionInterface => $results->map(function ($token) {
+            if ($token->hasValue('extra')) {
+                $token->set('extra', @unserialize($token->get('extra')));
+            }
 
-                return $token;
-            });
-        });
+            return $token;
+        }));
     }
 
     /**

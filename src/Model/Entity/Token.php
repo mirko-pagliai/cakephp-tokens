@@ -16,9 +16,9 @@ namespace Tokens\Model\Entity;
 
 use Cake\Core\Configure;
 use Cake\I18n\FrozenTime;
+use Cake\I18n\I18nDateTimeInterface;
 use Cake\ORM\Entity;
 use Cake\Utility\Security;
-use DateTimeInterface;
 
 /**
  * Token Entity
@@ -43,12 +43,11 @@ class Token extends Entity
 
     /**
      * `set` mutators for `expiry` property
-     * @param \DateTimeInterface|string $expiry `expiry` value. Can be a string or a time
-     *  instance. If the value is a string, an instance of `Cake\I18n\FrozenTime` will
-     *  be created
-     * @return \DateTimeInterface
+     * @param \Cake\I18n\I18nDateTimeInterface|string $expiry `expiry` value. Can be a string or a time instance. If the
+     *  value is a string, an instance of `FrozenTime` will be created
+     * @return \Cake\I18n\I18nDateTimeInterface
      */
-    protected function _setExpiry($expiry): DateTimeInterface
+    protected function _setExpiry($expiry): I18nDateTimeInterface
     {
         return is_object($expiry) && method_exists($expiry, 'i18nFormat') ? $expiry : new FrozenTime($expiry);
     }
@@ -56,13 +55,13 @@ class Token extends Entity
     /**
      * `set` mutators for `token` property
      * @param mixed $token Value. If it's not a string, it will be serialized
-     * @return mixed
+     * @return string
      */
-    protected function _setToken($token)
+    protected function _setToken($token): string
     {
         //Prevents an empty value is serialized
         if (!$token) {
-            return $token;
+            return '';
         }
         $token = is_string($token) ? $token : serialize($token);
 

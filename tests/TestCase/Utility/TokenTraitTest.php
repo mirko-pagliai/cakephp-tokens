@@ -20,6 +20,7 @@ use LogicException;
 use MeTools\TestSuite\MockTrait;
 use MeTools\TestSuite\TestCase;
 use TestApp\TokenTraitClass;
+use Tokens\Model\Table\TokensTable;
 
 /**
  * TokenTraitTest Test Case
@@ -37,7 +38,7 @@ class TokenTraitTest extends TestCase
     /**
      * @var \Tokens\Model\Table\TokensTable
      */
-    public $Tokens;
+    public TokensTable $Tokens;
 
     /**
      * Fixtures
@@ -56,7 +57,11 @@ class TokenTraitTest extends TestCase
     {
         parent::setUp();
 
-        $this->Tokens = $this->Tokens ?: $this->getTable('Tokens.Tokens');
+        if (empty($this->Tokens)) {
+            /** @var \Tokens\Model\Table\TokensTable $Tokens */
+            $Tokens = $this->getTable('Tokens.Tokens');
+            $this->Tokens = $Tokens;
+        }
         $this->TokenTrait = $this->TokenTrait ?: new TokenTraitClass();
     }
 
@@ -72,8 +77,8 @@ class TokenTraitTest extends TestCase
     }
 
     /**
-     * Test for `find()` method
      * @test
+     * @uses \Tokens\Utility\TokenTrait::find()
      */
     public function testFind(): void
     {
@@ -81,8 +86,8 @@ class TokenTraitTest extends TestCase
     }
 
     /**
-     * Test for `check()` method
      * @test
+     * @uses \Tokens\Utility\TokenTrait::check()
      */
     public function testCheck(): void
     {
@@ -96,10 +101,10 @@ class TokenTraitTest extends TestCase
 
         $this->assertTrue($this->TokenTrait->check($value, ['user_id' => 1, 'type' => 'registration']));
 
-        //Missing `user_id` and `ŧype`
+        //Missing `user_id` and `type`
         $this->assertFalse($this->TokenTrait->check($value, []));
 
-        //Missing `ŧype`
+        //Missing `type`
         $this->assertFalse($this->TokenTrait->check($value, ['user_id' => 1]));
 
         //Missing `user_id`
@@ -113,30 +118,31 @@ class TokenTraitTest extends TestCase
     }
 
     /**
-     * Test for `create()` method
      * @test
+     * @uses \Tokens\Utility\TokenTrait::create()
      */
     public function testCreate(): void
     {
-        $token = $this->TokenTrait->create('token_1');
-        $this->assertNotEmpty($token);
-        $token = $this->Tokens->findByToken($token)->contain('Users')->first();
-        $this->assertNotEmpty($token);
+        $Token = $this->TokenTrait->create('token_1');
+        $this->assertNotEmpty($Token);
+        $Token = $this->Tokens->findByToken($Token)->contain('Users')->first();
+        $this->assertNotEmpty($Token);
 
-        $token = $this->TokenTrait->create('token_2', [
+        $Token = $this->TokenTrait->create('token_2', [
             'user_id' => 2,
             'type' => 'testType',
             'extra' => ['extra1', 'extra2'],
             'expiry' => '+1 days',
         ]);
-        $this->assertNotEmpty($token);
-        /** @var \Tokens\Model\Entity\Token $token */
-        $token = $this->Tokens->findByToken($token)->contain('Users')->first();
-        $this->assertEquals(2, $token->get('user')->get('id'));
-        $this->assertEquals('testType', $token->get('type'));
-        $this->assertEquals(['extra1', 'extra2'], $token->get('extra'));
-        $this->assertInstanceOf(FrozenTime::class, $token->get('expiry'));
-        $this->assertTrue($token->get('expiry')->isTomorrow());
+        $this->assertNotEmpty($Token);
+        $Query = $this->Tokens->findByToken($Token);
+        /** @var \Tokens\Model\Entity\Token $Token */
+        $Token = $Query->contain('Users')->first();
+        $this->assertEquals(2, $Token->get('user')->get('id'));
+        $this->assertEquals('testType', $Token->get('type'));
+        $this->assertEquals(['extra1', 'extra2'], $Token->get('extra'));
+        $this->assertInstanceOf(FrozenTime::class, $Token->get('expiry'));
+        $this->assertTrue($Token->get('expiry')->isTomorrow());
 
         //With error
         $this->expectException(LogicException::class);
@@ -145,8 +151,8 @@ class TokenTraitTest extends TestCase
     }
 
     /**
-     * Test for `delete()` method
      * @test
+     * @uses \Tokens\Utility\TokenTrait::delete()
      */
     public function testDelete(): void
     {
