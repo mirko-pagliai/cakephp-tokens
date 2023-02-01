@@ -15,49 +15,55 @@ declare(strict_types=1);
 namespace Tokens\Utility;
 
 use Cake\Datasource\EntityInterface;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query;
-use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 use LogicException;
 use Tokens\Model\Entity\Token;
+use Tokens\Model\Table\TokensTable;
 
 /**
  * TokenTrait.
+ *
  * It allows to handle tokens.
  */
 trait TokenTrait
 {
+    use LocatorAwareTrait;
+
     /**
-     * Internal method to get the table instance
-     * @return \Cake\ORM\Table
+     * Internal method to get a `TokensTable` instance
+     * @return \Tokens\Model\Table\TokensTable
      */
-    protected function getTable(): Table
+    protected function getTokensTable(): TokensTable
     {
-        return TableRegistry::getTableLocator()->get('Tokens.Tokens');
+        /** @var \Tokens\Model\Table\TokensTable $Table */
+        $Table = $this->getTableLocator()->get('Tokens.Tokens');
+
+        return $Table;
     }
 
     /**
      * `find()` method
      * @param array $conditions Conditions for `where()`
      * @return \Cake\ORM\Query
-     * @uses getTable()
      */
     public function find(array $conditions = []): Query
     {
-        return $this->getTable()->find('active')->where($conditions);
+        return $this->getTokensTable()->find('active')->where($conditions);
     }
 
     /**
      * Checks if a token exists and is active.
      *
-     * Valid optios values: `user_id`, `type`.
+     * Valid options values:
+     *  - `user_id`;
+     *  - `type`.
      *
      * Be careful: if the token has these options, then you must set them.
      * In other words, blank options will be replaced with `null`.
      * @param string $token Token value
      * @param array $options Options
      * @return bool
-     * @uses find()
      */
     public function check(string $token, array $options = []): bool
     {
@@ -76,39 +82,39 @@ trait TokenTrait
     /**
      * Creates a token.
      *
-     * Valid optios values: `user_id`, `type`, `extra`, `expiry`.
+     * Valid options values:
+     *  - `user_id`;
+     *  - `type`;
+     *  - `extra`;
+     *  - `expiry`.
      * @param string $token Token value
      * @param array $options Options
      * @return string Token value
      * @throws \LogicException
-     * @uses getTable()
      */
     public function create(string $token, array $options = []): string
     {
-        $entity = new Token(compact('token'));
+        $Token = new Token(compact('token'));
 
         foreach (['user_id', 'type', 'extra', 'expiry'] as $key) {
             if (array_key_exists($key, $options)) {
-                $entity->set($key, $options[$key]);
+                $Token->set($key, $options[$key]);
             }
         }
 
-        if (!$this->getTable()->save($entity)) {
-            $field = array_key_first($entity->getErrors());
-            $error = array_value_first_recursive($entity->getErrors());
+        if (!$this->getTokensTable()->save($Token)) {
+            $error = array_value_first_recursive($Token->getErrors());
 
-            throw new LogicException(sprintf('Error for `%s` field: %s', $field, lcfirst($error)));
+            throw new LogicException(sprintf('Error for `%s` field: %s', array_key_first($Token->getErrors()), lcfirst($error)));
         }
 
-        return $entity->get('token');
+        return $Token->get('token');
     }
 
     /**
      * Deletes a token
      * @param string $token Token value
      * @return bool
-     * @uses find()
-     * @uses getTable()
      */
     public function delete(string $token): bool
     {
@@ -116,6 +122,6 @@ trait TokenTrait
 
         $first = $query->first();
 
-        return $query->count() && $first instanceof EntityInterface ? $this->getTable()->delete($first) : false;
+        return $query->count() && $first instanceof EntityInterface && $this->getTokensTable()->delete($first);
     }
 }

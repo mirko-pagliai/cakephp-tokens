@@ -69,7 +69,7 @@ class TokensTable extends Table
      *
      * This method should be called before creating a new token. In fact, it prevents a user from having more than token
      *  or a token is created with the same token value.
-     * @param \Tokens\Model\Entity\Token|null $Token Token entity
+     * @param ?\Tokens\Model\Entity\Token $Token Token entity
      * @return int Affected rows
      */
     public function deleteExpired(?Token $Token = null): int
